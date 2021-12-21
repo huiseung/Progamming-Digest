@@ -2,6 +2,7 @@
 - [목차](#목차)
 - [안드로이드](#안드로이드)
   - [프로젝트 구조](#프로젝트-구조)
+  - [AndroidMainfest.xml](#androidmainfestxml)
   - [성능 모니터링](#성능-모니터링)
   - [로그](#로그)
   - [라이브러리](#라이브러리)
@@ -35,19 +36,21 @@
       - [RecyclerView](#recyclerview)
   - [drawable 과 mipmap](#drawable-과-mipmap)
   - [Context](#context)
-  - [Intent](#intent)
   - [Activity](#activity)
     - [Activity LifeCycle](#activity-lifecycle)
+    - [Task 관리](#task-관리)
+    - [ViewBinding](#viewbinding)
+    - [Intent](#intent)
 - [데이터 저장](#데이터-저장)
-  - [파일 입출력](#파일-입출력)
   - [SharedPreferences](#sharedpreferences)
     - [객체를 생성하는 방법](#객체를-생성하는-방법)
     - [Editor 클래스](#editor-클래스)
-  - [SQLite](#sqlite)
+  - [SQLite 와 ROOM](#sqlite-와-room)
 - [API 통신](#api-통신)
-- [카메라](#카메라)
 - [코루틴](#코루틴)
-- [컨텐츠리졸버](#컨텐츠리졸버)
+- [Service](#service)
+- [Content Provider 와 Content Resolver](#content-provider-와-content-resolver)
+- [카메라](#카메라)
 - [구글지도](#구글지도)
 
 # 안드로이드 
@@ -63,6 +66,7 @@
 ```
 |-app
   |-manifests
+    |-AndroidMainfest.xml
   |-java
   |-res
     |-layout
@@ -72,6 +76,8 @@
 ```
 
 - 페키지 이름에 example이 들어가면 앱스토어 등록 불가
+
+## AndroidMainfest.xml
 
 
 ## 성능 모니터링
@@ -108,7 +114,8 @@
 
     //recyclerview
 
-    //
+    //cardView
+    implementation "androidx.cardview:cardview:1.0.0"
 
 ```
 
@@ -189,32 +196,6 @@ toast("Message")
 - Attributes/text 속성에 값으로 @string/name을 입력해 strings.xml에서 설정한 string name에 해당하는 값을 텍스트위젯에 할당한다.
 - 텍스트 크기는 주로 sp 단위를 사용한다. res/values/dimens.xml 파일을 생성해 관리한다
 
-- viewBinding
-  - build.gradle(Module) 설정
-```
-android{
-  buildFeatures{
-    viewBinding = ture
-  }
-}
-
-```
-
-  - MainActivity.kt에 프로퍼티 추가
-```kotlin
-class MainActivity: AppCompatActivity(){
-  val binding by lazy {ActivityMainBinding.inflate(layoutInflater)}
-
-  override fun onCreate(savedInstanceState: Bundle?){
-    super.onCreate(savedInstanceState)
-    setContentView(binding.root)
-
-    binding.id
-  }
-
-}
-
-```
 
 ### Buttons
 - 버튼 위젯들은 클릭 처리 위젯이다.
@@ -259,9 +240,7 @@ class MainActivity: AppCompatActivity(){
   - 싱글톤
 - Base Context
   - Activity, Service, Content Provider, Broadcast Receiver의 부모 클래스
-## Intent
-- bundle
-  - 인텐트 내부에 있는 데이터 저장 공간, 액티비티들은 번들을 활용해 데이터를 주고 받는다 
+
 
 ## Activity
 - 사용자 혹은 다른 앱과 상호작용하는 진입점
@@ -272,20 +251,113 @@ class MainActivity: AppCompatActivity(){
 
 |메서드|상태|
 |---|---|
-|onCreate()|액티비티 생성|
+|onCreate()|액티비티 생성, 메모리에 로드|
 |onStart()|화면에 나타나기 시작|
 |onResume()|화면에 보여지는 중|
 |onPause()|다른 액티비티에 의해 일부분이 가려짐|
 |onStop()|다른 액티비티가 실행되어 화면에서 사라짐|
-|onDestroy()|액티비티 종료|
-
+|onDestroy()|액티비티 종료, 메모리에서 제거|
 
 - 메서드 안에서 super를 호출하지 않으면 정상 작동하지 않는다
+
+- 첫 실행
+1) onCreate()
+2) onStart()
+3) onResume()
+
+- 화면에서 제거, 뒤로가기 혹은 finish() 호출
+1) onPause()
+2) onStop()
+3) onDestory()
+
+- 새 액티비티 생성
+
+
+### Task 관리
+
+```kotlin
+val intent = INtent(this, SomeActivity::class.java)
+intent.addFlags(Intent.FLAG)
+
+```
+
+|플래그|설명|
+|---|---|
+|FLAG_ACTIVITY_CLEAR_TOP||
+|FLAG_ACTIVITY_NEW_TASK|새 테스크 생성, 
+
+
+
+### ViewBinding
+- viewBinding
+  - build.gradle(Module) 설정
+```
+android{
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+```
+
+  - *Activity.kt에 프로퍼티 추가
+```kotlin
+class SomeActivity: AppCompatActivity(){
+  val binding by lazy {ActivitySomeBinding.inflate(layoutInflater)}
+
+  override fun onCreate(savedInstanceState: Bundle?){
+    super.onCreate(savedInstanceState)
+    setContentView(binding.root)
+
+    binding.id //위젯 id를 이용해 접근 가능
+  }
+}
+
+```
+
+### Intent
+- bundle
+  - 인텐트 내부에 있는 데이터 저장 공간, 액티비티들은 번들을 활용해 데이터를 주고 받는다 
+
+1) val intent = Intent(this, TargetACtivity::class.java) 객체 생성
+2) startActivity(intent) 호출, ActivityManager에 intent가 전달된다
+3) ActivityManager가 TargetActivity를 실행, intent 전달
+4) TargetActivity가 intent에서 data를 꺼내 사용
+
+- Some -> Other data 전달 예제
+```kotlin
+class SomeActivity: AppCompatActivity(){
+  val binding by lazy{ActivitySomeBinding.inflate(layoutInflater)}
+
+  override fun onCreate(savedInstanceState: Bundle?){
+    super.onCreate(savedInstanceState)
+    setContentView(binding.root)
+    val intent = Intent(this, SubActivity::class.java)
+    intent.putExtra("from1", "Hello Bundle")
+    intent.putExtra("from2", 2021)
+  }
+}
+
+
+class OtherActivity: AppCompatActivity(){
+  val binding by lazy{ActivityOtherBinding.inflate(layoutInflater)}
+
+  override fun onCreate(savedInstanceState: Bundle?){
+    super.onCreate(savedInstanceState)
+    setContentView(binding.root)
+    binding.to1.text = intent.getStringExtra("from1") //사용하는 intent 객체는 SomeAcitivty에서 생성한 객체
+  }
+}
+
+```
+
+
+
 
 
 -------
 # 데이터 저장
-## 파일 입출력
+- 앱 설치시, 앱 마다 리눅스 파일시스템에 저장 공간(폴더)을 할당 받는다. 해당 폴더는 연동된 앱만 쓰기/읽기 권한이 있다
 
 ## SharedPreferences
 - 데이터 저장/불러오기 기능이 있는 클래스
@@ -294,7 +366,7 @@ class MainActivity: AppCompatActivity(){
 ```kotlin
 val sharedPref = getPreferences(int mode)
 val sharedPref = getSharedPreferences(String fileName, int mode)
-val sharedPref = PreferenceManager.getDefaultSharedPreferences(this) //androidx.preference:preferece-ktx:1.1.0 라이브러리 추가 필요
+val sharedPref = PreferenceManager.getDefaultSharedPreferences(this) //androidx.preference:preference-ktx:1.1.0 라이브러리 추가 필요
 ```
 - mode
   - MODE_PRIVATE:
@@ -326,18 +398,21 @@ val data: Boolean = editor.getBoolean(String key, Boolean defaultValue)
 ```
 
 
-
-
-## SQLite
+## SQLite 와 ROOM
 
 ------
 
 # API 통신
 
-# 카메라
-
 # 코루틴
 
-# 컨텐츠리졸버
+# Service
+
+# Content Provider 와 Content Resolver
+
+
+------
+
+# 카메라
 
 # 구글지도
