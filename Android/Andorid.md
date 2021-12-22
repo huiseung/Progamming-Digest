@@ -1,10 +1,13 @@
 # 목차
 - [목차](#목차)
 - [안드로이드](#안드로이드)
+  - [Version 정보](#version-정보)
   - [프로젝트 구조](#프로젝트-구조)
   - [AndroidMainfest.xml](#androidmainfestxml)
   - [성능 모니터링](#성능-모니터링)
   - [로그](#로그)
+  - [Toast](#toast)
+  - [런처 아이콘](#런처-아이콘)
   - [라이브러리](#라이브러리)
 - [Design Pattern](#design-pattern)
   - [MVVM](#mvvm)
@@ -12,17 +15,18 @@
     - [Anko](#anko)
     - [splitties-toast](#splitties-toast)
 - [화면 구성](#화면-구성)
-  - [Design](#design)
-    - [Layout](#layout)
+  - [Design(res 폴더)](#designres-폴더)
       - [Constraint Layout](#constraint-layout)
       - [LinearLayout](#linearlayout)
       - [FrameLayout](#framelayout)
     - [Text](#text)
+      - [EditText](#edittext)
     - [Buttons](#buttons)
+      - [Button](#button)
       - [ImageButton](#imagebutton)
+      - [ToggleButton](#togglebutton)
       - [RadioButton](#radiobutton)
       - [CheckBox](#checkbox)
-      - [ToggleButton](#togglebutton)
       - [Switch](#switch)
     - [Widgets](#widgets)
       - [ProgressBar](#progressbar)
@@ -34,13 +38,14 @@
     - [Containers](#containers)
       - [ScrollView](#scrollview)
       - [RecyclerView](#recyclerview)
+  - [values](#values)
   - [drawable 과 mipmap](#drawable-과-mipmap)
-  - [Context](#context)
   - [Activity](#activity)
     - [Activity LifeCycle](#activity-lifecycle)
-    - [Task 관리](#task-관리)
-    - [ViewBinding](#viewbinding)
+    - [상태 저장/복구 call back method](#상태-저장복구-call-back-method)
     - [Intent](#intent)
+      - [Task 관리](#task-관리)
+      - [ViewBinding](#viewbinding)
 - [데이터 저장](#데이터-저장)
   - [SharedPreferences](#sharedpreferences)
     - [객체를 생성하는 방법](#객체를-생성하는-방법)
@@ -60,6 +65,15 @@
 
 - 젯팻 Jetpack
 
+## Version 정보
+
+|플랫폼 버전|API Level|별명|
+|---|---|---|
+|10.0|29|Android 10|
+|9.0|28|Pie|
+|8.0-8.1|26-27|Oreo|
+|7.0-7.12|24-25|Nougat|
+|6.0-6.0.1|23|Marshmallow|
 
 ## 프로젝트 구조
 - 안드로이드뷰: 개발 편의성을 위해 안드로이드 스튜디오가 만들어낸 가상에 폴더 구조
@@ -79,6 +93,43 @@
 
 ## AndroidMainfest.xml
 
+```xml
+<manifest package="">
+  <use-feature android:name=""
+    android:required="true"/>
+  <use-permission android:name="">
+  <application
+    android:allowBackup="false"
+    andriod:label="">
+    <activity android:name=""></android>
+    <activity android:name="">
+      <intent-filter>
+        <action android:name=""></action>
+        <category antroid:name=""></category>
+      </intent-filter>
+    </android>
+  </application>
+</maifest>
+
+```
+
+- 다음으로 이루어져 있다
+  - 패키지 이름
+    - 이를 기반으로 빌드시 R 클래스가 생성된다
+  - application
+    - allowBackup: 앱 내부 데이터를 구글 계정과 연동된 구글 드라이브에 백업할지 여부를 결정
+    - label: 앱 이름
+  - 앱의 구성 요소(컴포넌트)
+    - 컴포넌트: 액티비티(acitivty), 서비스(service), 브로드캐스트 리시버(receiver), 콘텐츠 프로바이더(provider)
+    - intent-filter: 컴포넌트가 어떻게 시작되는지 설정
+      - 액티비티, 서비스, 브로드캐스트 리시버는 인텐트가 실행시킨다 
+      - action: 수행할 작업
+        - android.intent.action.MAIN: 앱 첫 실행 작업시 실행되는 액티비티
+      - category: 
+        - android:intent.category.LAUNCHER: 런처 화면을 통해 앱 접근시 시작할 액티비티임을 명시
+      - data: 
+  - use-permission: 권한 설정
+  - use-feature: 필요한 하드웨어, 소프트웨어 기능 설정
 
 ## 성능 모니터링
 - Profiler 탭에서 실생중인 앱에 CPU, 메모리 사용량 모니터링 가능
@@ -95,9 +146,52 @@
 |Log.w(태그, 내용)|warning|경고성 메세지|
 |Log.e(태그, 내용)|error|오류 메세지
 
+## Toast
+```kotlin
+val toast : Toast = Toast.makeText(this, "", Toast.LENGTH_SHORT)
+toast.setGravity(Gravitity.CENTER, 0, 0)
+toast.show()
+```
+- Toast.makeText(토스트를 사용할 객체, 메세지, 출력 시간)
+  - 출력시간
+    - Toast.LENGTH_SHORT: 2초 출력
+    - Toast.LENGTH_LONG: 3초 출력
+- toast.setGravity(출력 위치, 지정 위치로부터 x 오프셋, 지정 위치로부터 y오프셋)
+  - 출력 위치
+    - 출력위치는 or 연산 사용가능
+    - Gravitiy.CENTER
+    - Gravitiy.LIGHT
+    - Gravity.LEFT
+
+
+## 런처 아이콘
+- File > New > Image Asset
+- 런처 아이콘 기준은 가로 세로 512px 다
+
 ## 라이브러리
 
-```
+```build.gradle(Module)
+
+android{
+  compileSdk 32 //
+
+  defaultConfig{
+    applicationId "" //앱스토에서 앱들을 구분하는 식별자
+    minSdk 21
+    targetSdk 32
+    versionCode 1
+    versionName "1.0"
+
+    testInstrumentationRunner ""
+  }
+
+  buildFeatures{
+    viewBinding true
+  }
+}
+
+
+dependencies{
   //basic
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
@@ -116,7 +210,7 @@
 
     //cardView
     implementation "androidx.cardview:cardview:1.0.0"
-
+}
 ```
 
 
@@ -158,12 +252,21 @@ toast("Message")
 ------
 
 # 화면 구성
-## Design
-- res/layout에 위치하는 xml 파일이용
+## Design(res 폴더)
+- R.java는 id가 붙은 모든 리소스에 대해 id에 대응하는 정수들을 저장하고 있는 클래스다. 
 - 안드로이드 스튜디오는 코드를 통해서가 아니라 상호작용형태로 레이아웃 디자인을 꾸밀 수 있다
 - 화면을 가로로 전환해도 그대로인지 살펴봄으로서 제대로 레이아웃 배치가 되었는지 확인해 볼 수 있다.
+- dp:
+- sp: 
+- 이벤트
+  - event: 프로그램에서 일어나는 사건
+    - 터치: 특정 위치를 건드릴시 이벤트 발생
+    - 클릭: 특정 위치를 건드렸다가 손가락을 땔때 이벤트 발생
+    - 스크롤
+    - 체크박스 설정/해제
+  - event source: 이벤트가 발생하는 뷰 객체
+  - event listener: 이벤트 발생시 대응하는 추상 메서드를 정의한 인터페이스
 
-### Layout
 #### Constraint Layout
 - 위젯 사이 상대적인 제약 조건을 이용해 화면을 구성하는 기본 레이아웃
 - Constraint: 
@@ -196,16 +299,20 @@ toast("Message")
 - Attributes/text 속성에 값으로 @string/name을 입력해 strings.xml에서 설정한 string name에 해당하는 값을 텍스트위젯에 할당한다.
 - 텍스트 크기는 주로 sp 단위를 사용한다. res/values/dimens.xml 파일을 생성해 관리한다
 
+#### EditText
+
 
 ### Buttons
-- 버튼 위젯들은 클릭 처리 위젯이다.
-  - 터치: 특정 위치를 건드릴시 이벤트 발생
-  - 클릭: 특정 위치를 건드렸다가 손가락을 땔때 이벤트 발생
+- 이벤트 리스너
+  - 버튼 위젯들은 클릭 처리 가능한 위젯이다.
+  - setOnClickListenr{}
 
+
+#### Button
 #### ImageButton
+#### ToggleButton
 #### RadioButton
 #### CheckBox
-#### ToggleButton
 #### Switch
 
 ### Widgets
@@ -224,6 +331,11 @@ toast("Message")
 #### RecyclerView
 
 
+## values
+- strings.xml:
+- colors: xml: 
+- array.xml: Spinner 같은 목록 위젯에 사용하는 데이터 관리 파일
+
 ## drawable 과 mipmap
 - 스마트폰마다 해상도가 달라 이미지 파일의 경우 해상도에 맞춰 res/drawable/drawable-* 형태의 폴더에 넣어두어야 한다
   - drawable-mdpi : 1인치안에 160 화소
@@ -235,25 +347,20 @@ toast("Message")
 - 아이콘 이미지에 경우도 일반 이미지처럼 화소 단위로 분류해 mipmap 폴더에 넣어둔다.
 
 
-## Context
-- Application Context
-  - 싱글톤
-- Base Context
-  - Activity, Service, Content Provider, Broadcast Receiver의 부모 클래스
-
-
 ## Activity
 - 사용자 혹은 다른 앱과 상호작용하는 진입점
 - 사용자 혹은 다른 앱이 앱을 호출하는 건 사실 하나에 Activity를 호출하는 것이다.
-- Base Context를 상속받은 클래스, 컴포넌트 중 하나
+- AppCompatAcitivty 클래스: 하위 버전 API Level에도 호환 가능하게끔 구성된 Activity 클래스를 상속받은 클래스
 
 ### Activity LifeCycle
+- callback method: event 발생시 os에 의해 호출되는 메서드
 
-|메서드|상태|
+|callback method|상태|
 |---|---|
-|onCreate()|액티비티 생성, 메모리에 로드|
+|onCreate()|액티비티 생성(XML기반 레이아웃 구성, 화면에서 사용할 데이터 초기화, 이벤트 리스너 등록), 메모리에 로드|
 |onStart()|화면에 나타나기 시작|
 |onResume()|화면에 보여지는 중|
+|onRestart()|재시작|
 |onPause()|다른 액티비티에 의해 일부분이 가려짐|
 |onStop()|다른 액티비티가 실행되어 화면에서 사라짐|
 |onDestroy()|액티비티 종료, 메모리에서 제거|
@@ -265,61 +372,32 @@ toast("Message")
 2) onStart()
 3) onResume()
 
-- 화면에서 제거, 뒤로가기 혹은 finish() 호출
+- 화면에서 제거, 뒤로가기, finish() 호출
 1) onPause()
 2) onStop()
 3) onDestory()
 
-- 새 액티비티 생성
+- 종료는 아니고 빠져나가기
+1) onPause()
+2) onStop()
 
+- 빠져나온 액티비티 재 실행
+1) onRestart()
+2) onStart()
+3) onResume()
 
-### Task 관리
+### 상태 저장/복구 call back method
+- onSaveInstanceState(outState: Bundle): onStop() 호출 후 호출 된다
+- onRestoreInstanceState(savedInstanceState: Bundle): onStart() 후출 후 호출 된다
 
-```kotlin
-val intent = INtent(this, SomeActivity::class.java)
-intent.addFlags(Intent.FLAG)
-
-```
-
-|플래그|설명|
-|---|---|
-|FLAG_ACTIVITY_CLEAR_TOP||
-|FLAG_ACTIVITY_NEW_TASK|새 테스크 생성, 
-
-
-
-### ViewBinding
-- viewBinding
-  - build.gradle(Module) 설정
-```
-android{
-    buildFeatures {
-        viewBinding true
-    }
-}
-
-```
-
-  - *Activity.kt에 프로퍼티 추가
-```kotlin
-class SomeActivity: AppCompatActivity(){
-  val binding by lazy {ActivitySomeBinding.inflate(layoutInflater)}
-
-  override fun onCreate(savedInstanceState: Bundle?){
-    super.onCreate(savedInstanceState)
-    setContentView(binding.root)
-
-    binding.id //위젯 id를 이용해 접근 가능
-  }
-}
-
-```
 
 ### Intent
 - bundle
   - 인텐트 내부에 있는 데이터 저장 공간, 액티비티들은 번들을 활용해 데이터를 주고 받는다 
+  - put
+  - get
 
-1) val intent = Intent(this, TargetACtivity::class.java) 객체 생성
+1) val intent = Intent(packageContext: this, class: TargetACtivity::class.java) 객체 생성
 2) startActivity(intent) 호출, ActivityManager에 intent가 전달된다
 3) ActivityManager가 TargetActivity를 실행, intent 전달
 4) TargetActivity가 intent에서 data를 꺼내 사용
@@ -346,6 +424,49 @@ class OtherActivity: AppCompatActivity(){
     super.onCreate(savedInstanceState)
     setContentView(binding.root)
     binding.to1.text = intent.getStringExtra("from1") //사용하는 intent 객체는 SomeAcitivty에서 생성한 객체
+  }
+}
+
+```
+
+
+#### Task 관리
+
+```kotlin
+val intent = Intent(this, SomeActivity::class.java)
+intent.addFlags(Intent.FLAG)
+
+```
+
+|플래그|설명|
+|---|---|
+|FLAG_ACTIVITY_CLEAR_TOP||
+|FLAG_ACTIVITY_NEW_TASK|새 테스크 생성, 
+
+
+
+#### ViewBinding
+- viewBinding
+  - build.gradle(Module) 설정
+```
+android{
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+```
+
+  - *Activity.kt에 프로퍼티 추가
+```kotlin
+class SomeActivity: AppCompatActivity(){
+  val binding by lazy {ActivitySomeBinding.inflate(layoutInflater)}
+
+  override fun onCreate(savedInstanceState: Bundle?){
+    super.onCreate(savedInstanceState)
+    setContentView(binding.root)
+
+    binding.id //위젯 id를 이용해 접근 가능
   }
 }
 

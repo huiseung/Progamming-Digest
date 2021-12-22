@@ -32,7 +32,21 @@ var c: Int  = 1
 
 //null safe
 
+
+//초기화 지연 lateinit 과 lazy
+//lateinit, var에 사용
+lateinit var a: String //a는 null이 될 수 없다, Primitive Type에는 사용 불가
+a = ""
+
+//lazy, val에 사용
+val a: String by lazy {""}
+
+
+
 ```
+
+
+
 
 ### 함수 정의
 ```kotlin
