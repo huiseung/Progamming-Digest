@@ -44,14 +44,16 @@
     - [Activity LifeCycle](#activity-lifecycle)
     - [상태 저장/복구 call back method](#상태-저장복구-call-back-method)
     - [Intent](#intent)
+      - [화면 전환](#화면-전환)
       - [Task 관리](#task-관리)
-      - [ViewBinding](#viewbinding)
+    - [ViewBinding](#viewbinding)
 - [데이터 저장](#데이터-저장)
   - [SharedPreferences](#sharedpreferences)
-    - [객체를 생성하는 방법](#객체를-생성하는-방법)
+    - [객체를 생성하는 3가지 방법](#객체를-생성하는-3가지-방법)
     - [Editor 클래스](#editor-클래스)
   - [SQLite 와 ROOM](#sqlite-와-room)
 - [API 통신](#api-통신)
+- [공유하기](#공유하기)
 - [코루틴](#코루틴)
 - [Service](#service)
 - [Content Provider 와 Content Resolver](#content-provider-와-content-resolver)
@@ -256,8 +258,7 @@ toast("Message")
 - R.java는 id가 붙은 모든 리소스에 대해 id에 대응하는 정수들을 저장하고 있는 클래스다. 
 - 안드로이드 스튜디오는 코드를 통해서가 아니라 상호작용형태로 레이아웃 디자인을 꾸밀 수 있다
 - 화면을 가로로 전환해도 그대로인지 살펴봄으로서 제대로 레이아웃 배치가 되었는지 확인해 볼 수 있다.
-- dp:
-- sp: 
+
 - 이벤트
   - event: 프로그램에서 일어나는 사건
     - 터치: 특정 위치를 건드릴시 이벤트 발생
@@ -266,6 +267,33 @@ toast("Message")
     - 체크박스 설정/해제
   - event source: 이벤트가 발생하는 뷰 객체
   - event listener: 이벤트 발생시 대응하는 추상 메서드를 정의한 인터페이스
+
+- 뷰
+  - layout, widget 모두 뷰 클래스에 자식 클래스다
+
+- 크기
+  - layout_width: 뷰에 가로 길이
+  - layout_height: 뷰에 세로 길이
+
+- 단위
+  - dp:
+  - sp: 
+  - match_parent:
+  - wrap_content:
+
+- 배치
+  - layout_gravitiy: 부모뷰 기준 현재 뷰를 어디 위치 시킬까
+  - gravitiy: 뷰에 내용을 뷰상에 어디 위치 시킬까
+
+- 바깥 여백
+  - layout_marginLeft
+  - layout_margingRight
+  - layout_marginTop
+  - layout_marginBottom
+
+- 내부 여백
+  - layout_padding
+
 
 #### Constraint Layout
 - 위젯 사이 상대적인 제약 조건을 이용해 화면을 구성하는 기본 레이아웃
@@ -299,6 +327,11 @@ toast("Message")
 - Attributes/text 속성에 값으로 @string/name을 입력해 strings.xml에서 설정한 string name에 해당하는 값을 텍스트위젯에 할당한다.
 - 텍스트 크기는 주로 sp 단위를 사용한다. res/values/dimens.xml 파일을 생성해 관리한다
 
+- 속성
+  - textSize: 글 크기
+  - textColor: 글 색깔
+  - text: 글 내용
+
 #### EditText
 
 
@@ -329,7 +362,21 @@ toast("Message")
 - root element를 Scrollview로 설정하면 사용할 수 있다
 
 #### RecyclerView
+- gradle(Module) 추가 필요
+  - implementation "androidx.recyclerview:recyclerview:1.0.0"
+- 속성
+  - scrollbars="vertical" or "horizetal" 
 
+```kotlin
+class SomeAdapter(
+  private val dataList: List<>
+): RecyclerView.Adapter<SomeAdapter.SomeItemViewHolder>(){
+  
+
+}
+
+
+```
 
 ## values
 - strings.xml:
@@ -397,7 +444,7 @@ toast("Message")
   - put
   - get
 
-1) val intent = Intent(packageContext: this, class: TargetACtivity::class.java) 객체 생성
+1) val intent = Intent(packageContext: this, class: TargetActivity::class.java) 객체 생성
 2) startActivity(intent) 호출, ActivityManager에 intent가 전달된다
 3) ActivityManager가 TargetActivity를 실행, intent 전달
 4) TargetActivity가 intent에서 data를 꺼내 사용
@@ -413,6 +460,7 @@ class SomeActivity: AppCompatActivity(){
     val intent = Intent(this, SubActivity::class.java)
     intent.putExtra("from1", "Hello Bundle")
     intent.putExtra("from2", 2021)
+    startActivity(intent) 
   }
 }
 
@@ -429,6 +477,21 @@ class OtherActivity: AppCompatActivity(){
 
 ```
 
+#### 화면 전환
+```kotlin
+class SomActivity: AppCompatActivity(){
+  overrid fun onCreate(savedInstanceState: Bundle?){
+    val toButton = binding.btn
+    toButton.setOnClickListener{
+      val intent = Intent(this, TargetActivity::Class.java)
+      intent.putExtra("", "")
+      startAcitivity(intent)
+    }
+  }
+}
+
+
+```
 
 #### Task 관리
 
@@ -445,7 +508,7 @@ intent.addFlags(Intent.FLAG)
 
 
 
-#### ViewBinding
+### ViewBinding
 - viewBinding
   - build.gradle(Module) 설정
 ```
@@ -476,6 +539,8 @@ class SomeActivity: AppCompatActivity(){
 
 
 
+
+
 -------
 # 데이터 저장
 - 앱 설치시, 앱 마다 리눅스 파일시스템에 저장 공간(폴더)을 할당 받는다. 해당 폴더는 연동된 앱만 쓰기/읽기 권한이 있다
@@ -483,14 +548,14 @@ class SomeActivity: AppCompatActivity(){
 ## SharedPreferences
 - 데이터 저장/불러오기 기능이 있는 클래스
 - 데이터는 XML파일로 관리되지만 코드상에선 Map 클래스처럼 이용 가능하다
-### 객체를 생성하는 방법
+### 객체를 생성하는 3가지 방법
 ```kotlin
-val sharedPref = getPreferences(int mode)
-val sharedPref = getSharedPreferences(String fileName, int mode)
+val sharedPref = getPreferences(int mode) //Context를 상속받은 객체는 사용 가능한 메서드
+val sharedPref = getSharedPreferences(String fileName, int mode) //Context를 상속받은 객체는 사용 가능한 메서드
 val sharedPref = PreferenceManager.getDefaultSharedPreferences(this) //androidx.preference:preference-ktx:1.1.0 라이브러리 추가 필요
 ```
 - mode
-  - MODE_PRIVATE:
+  - MODE_PRIVATE: 해당 프리퍼런스를 생성한 클래스만 데이터 접근 가능
   - MODE_WORLD_READABLE //해당 모드는 API-Level17부터 지원 중단 상태라 사용하지 않는다.
   - MODE_WORLD_WRITEABLE //해당 모드는 API-Level17부터 지원 중단 상태라 사용하지 않는다.
 
@@ -506,8 +571,8 @@ editor.putFloat(String key, float value)
 editor.putBoolean(String key, boolean value)
 
 //반영
-editor.commit()
-editor.apply()
+editor.commit() //동기적 디스크 쓰기 반영
+editor.apply() //권장사항,  비동기 디스크 쓰기 반영
 
 //불러오기
 val data: String = editor.getString(String key, String defaultValue)
@@ -515,15 +580,41 @@ val data: Int = editor.getInt(String key, int defaultValue)
 val data: Long = editor.getLong(String key, long defaultValue)
 val data: Float = editor.getString(String key, float defaultValue)
 val data: Boolean = editor.getBoolean(String key, Boolean defaultValue)
-
 ```
 
 
 ## SQLite 와 ROOM
+- 안드로이드 OS 안에는 SQLite Database가 기본 탑재되어 있다
+
 
 ------
 
 # API 통신
+- 라이브러리 추가
+  - implementation 'com.squareup.retrofit2:converter-gson:2.6.2' 
+  - implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+  - implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+  - implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+- maniset 파일 코드 추가
+```
+<uses-permission android:name="android.permission.INTERNET"/> //인터넷 허용
+```
+
+- 코드
+
+```kotlin
+
+//API Response
+
+
+//API
+
+
+
+//
+```
+
+# 공유하기
 
 # 코루틴
 
