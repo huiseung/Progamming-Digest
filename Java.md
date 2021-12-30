@@ -1,3 +1,4 @@
+# 언어 공부 목적
 - 문법을 공부하는 이유는 효율적인 코드 작성을 위해서이다.
   - 효율적인 코드 필요 조건
     - 제대로 동작한다
@@ -7,6 +8,7 @@
 
 
 # 목차
+- [언어 공부 목적](#언어-공부-목적)
 - [목차](#목차)
 - [OOP](#oop)
 - [Java version update 중요 사항](#java-version-update-중요-사항)
@@ -26,6 +28,7 @@
     - [Enum](#enum)
   - [Generic](#generic)
   - [Interface](#interface)
+    - [interface와 abstract class에 활용](#interface와-abstract-class에-활용)
     - [Anotation](#anotation)
 - [Exception](#exception)
   - [try-finally보다는 try-with-resources를 사용하자](#try-finally보다는-try-with-resources를-사용하자)
@@ -33,7 +36,7 @@
     - [Optional](#optional)
 - [java.lang](#javalang)
   - [String, StrinbBuilder, StringBuffer](#string-strinbbuilder-stringbuffer)
-- [Collections](#collections)
+- [java.util.Collections](#javautilcollections)
 - [Stream](#stream)
 - [Lambda](#lambda)
 - [Thread](#thread)
@@ -42,6 +45,7 @@
 
 
 # OOP
+
 
 # Java version update 중요 사항
 - version 5
@@ -56,7 +60,36 @@
 - version 11
 
 # JVM
-
+- .java 파일을 javac 컴파일러를 이용해 .class 파일(Byte Code)로 바꾼다 JIT가 os 맞춤으로 바꾼다
+- excutable jar 파일
+  - 
+- class loader
+  - class파일들을 runtime data area에 적재한다
+- runtime data area
+  - 컴퓨터 시스템으로부터 클래스 파일 실행시 할당받은 메모리영역 
+  - 5가지 용도로 구분해 사용한다. 
+    - pc registers, stack area, native method stack은 스레드별로 생성해 사용한다
+    - method area, heap area은 스레드가 공유하며 사용한다
+  - pc registers
+    - thread가 다음 실행할 명령어를 저장
+  - stack area
+    - thread가 메서드를 호출하면 지역변수를 저장, 메서드가 리턴되면 메모리에서 해제된다.
+    - main 역시 하나의 메서드다. 
+    - primitive type은 값 자체가 저장되고 reference type은 heap영역에 주소가 저장된다
+  - native method stack
+    - 자바 이외의 언어로 작성된 코드를 위한 영역
+  - method area(static area)
+    - 클래스와 관련한 정보(이름, 속성 타입, 속성 접근 제어자)
+    - static 변수, 인터페이스가 저장된다
+    - 런타임이 종료되기까지 유지된다
+  - heap area
+    - 인스턴스에 실제 값이 저장
+    - GC가 관리한다
+- Execution Engine
+  - Garabage Collector, Interpreter, JIT Compirer 로 구성된다
+  - Garabage Collector 동작 과정
+    - minor GC
+    - major GC
 
 
 # Keyword
@@ -75,7 +108,6 @@
   - 클래스에 붙이면 상속 불가, 속성 앞에 붙이면 변경 불가, 메서드에 붙이면 오버라이딩 불가 
 
 - abstract
-  - 클래스와 메서드 동시에 붙인다. 해당 클래스에는 속성이 없다. 메서드를 선언만 하고 구현은 자식 클래스에서 오버라이딩
   - 인스턴스를 생성 못하고 자식에게 상속하는 걸 목적으로 하는 클래스
 
 - synchronized
@@ -122,7 +154,18 @@
 ## Generic
 
 ## Interface
+- 협업시 클래스에서 사용하는 메서드에 이름과 반환값을 사전에 선언해 둔것
+  - 해당 인터페이스를 상속받은 클래스에 메서드는 인터페이스에서 선언한것만 있음을 약속 받음
+- 다수의 인터페이스를 상속하는게 가능
+- 인터페이스를 구현(implement)하는 클래스에게 인터페이스에서 선언한 메서드를 정의하도록 강제
+- 약한 연결
+  - 객체를 속성으로 갖는 클래스를 정의할때 자료형을 속성을 정의한 클래스로 두지 않고 인터페이스로 두면 속성 클래스 변경에 용이하다
+### interface와 abstract class에 활용
+
 ### Anotation
+
+
+
 
 
 ------
@@ -135,10 +178,25 @@
 
 
 # java.lang
+- import 없이도 사용가능한 기본 패키지
+
 ## String, StrinbBuilder, StringBuffer
+- String은 불변 객체. thread safe하다
+```java
+String str = "hello";
+str += "world";
+// 새 주소를 할당해 "hello world" 저장, 기존 "hello"는 garbage collector에 대상
+```
+- StringBuffer와 StringBuilder는 가변 객체, 값이 변경되도 주소를 새로 할당하지 않는다.
+- StringBuffer는 thread safe, StringBuilder는 thread safe하지 않음.
+- 언제 뭘 쓸까 정리
+  - String: 문자열 연산이 적고, 멀티스레드 환경
+  - StringBuffer: 문자열 연산이 많고, 멀티스레드 환경
+  - StringBuilder: 문자열 연산이 많고, 단일 스레드 환경 혹은 동기화를 고려하지 않아도 되는 환경
 
 
-# Collections
+# java.util.Collections
+![](./image/javaCollection.PNG)
 
 # Stream
 

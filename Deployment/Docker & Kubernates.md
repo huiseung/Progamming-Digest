@@ -3,54 +3,6 @@
 - 서버에 프로그램을 배포할시 환경설정을 고정하여 배포할 수 있다.
 - 하나에 서버에 여러 프로그램을 배포&실행시킬때 서로 독립적인 환경을 구축할 수 있다
 
-# cheat sheet
-## mysql docker
-1) 이미지 다운로드
-   - docker pull mysql:8.0.22 
-   - kafka connect에서 사용하는 것과 같은 버전으로
-2) 컨테이너 생성및 실행
-   - dcoker run -d --name 컨테이너이름 -e MYSQL_ROOT_PASSWORD=디비비밀번호 -p 로컬에서설정한디비포트:3306 mysql:8.0.22
-3) 컨테이너안에 bash 실행
-   - docker exec -it 컨테이너이름 bash
-4) 컨테이너안에 mysql 접속
-   - mysql -u root -p
-5) 컨테이너안에 mysql database 만들기
-   - create database 디비이름
-
-## kafaka-zookeeper docker
-1) 
-
-
-## Redis
-
-
-## spring docker
-1) build로 jar 파일 만들기
-   - gradlew ./bootJar
-
-2) java image 다운로드
-   - docker pull openjdk:11
-
-3) Dockerfile 만들기
-```
-FROM 
-COPY *.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
-```
-
-4) image 만들기
-   - docker build -t 이미지이름
-
-5) docker hub repository 만들어 image 올리기
-- docker push 레포지토리이름
-
-6) 데이터베이스, 카프카 등 스프링과 연동할 시스템을 담은 컨테이너들 전부 실행시키기
-
-7) 스프링 컨테이너 실행시키기
-   - 시스템들과 스프링에 컨테이너들은 같은 네트워크에 등록해야 연동 가능하다 
-
-
----
 # 설치
 ## 윈도우 도커 환경 설정
 - docker 환경변수 등록
@@ -156,4 +108,46 @@ networks:
 ---
 # Kubernetes란 무엇이고 왜 사용할까
 - kubernetes는 도커 오케스트라 기술이다
-- 
+
+
+---
+
+# cheat sheet
+## mysql docker
+1) 이미지 다운로드
+   - docker pull mysql:8.0.22 
+   - kafka connect에서 사용하는 것과 같은 버전으로
+2) 컨테이너 생성및 실행
+   - dcoker run -d --name 컨테이너이름 -e MYSQL_ROOT_PASSWORD=디비비밀번호 -p 로컬에서설정한디비포트:3306 mysql:8.0.22
+3) 컨테이너안에 bash 실행
+   - docker exec -it 컨테이너이름 bash
+4) 컨테이너안에 mysql 접속
+   - mysql -u root -p
+5) 컨테이너안에 mysql database 만들기
+   - create database 디비이름
+
+
+## spring docker
+1) build로 jar 파일 만들기
+   - gradlew ./bootJar
+
+2) java image 다운로드
+   - docker pull openjdk:11
+
+3) Dockerfile 만들기
+```
+FROM 
+COPY *.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+4) image 만들기
+   - docker build -t 이미지이름
+
+5) docker hub repository 만들어 image 올리기
+- docker push 레포지토리이름
+
+6) 데이터베이스, 카프카 등 스프링과 연동할 시스템을 담은 컨테이너들 전부 실행시키기
+
+7) 스프링 컨테이너 실행시키기
+   - 시스템들과 스프링에 컨테이너들은 같은 네트워크에 등록해야 연동 가능하다 
