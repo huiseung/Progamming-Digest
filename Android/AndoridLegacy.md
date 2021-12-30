@@ -3,18 +3,21 @@
 - [안드로이드](#안드로이드)
   - [Version 정보](#version-정보)
   - [프로젝트 구조](#프로젝트-구조)
-  - [AndroidMainfest.xml](#androidmainfestxml)
+    - [라이브러리](#라이브러리)
+    - [AndroidMainfest.xml](#androidmainfestxml)
+    - [res](#res)
+  - [애뮬레이터](#애뮬레이터)
   - [성능 모니터링](#성능-모니터링)
   - [로그](#로그)
   - [Toast](#toast)
   - [런처 아이콘](#런처-아이콘)
-  - [라이브러리](#라이브러리)
 - [Design Pattern](#design-pattern)
   - [MVVM](#mvvm)
   - [코드 작성양을 줄이는 라이브러리](#코드-작성양을-줄이는-라이브러리)
     - [Anko](#anko)
     - [splitties-toast](#splitties-toast)
 - [화면 구성](#화면-구성)
+  - [Splash Screen](#splash-screen)
   - [Design(res 폴더)](#designres-폴더)
       - [Constraint Layout](#constraint-layout)
       - [LinearLayout](#linearlayout)
@@ -47,6 +50,9 @@
       - [화면 전환](#화면-전환)
       - [Task 관리](#task-관리)
     - [ViewBinding](#viewbinding)
+    - [Fragment](#fragment)
+      - [Manager](#manager)
+      - [생명주기](#생명주기)
 - [데이터 저장](#데이터-저장)
   - [SharedPreferences](#sharedpreferences)
     - [객체를 생성하는 3가지 방법](#객체를-생성하는-3가지-방법)
@@ -93,13 +99,63 @@
 
 - 페키지 이름에 example이 들어가면 앱스토어 등록 불가
 
-## AndroidMainfest.xml
+
+### 라이브러리
+
+```build.gradle(Module)
+
+android{
+  compileSdk 32 //
+
+  defaultConfig{
+    applicationId "" //앱스토에서 앱들을 구분하는 식별자
+    minSdk 21 //최소 지원 안드로이드 버전
+    targetSdk 32 //사용할거라 기대되는 안드로이드 버전
+    versionCode 1
+    versionName "1.0"
+
+    testInstrumentationRunner ""
+  }
+
+  buildFeatures{
+    viewBinding true
+  }
+}
+
+
+dependencies{
+  //basic
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    //API
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_Version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    //lifecycle
+
+    //recyclerview
+
+    //cardView
+    implementation "androidx.cardview:cardview:1.0.0"
+}
+```
+
+
+### AndroidMainfest.xml
+- refrence: https://developer.android.com/guide/topics/manifest/manifest-intro?hl=ko
 
 ```xml
 <manifest package="">
   <use-feature android:name=""
     android:required="true"/>
+  
   <use-permission android:name="">
+
   <application
     android:allowBackup="false"
     andriod:label="">
@@ -107,7 +163,7 @@
     <activity android:name="">
       <intent-filter>
         <action android:name=""></action>
-        <category antroid:name=""></category>
+        <category android:name=""></category>
       </intent-filter>
     </android>
   </application>
@@ -125,13 +181,37 @@
     - 컴포넌트: 액티비티(acitivty), 서비스(service), 브로드캐스트 리시버(receiver), 콘텐츠 프로바이더(provider)
     - intent-filter: 컴포넌트가 어떻게 시작되는지 설정
       - 액티비티, 서비스, 브로드캐스트 리시버는 인텐트가 실행시킨다 
-      - action: 수행할 작업
-        - android.intent.action.MAIN: 앱 첫 실행 작업시 실행되는 액티비티
-      - category: 
+      - action android:name = 수행할 작업
+        - "android.intent.action.MAIN": 앱 첫 실행 작업시 실행되는 액티비티
+      - category android:name = "" 
         - android:intent.category.LAUNCHER: 런처 화면을 통해 앱 접근시 시작할 액티비티임을 명시
       - data: 
   - use-permission: 권한 설정
   - use-feature: 필요한 하드웨어, 소프트웨어 기능 설정
+
+### res
+- refrence: https://developer.android.com/guide/topics/resources/available-resources?hl=ko
+- animator
+- anim
+- color
+- drawable
+- minmap
+- layout
+- menu
+- raw
+- values
+  - colors.xml
+  - dimens.xml
+  - strings.xml
+  - styles.xml
+- values-kr //현지화하는 법
+  - strings.xml
+- xml
+- font
+
+## 애뮬레이터
+- 앱 삭제
+  - 드래그 드롭 uninstall 기능이 있다
 
 ## 성능 모니터링
 - Profiler 탭에서 실생중인 앱에 CPU, 메모리 사용량 모니터링 가능
@@ -169,51 +249,6 @@ toast.show()
 ## 런처 아이콘
 - File > New > Image Asset
 - 런처 아이콘 기준은 가로 세로 512px 다
-
-## 라이브러리
-
-```build.gradle(Module)
-
-android{
-  compileSdk 32 //
-
-  defaultConfig{
-    applicationId "" //앱스토에서 앱들을 구분하는 식별자
-    minSdk 21
-    targetSdk 32
-    versionCode 1
-    versionName "1.0"
-
-    testInstrumentationRunner ""
-  }
-
-  buildFeatures{
-    viewBinding true
-  }
-}
-
-
-dependencies{
-  //basic
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    //API
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit_Version"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-    //lifecycle
-
-    //recyclerview
-
-    //cardView
-    implementation "androidx.cardview:cardview:1.0.0"
-}
-```
 
 
 # Design Pattern
@@ -254,6 +289,9 @@ toast("Message")
 ------
 
 # 화면 구성
+## Splash Screen
+- res/draw
+
 ## Design(res 폴더)
 - R.java는 id가 붙은 모든 리소스에 대해 id에 대응하는 정수들을 저장하고 있는 클래스다. 
 - 안드로이드 스튜디오는 코드를 통해서가 아니라 상호작용형태로 레이아웃 디자인을 꾸밀 수 있다
@@ -339,7 +377,9 @@ toast("Message")
 - 이벤트 리스너
   - 버튼 위젯들은 클릭 처리 가능한 위젯이다.
   - setOnClickListenr{}
-
+- background 로 색 변경 적용이 안 되는 상황 
+  - res/themes/themes.xml의 style parent에 값 수정
+    - parent="Theme.AppCompat.DayNight.DarkActionBar"
 
 #### Button
 #### ImageButton
@@ -376,7 +416,10 @@ class SomeAdapter(
 }
 
 
+
 ```
+
+
 
 ## values
 - strings.xml:
@@ -536,7 +579,76 @@ class SomeActivity: AppCompatActivity(){
 ```
 
 
+### Fragment
+- 라이브러리
+  - implementation "androidx.fragment:fragment-ktx:1.3.1" //프래그먼트와 프래그먼트 데이터 전달 라이브러리
 
+#### Manager
+- supportFragmentManager()
+- parentFragmentManager()
+- childFragmentManager()
+
+#### 생명주기
+|메서드|설명|
+|---|---|
+|onAttach()||
+|onCreate()||
+|onCreateView()||
+|onViewCreated()||
+|onStart()||
+|onResume()||
+|onPause()||
+|onStop()||
+|onDestroyView()||
+|onDestroy()||
+|onDetach()||
+
+```kotlin
+class SomeFragment: Fragment(){
+  //memory에 fragment 클래스 load
+  override fun onCreate(saveInstatanceState: Bundle?){
+
+  }
+
+  //fragment layout과 매칭시키고 부모 layout에 부착
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    saveInstanceState: Bundle?
+  ): View?{
+    """
+    inflater: layout file loader
+    container: fragment layout이 배치되는 부모 layout
+    saveInstanceState: 상태 저장 클래스
+    """
+    val binding = FragmentSomeBinding.inflate(inflater, container, flase)
+    return binding.root
+  }
+
+  companion object{
+    @JvmStatic
+    fun newInstance() = SomFragment().apply{
+
+    }
+  }
+}
+
+```
+
+```
+
+class SomeActivity{
+  override fun onCreate(){
+    val transaction = supportFragmentManager.beginTransaction()
+    transaction.add(layout.id, Fragment) //Fragment를 layout에 붙입니다
+    transaction.replace(layout.id, Fragment)
+    transaction.remove(Fragment) //Fragment를 layout에서 제거
+    transection.commit()//작업 반영
+
+  }
+}
+
+```
 
 
 
@@ -548,6 +660,8 @@ class SomeActivity: AppCompatActivity(){
 ## SharedPreferences
 - 데이터 저장/불러오기 기능이 있는 클래스
 - 데이터는 XML파일로 관리되지만 코드상에선 Map 클래스처럼 이용 가능하다
+- 저장된 데이터는 앱을 삭제하기 전까지 휴대폰에 남아 앱을 종료후 재시작시에도 불러 올 수 있다.
+ 
 ### 객체를 생성하는 3가지 방법
 ```kotlin
 val sharedPref = getPreferences(int mode) //Context를 상속받은 객체는 사용 가능한 메서드

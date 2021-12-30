@@ -11,6 +11,7 @@
 - [Index](#index)
   - [B+tree](#btree)
     - [추가, 삭제 비용 절감](#추가-삭제-비용-절감)
+- [대용량 트래픽 처리](#대용량-트래픽-처리)
 - [Replica](#replica)
   - [Database가 Crash 되는 상황](#database가-crash-되는-상황)
   - [HowTo](#howto-1)
@@ -44,6 +45,13 @@
 ### 추가, 삭제 비용 절감
 - B+tree에 단점은 추가, 삭제 overhead가 크다는 점이다.
 - MySQL은 추가/삭제 정보들을 메모리에 일시 기록해 두고 추후 한 번에 갱신하는 방법을 취한다.
+
+
+# 대용량 트래픽 처리
+- cache
+- clustering
+- replica
+- sharding
 
 # Replica
 - CRUD 성능을 높이기 위해 사용, 트래픽 분산
