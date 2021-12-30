@@ -1,0 +1,96 @@
+[2021-09-20 15:36:36:1179] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.StartupInfoLogger.logStarting:[33m55[0;39m][0;39m - Starting CacheApplication using Java 11.0.11 on LAPTOP-K3QUG25N with PID 13512 (C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache\build\classes\java\main started by whtjd in C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache)
+[2021-09-20 15:36:36:1182] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.SpringApplication.logStartupProfileInfo:[33m663[0;39m][0;39m - The following profiles are active: prod
+[2021-09-20 15:36:37:2205] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize:[33m108[0;39m][0;39m - Tomcat initialized with port(s): 8080 (http)
+[2021-09-20 15:36:37:2216] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Initializing ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:36:37:2217] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Starting service [Tomcat]
+[2021-09-20 15:36:37:2218] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Starting Servlet engine: [Apache Tomcat/9.0.52]
+[2021-09-20 15:36:37:2338] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Initializing Spring embedded WebApplicationContext
+[2021-09-20 15:36:37:2339] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.prepareWebApplicationContext:[33m290[0;39m][0;39m - Root WebApplicationContext: initialization completed in 1108 ms
+[2021-09-20 15:36:38:2922] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Starting ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:36:38:2940] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start:[33m220[0;39m][0;39m - Tomcat started on port(s): 8080 (http) with context path ''
+[2021-09-20 15:36:38:2952] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.StartupInfoLogger.logStarted:[33m61[0;39m][0;39m - Started CacheApplication in 2.605 seconds (JVM running for 4.415)
+[2021-09-20 15:36:38:2959] [32m[main][0;39m [34mINFO [0;39m [1;37m[com.example.cache.CacheManagerCheck.run:[33m20[0;39m][0;39m - 
+
+==================================================
+org.springframework.cache.ehcache.EhCacheCacheManager
+==================================================
+
+
+[2021-09-20 15:37:01:26378] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2021-09-20 15:37:01:26379] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[org.springframework.web.servlet.FrameworkServlet.initServletBean:[33m525[0;39m][0;39m - Initializing Servlet 'dispatcherServlet'
+[2021-09-20 15:37:01:26381] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[org.springframework.web.servlet.FrameworkServlet.initServletBean:[33m547[0;39m][0;39m - Completed initialization in 1 ms
+[2021-09-20 15:37:03:28439] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m][0;39m - huiseung의 NoCache 수행시간: 2023sec
+[2021-09-20 15:37:36:61204] [32m[http-nio-8080-exec-4][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m][0;39m - huiseung의 NoCache 수행시간: 2007sec
+[2021-09-20 15:37:42:67199] [32m[http-nio-8080-exec-7][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m][0;39m - huiseung의 NoCache 수행시간: 2002sec
+[2021-09-20 15:37:48:72945] [32m[http-nio-8080-exec-8][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getCacheMember:[33m36[0;39m][0;39m - huiseung의 Cache 수행시간: 2037sec
+[2021-09-20 15:37:50:74777] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getCacheMember:[33m36[0;39m][0;39m - huiseung의 Cache 수행시간: 1sec
+[2021-09-20 15:37:52:76628] [32m[http-nio-8080-exec-2][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getCacheMember:[33m36[0;39m][0;39m - huiseung의 Cache 수행시간: 1sec
+[2021-09-20 15:38:00:85558] [32m[http-nio-8080-exec-3][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m][0;39m - huiseung의 NoCache 수행시간: 2004sec
+[2021-09-20 15:41:12:1453] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.StartupInfoLogger.logStarting:[33m55[0;39m][0;39m - Starting CacheApplication using Java 11.0.11 on LAPTOP-K3QUG25N with PID 11172 (C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache\build\classes\java\main started by whtjd in C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache)
+[2021-09-20 15:41:12:1458] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.SpringApplication.logStartupProfileInfo:[33m663[0;39m][0;39m - The following profiles are active: prod
+[2021-09-20 15:41:14:2919] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize:[33m108[0;39m][0;39m - Tomcat initialized with port(s): 8080 (http)
+[2021-09-20 15:41:14:2932] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Initializing ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:41:14:2933] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Starting service [Tomcat]
+[2021-09-20 15:41:14:2933] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Starting Servlet engine: [Apache Tomcat/9.0.52]
+[2021-09-20 15:41:14:3055] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Initializing Spring embedded WebApplicationContext
+[2021-09-20 15:41:14:3056] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.prepareWebApplicationContext:[33m290[0;39m][0;39m - Root WebApplicationContext: initialization completed in 1520 ms
+[2021-09-20 15:41:15:3727] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Starting ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:41:15:3745] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start:[33m220[0;39m][0;39m - Tomcat started on port(s): 8080 (http) with context path ''
+[2021-09-20 15:41:15:3756] [32m[main][0;39m [34mINFO [0;39m [1;37m[org.springframework.boot.StartupInfoLogger.logStarted:[33m61[0;39m][0;39m - Started CacheApplication in 3.243 seconds (JVM running for 5.521)
+[2021-09-20 15:41:15:3763] [32m[main][0;39m [34mINFO [0;39m [1;37m[com.example.cache.CacheManagerCheck.run:[33m20[0;39m][0;39m - 
+
+==================================================
+org.springframework.cache.ehcache.EhCacheCacheManager
+==================================================
+
+
+[2021-09-20 15:41:21:9822] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m][0;39m - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2021-09-20 15:41:21:9823] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[org.springframework.web.servlet.FrameworkServlet.initServletBean:[33m525[0;39m][0;39m - Initializing Servlet 'dispatcherServlet'
+[2021-09-20 15:41:21:9825] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[org.springframework.web.servlet.FrameworkServlet.initServletBean:[33m547[0;39m][0;39m - Completed initialization in 1 ms
+[2021-09-20 15:41:23:11881] [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m][0;39m - huiseung의 NoCache 수행시간: 2013sec
+[2021-09-20 15:41:33:21736] [32m[http-nio-8080-exec-4][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m][0;39m - huiseung의 NoCache 수행시간: 2012sec
+[2021-09-20 15:41:37:25694] [32m[http-nio-8080-exec-5][0;39m [34mINFO [0;39m [1;37m[com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m][0;39m - huiseung의 NoCache 수행시간: 2014sec
+[2021-09-20 15:43:55:1389] [main] INFO  [org.springframework.boot.StartupInfoLogger.logStarting:[33m55[0;39m] - Starting CacheApplication using Java 11.0.11 on LAPTOP-K3QUG25N with PID 11380 (C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache\build\classes\java\main started by whtjd in C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache)
+[2021-09-20 15:43:55:1394] [main] INFO  [org.springframework.boot.SpringApplication.logStartupProfileInfo:[33m663[0;39m] - The following profiles are active: prod
+[2021-09-20 15:43:56:2638] [main] INFO  [org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize:[33m108[0;39m] - Tomcat initialized with port(s): 8080 (http)
+[2021-09-20 15:43:56:2649] [main] INFO  [org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m] - Initializing ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:43:56:2650] [main] INFO  [org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m] - Starting service [Tomcat]
+[2021-09-20 15:43:56:2650] [main] INFO  [org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+[2021-09-20 15:43:57:2754] [main] INFO  [org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m] - Initializing Spring embedded WebApplicationContext
+[2021-09-20 15:43:57:2754] [main] INFO  [org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.prepareWebApplicationContext:[33m290[0;39m] - Root WebApplicationContext: initialization completed in 1276 ms
+[2021-09-20 15:43:57:3373] [main] INFO  [org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m] - Starting ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:43:57:3394] [main] INFO  [org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start:[33m220[0;39m] - Tomcat started on port(s): 8080 (http) with context path ''
+[2021-09-20 15:43:57:3410] [main] INFO  [org.springframework.boot.StartupInfoLogger.logStarted:[33m61[0;39m] - Started CacheApplication in 3.026 seconds (JVM running for 5.162)
+[2021-09-20 15:43:57:3417] [main] INFO  [com.example.cache.CacheManagerCheck.run:[33m20[0;39m] - 
+
+==================================================
+org.springframework.cache.ehcache.EhCacheCacheManager
+==================================================
+
+
+[2021-09-20 15:44:07:13537] [http-nio-8080-exec-1] INFO  [org.apache.juli.logging.DirectJDKLog.log:[33m173[0;39m] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2021-09-20 15:44:07:13538] [http-nio-8080-exec-1] INFO  [org.springframework.web.servlet.FrameworkServlet.initServletBean:[33m525[0;39m] - Initializing Servlet 'dispatcherServlet'
+[2021-09-20 15:44:07:13539] [http-nio-8080-exec-1] INFO  [org.springframework.web.servlet.FrameworkServlet.initServletBean:[33m547[0;39m] - Completed initialization in 0 ms
+[2021-09-20 15:44:09:15604] [http-nio-8080-exec-1] INFO  [com.example.cache.MemberController.getNoCacheMember:[33m28[0;39m] - huiseung의 NoCache 수행시간: 2024sec
+[2021-09-20 15:46:38:1494] [main] INFO  [org.springframework.boot.StartupInfoLogger:logStarting:55] - Starting CacheApplication using Java 11.0.11 on LAPTOP-K3QUG25N with PID 14408 (C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache\build\classes\java\main started by whtjd in C:\Users\whtjd\Desktop\springboot and backendsystem\springboot-lab\cache\cache)
+[2021-09-20 15:46:38:1499] [main] INFO  [org.springframework.boot.SpringApplication:logStartupProfileInfo:663] - The following profiles are active: prod
+[2021-09-20 15:46:39:2997] [main] INFO  [org.springframework.boot.web.embedded.tomcat.TomcatWebServer:initialize:108] - Tomcat initialized with port(s): 8080 (http)
+[2021-09-20 15:46:39:3040] [main] INFO  [org.apache.juli.logging.DirectJDKLog:log:173] - Initializing ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:46:39:3042] [main] INFO  [org.apache.juli.logging.DirectJDKLog:log:173] - Starting service [Tomcat]
+[2021-09-20 15:46:39:3043] [main] INFO  [org.apache.juli.logging.DirectJDKLog:log:173] - Starting Servlet engine: [Apache Tomcat/9.0.52]
+[2021-09-20 15:46:40:3218] [main] INFO  [org.apache.juli.logging.DirectJDKLog:log:173] - Initializing Spring embedded WebApplicationContext
+[2021-09-20 15:46:40:3219] [main] INFO  [org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:prepareWebApplicationContext:290] - Root WebApplicationContext: initialization completed in 1624 ms
+[2021-09-20 15:46:40:3779] [main] INFO  [org.apache.juli.logging.DirectJDKLog:log:173] - Starting ProtocolHandler ["http-nio-8080"]
+[2021-09-20 15:46:40:3798] [main] INFO  [org.springframework.boot.web.embedded.tomcat.TomcatWebServer:start:220] - Tomcat started on port(s): 8080 (http) with context path ''
+[2021-09-20 15:46:40:3809] [main] INFO  [org.springframework.boot.StartupInfoLogger:logStarted:61] - Started CacheApplication in 3.495 seconds (JVM running for 5.133)
+[2021-09-20 15:46:40:3816] [main] INFO  [com.example.cache.CacheManagerCheck:run:20] - 
+
+==================================================
+org.springframework.cache.ehcache.EhCacheCacheManager
+==================================================
+
+
+[2021-09-20 15:46:42:5386] [http-nio-8080-exec-1] INFO  [org.apache.juli.logging.DirectJDKLog:log:173] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2021-09-20 15:46:42:5388] [http-nio-8080-exec-1] INFO  [org.springframework.web.servlet.FrameworkServlet:initServletBean:525] - Initializing Servlet 'dispatcherServlet'
+[2021-09-20 15:46:42:5389] [http-nio-8080-exec-1] INFO  [org.springframework.web.servlet.FrameworkServlet:initServletBean:547] - Completed initialization in 1 ms
+[2021-09-20 15:46:44:7460] [http-nio-8080-exec-1] INFO  [com.example.cache.MemberController:getNoCacheMember:28] - huiseung의 NoCache 수행시간: 2023sec

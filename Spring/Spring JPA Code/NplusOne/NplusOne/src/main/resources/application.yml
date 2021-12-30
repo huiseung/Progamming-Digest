@@ -1,0 +1,27 @@
+spring:
+    datasource:
+        url: jdbc:h2:tcp://localhost:9092/mem:testdb
+        username: sa
+        password:
+        driver-class-name: org.h2.Driver
+    jpa:
+        hibernate:
+            ddl-auto: create
+        properties:
+            hibernate:
+                show_sql: true #SQL 출력
+                #format_sql: true # 한 줄로 출력하지 않고 보기 좋게 출력
+
+logging:
+    level:
+        org:
+            hibernate:
+                type:
+                    descriptor:
+                        #sql: trace # 바인드 파라미터(values 의 ? 부분)에 어떤 값이 대응되는지 출력
+
+
+#    h2:
+#        console:
+#            enabled: true
+

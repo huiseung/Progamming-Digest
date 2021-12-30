@@ -1,1 +1,19 @@
+spring:
+  profiles:
+    active: local
 
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://localhost:3306/devdb
+      username: root
+      password: gmltmd75
+      driver-class-name: com.mysql.jdbc.Driver
+  batch:
+    jdbc:
+      initialize-schema: always

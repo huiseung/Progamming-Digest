@@ -1,0 +1,14 @@
+# mapping 정보
+- 양방향 N:1
+  - Orders(N)
+  - Member(1)
+- 양방향 1:1
+  - Orders(FK 소유)
+  - Delivery
+- N:N
+  - 양방향 N:1
+    - Orders(1)
+    - Order_Item(N)
+  - 단방향 N:1
+    - Item(1)
+    - Order_Item(N)
