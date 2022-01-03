@@ -36,10 +36,10 @@
     - [Optional](#optional)
 - [java.lang](#javalang)
   - [String, StrinbBuilder, StringBuffer](#string-strinbbuilder-stringbuffer)
+  - [ThreadLocal](#threadlocal)
 - [java.util.Collections](#javautilcollections)
 - [Stream](#stream)
 - [Lambda](#lambda)
-- [Thread](#thread)
 
 
 
@@ -194,6 +194,8 @@ str += "world";
   - StringBuffer: 문자열 연산이 많고, 멀티스레드 환경
   - StringBuilder: 문자열 연산이 많고, 단일 스레드 환경 혹은 동기화를 고려하지 않아도 되는 환경
 
+## ThreadLocal
+
 
 # java.util.Collections
 ![](./image/javaCollection.PNG)
@@ -201,5 +203,3 @@ str += "world";
 # Stream
 
 # Lambda
-
-# Thread
