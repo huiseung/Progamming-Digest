@@ -75,6 +75,7 @@ public class BackApplication {
 
 ### 설정 클래스들
 #### SimpleBatchConfiguration extends AbstractBatchConfiguration 
+- Job과 관련한 Bean 객체 등록
 
 - 메서드
 - void initialize()
@@ -127,6 +128,7 @@ public class JobConfig{
 
 ## Job and Step
 - JobBuilderFactory
+- JobParametersBuilder
 - StepBuilderFactory
 
 ### SimpleJob
@@ -158,14 +160,20 @@ public class JobConfig{
 #### @JobScope와 @StepScope
 
 ### JobParameter
-
+- JobParameters = JobParametersBuilder().addString("key","parameter").toJobParameters()
+  
 ### JobInstance
-- Job 설정은 동일하지만 실행시 처리하는 데이터, 내용이 다르기 때문에 이를 구분하는 용도에 객체
+- Job 설정은 동일하지만 실행시 처리하는 데이터, 내용(Job Parameter)이 다르기 때문에 이를 구분하는 용도에 객체
 - BATCH_JOB_INSTANCE table에 매핑된다
 - JobLauncher가 Job 실행시, 처음 시작하는 (Job, Job Parameter)일 경우 JobRepository는 JobInstance를 생성하고, 이전과 동일할 경우 존재하는 JobInstance를 반환
 
 ### JobLauncher
 - Job과 Job Parameters 객체를 받아 실행(run)시키는 class
+- 메서드
+- run(Job, JobParameters)
+  - 이미 JobInstance가 존재하는 (Job, Job Parameter)를 실행시키면 error 발생
+
+
 ### JobRepository
 - meta data 관리
 
