@@ -1,7 +1,6 @@
-package com.example.back;
+package com.example.back.trace;
 
-import com.example.back.trace.FieldLogTrace;
-import com.example.back.trace.TraceStatus;
+
 import org.junit.jupiter.api.Test;
 
 class FieldLogTraceTest {

@@ -126,6 +126,9 @@ public class JobConfig{
 
 #### BatchAutoConfiguration
 
+
+
+
 ## Job and Step
 - JobBuilderFactory
 - JobParametersBuilder
@@ -139,6 +142,12 @@ public class JobConfig{
 - incrementer()
 
 ### Step
+- 처리 단계, 입력출력, 비즈니스 로직이 정의 되어 있다
+- 구현체
+  - TaskletStep
+  - PartionStep
+  - JobStep
+  - FlowStep
 - tasklet()
 - startLimit()
 - allowStartIfComplete()
@@ -161,6 +170,15 @@ public class JobConfig{
 
 ### JobParameter
 - JobParameters = JobParametersBuilder().addString("key","parameter").toJobParameters()
+  - addString(), addLong(), addDate(), addDouble()
+- BATCH_JOB_EXECUTION_PARAMS table에 매핑된다
+- JobParameters는 LinkedHashMap<String, JobParameter> parameters 필드를 갖는다
+- JobParameter
+  - T parameter
+  - ParameterType parameterTye
+    - String, Date, Long, Double
+  - boolean identifying
+- 
   
 ### JobInstance
 - Job 설정은 동일하지만 실행시 처리하는 데이터, 내용(Job Parameter)이 다르기 때문에 이를 구분하는 용도에 객체
@@ -169,19 +187,37 @@ public class JobConfig{
 
 ### JobLauncher
 - Job과 Job Parameters 객체를 받아 실행(run)시키는 class
-- 메서드
 - run(Job, JobParameters)
   - 이미 JobInstance가 존재하는 (Job, Job Parameter)를 실행시키면 error 발생
-
 
 ### JobRepository
 - meta data 관리
 
 ### JobExecution
-
+- JobInstance 실행시 생성되는 객체
+- 속성
+  - JobParmeters, JobInstance
+  - ExcutionContenxt
+  - Enum BatchStatus: JobInstance 실행 결과를 갖고 있다
+    - COMPLETED: JobInstance 완료라 재 실행 불가. JobInstanceAlreadyCompleteException
+    - FAILED: JobInstance 실패로 JobInstance 재실행, new JobExecution
+    - STARTING, STARTED, STOPPING, STOPPED, ABANDONED, UNKNOWN
+  - ExitStatus: Step이 끝난 후 
+    - COMPLETED, FAILED, STOPPED, EXCUTING, NOOP, UNKNOWN
+  - failureExceptions: JobInstance 실행중 발생한 exception list
+  - startTime, reateTime, endTime, lastUpdated
+- BATCH_JOB_EXECUTIOn table과 매핑
 
 ### StepExecution
+- JobExecution을 속성으로 갖는다
+
 ### StepContribution
+- StepExecution을 속성으로 갖는다
+- Step에서 JobParameter 값 조회하기
+```java
+JobParameters = StepContribution.getStepExecution().getJobExecution().getJobParameters()
+```
+
 ### ExecutionContext
 
 ### ItemReader&ItemProcessor&ItemWriter
@@ -195,8 +231,8 @@ public class JobConfig{
 <br></br>
 - Job 관련 테이블
 - BATCH_JOB_INSTANCE: Job 실행시 Job Parameter에 따라 job_name, job_key(Job Parameter에 해쉬값) 이 저장 된다
-- BATCH_JOB_EXECUTION: Job 실행 정보가 저장되는 테이블. 생성시간, 시작시간, 종료시간, 실행상태, 메세지
 - BATCH_JOB_EXECUTION_PARAMS: Job parameter 정보
+- BATCH_JOB_EXECUTION: Job 실행 정보가 저장되는 테이블. 생성시간, 시작시간, 종료시간, 실행상태, 메세지
 - BATCH_JOB_EXECUTION_CONTEXT: step간 공유 가능한 데이터를 Jso 형태로 저장
 - BATCH_JOB_SEQ
 - BATCH_JOB_EXECUTION_SEQ

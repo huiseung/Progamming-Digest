@@ -36,7 +36,9 @@
     - [Optional](#optional)
 - [java.lang](#javalang)
   - [String, StrinbBuilder, StringBuffer](#string-strinbbuilder-stringbuffer)
-  - [ThreadLocal](#threadlocal)
+  - [Thread와 ThreadLocal](#thread와-threadlocal)
+    - [Thread](#thread)
+    - [ThreadLocal](#threadlocal)
 - [java.util.Collections](#javautilcollections)
 - [Stream](#stream)
 - [Lambda](#lambda)
@@ -194,8 +196,43 @@ str += "world";
   - StringBuffer: 문자열 연산이 많고, 멀티스레드 환경
   - StringBuilder: 문자열 연산이 많고, 단일 스레드 환경 혹은 동기화를 고려하지 않아도 되는 환경
 
-## ThreadLocal
+## Thread와 ThreadLocal
+### Thread
+- int activeCount()
+- void checkAccess()
+- Object clone()
+- int countStackFrames()
+- Thread currentThread()
+- void destroy()
+- void dumpStack()
+- int enumerate()
 
+- Map getAllStackTraces()
+- String getName()
+- int getPriority()
+- void setName()
+- void setPriority()
+
+
+- void join()
+- void resume()
+- void run()
+- void sleep
+- void start()
+- void stop()
+- void suspend()
+- String toString()
+- void yield()
+
+### ThreadLocal
+- T get()
+  - 현재 스레드에 thread-local variable copy를 리턴
+- T initialValue()
+  - 현재 스레드에 thread-local variable에 값 초기화
+- void remove()
+  - 현재 스레드에 thread-local variable 값 제거
+- void set(T)
+  - 현재 스레드에 thread-local variable 값 설정
 
 # java.util.Collections
 ![](./image/javaCollection.PNG)
