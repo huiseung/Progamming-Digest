@@ -21,23 +21,18 @@
     - [mounted](#mounted)
     - [updated](#updated)
     - [unmounted](#unmounted)
-  - [Data Binding](#data-binding)
-  - [Component 삽입, Component간 data 주고받기](#component-삽입-component간-data-주고받기)
-    - [provide/inject](#provideinject)
-  - [slot](#slot)
+  - [Directive와 Data Binding](#directive와-data-binding)
 - [API](#api)
-  - [axios와 mixins](#axios와-mixins)
+  - [axios](#axios)
+  - [loading spiner](#loading-spiner)
+- [vuex](#vuex)
+  - [vuex-persistedstate](#vuex-persistedstate)
 - [WebStorage: sessionStorage와 localStorage](#webstorage-sessionstorage와-localstorage)
   - [xss 취약점](#xss-취약점)
     - [대응책](#대응책)
 - [sessionCookie와 persistentCookie](#sessioncookie와-persistentcookie)
   - [csrf 취약점](#csrf-취약점)
     - [대응책](#대응책-1)
-- [vuex](#vuex)
-  - [vuex-persistedstate](#vuex-persistedstate)
-  - [State](#state)
-  - [Mutations](#mutations)
-  - [Actions](#actions)
 - [accessToken과 RefreshToken 관리](#accesstoken과-refreshtoken-관리)
 
 # 프론트엔트가 알아야할 사항들 
@@ -468,6 +463,7 @@ new Vue({
 - data
   - 하나에 객체를 반환한다
   - 해당 컴포넌트가 갖고 있는 속성과 초기값을 정의
+  - template와 data binding이 이루어진다
 - hooks
   - life cycle에 맞춰 실행되는 메소드들
 - computed
@@ -481,7 +477,6 @@ new Vue({
 - watch
 - methods
   - methods에 정의한 함수는 parameter를 받을 수 있다
-  - updated life cycle때 정의한 모든 함수들이 실행된다
 
 ## Life Cycle
 ### created
@@ -500,9 +495,21 @@ new Vue({
 - unmounted()
 
 
-## Data Binding
-
+## Directive와 Data Binding
+- directive
+  - 접두사 v를 가진 vue에서 사용하는 html 태그 속성
 - vue는 js의 data를 html에 binding 시키고, html에 입력을 js의 data에 binding 시키는 양방향 data binding 기능을 제공한다
+
+|Directive|설명|
+|---|---|
+|v-if|속성값에 참일때만 태그가 dom에 추가된다|
+|v-else-if|2.1부터 추가된 기능|
+|v-else|v-if, v-else-if에도 해당이 안 될때 해당 태그가 dom에 추가도니다|
+|v-show|속성값이 참일때만 태그가 화면에 표시된다, 보이지 않을뿐 dom에 추가되어 있다|
+|v-for|iterable 속성값에 갯수만큼 태그 반복|
+|v-model|input, select, textarea 태그에 value 속성 값을 data에 속성과 바인딩|
+|v-bind|html에 속성값을 data에 속성과 바인딩|
+|v-on|이벤트 리스너|
 
 ```vue
 <template>
@@ -639,35 +646,45 @@ export default{
 </script>
 ```
 
-## Component 삽입, Component간 data 주고받기
-```vue
-<template>
-    <h2>{{title}}</h2>
-</template>
-<script>
-    export default {
-        props: {
-            title: {
-                type: String,
-                default: ""
-            }
-        }
-    }
-</script>
-```
-
-```vue
-
-
-```
-
-### provide/inject
-
-## slot
-
-
 # API
-## axios와 mixins
+## axios
+- npm install axios
+
+```js
+
+
+```
+
+## loading spiner 
+- 화면에 url에 맞는 페이지가 렌더링이 완료되기 전까지 대하는 페이지
+  - server에서 data를 얻어 와 렌더링하기 까지 시간이 걸리는 중임을 사용자에게 알림
+
+
+# vuex
+- npm install vuex
+- 새로고침과 탭 종료시 날라간다
+  - js가 동작하는 메모리 공간에 존재
+
+```js
+
+
+
+```
+
+- state
+- mutations
+- getters
+- actions
+- commit
+- module
+
+
+## vuex-persistedstate
+- vuex에 저장 중인 데이터를 sessionStorage나 localStorage로 옮기는 라이브러리
+- sessionStorage로 옮기면 새로고침을 해도 사라지지 않게 할 수 있다. 탭 종료시에는 사라진다
+- localStorage로 옮기면 창을 닫아도 사라지지 않는다
+
+
 
 
 # WebStorage: sessionStorage와 localStorage
@@ -710,28 +727,8 @@ export default{
 
 ### 대응책
 
-# vuex
-- npm install vuex@next --save
-- 새로고침과 탭 종료시 날라간다
-  - js가 동작하는 메모리 공간에 존재
-
-```js
 
 
-
-```
-
-## vuex-persistedstate
-- vuex에 저장 중인 데이터를 sessionStorage나 localStorage로 옮기는 라이브러리
-- sessionStorage로 옮기면 새로고침을 해도 사라지지 않게 할 수 있다. 탭 종료시에는 사라진다
-- localStorage로 옮기면 창을 닫아도 사라지지 않는다
-
-
-## State
-
-## Mutations
-
-## Actions
 
 
 # accessToken과 RefreshToken 관리
