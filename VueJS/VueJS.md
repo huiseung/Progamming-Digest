@@ -26,6 +26,7 @@
   - [axios](#axios)
   - [loading spiner](#loading-spiner)
 - [vuex](#vuex)
+  - [module](#module)
   - [vuex-persistedstate](#vuex-persistedstate)
 - [WebStorage: sessionStorage와 localStorage](#webstorage-sessionstorage와-localstorage)
   - [xss 취약점](#xss-취약점)
@@ -443,11 +444,36 @@ new Vue({
 # routing
 - npm install vue-router
 
+```js
+//routes/index.js
+import Vue from "vue"
+import VueRouter from "vue-router"
+
+Vue.use(VueRouter)
+export default new VueRouter({
+  mode: "history",
+  routes: [
+    {
+      path: "/",
+      redirect: ""
+    },
+    {
+      path: "/register",
+      component: () => import("@/views/RegisterPage.vue")
+    },
+    {
+      path: "*", //위에 path에 다 해당 안 되는 page에 경우
+      component: () => import("@/views/NotFoundPage.vue")
+    }
+  ]
+})
+
+```
+
 ## Lazy Load
 - vueCLI를 이용해 build시 소스코드가 하나로 합쳐진다
   - 처음 방문시 다운 받는 자원 양이 많아 첫 렌더링이 오래걸린다는 단점이 있다
   - 한번 다운로드 받고나면 페이지 전환이 빠른 장점이 있다
-- vue3는 prefecth(default: true)기능을 사용해 나중에 사용될 가능성이 있는 자원을 request로 받아 캐시에 저장해 둔다
 - component(): ()=> import() 
   - path 접근 전 까지 import가 발생하지 않음
 
@@ -470,13 +496,14 @@ new Vue({
   - computed에 정의한 함수는 return이 반드시 존재해야 한다
   - computed에 정의한 함수는 parameter를 받을 수 없다. 
     - 함수 정의시엔 ()이 붙지만 template에서 호출시엔 () 를 적지 말아야 한다.
-  - updated life cycle일때 computed에 정의한 함수 안에서 사용하는 변수(속성)가 변한경우에만 함수가 호출된다(이벤트 리스너 역활)
+  - updated life cycle일때 computed에 정의한 함수 안에서 사용하는 변수(속성)가 변한경우에만 함수가 호출된다
     - this.속성 방식으로 접근 
   - computed에 정의한 함수에 결과물은 캐싱된다
     - updated life cyle일때 추적하고 있는 속성이 변한게 아니라면 캐싱된 결과를 반환한다
 - watch
 - methods
   - methods에 정의한 함수는 parameter를 받을 수 있다
+  - form v-on:submit.prevent="메소드이름" 형태로 자주 사용된다
 
 ## Life Cycle
 ### created
@@ -502,14 +529,14 @@ new Vue({
 
 |Directive|설명|
 |---|---|
-|v-if|속성값에 참일때만 태그가 dom에 추가된다|
-|v-else-if|2.1부터 추가된 기능|
+|v-if=""|속성값에 참일때만 태그가 dom에 추가된다|
+|v-else-if=""|2.1부터 추가된 기능|
 |v-else|v-if, v-else-if에도 해당이 안 될때 해당 태그가 dom에 추가도니다|
 |v-show|속성값이 참일때만 태그가 화면에 표시된다, 보이지 않을뿐 dom에 추가되어 있다|
-|v-for|iterable 속성값에 갯수만큼 태그 반복|
-|v-model|input, select, textarea 태그에 value 속성 값을 data에 속성과 바인딩|
-|v-bind|html에 속성값을 data에 속성과 바인딩|
-|v-on|이벤트 리스너|
+|v-for="":key=""|iterable 속성값에 갯수만큼 태그 반복|
+|v-model=""|input, select, textarea 태그에 value 속성 값을 data에 속성과 바인딩|
+|v-bind:속성=""|html에 속성값을 data에 속성과 바인딩|
+|v-on:속성="메소드"|이벤트 리스너, 다음에 접미사가 있다 .stop .prevent .captuer .self .once .passive|
 
 ```vue
 <template>
@@ -666,17 +693,51 @@ export default{
   - js가 동작하는 메모리 공간에 존재
 
 ```js
+import Vue from "vue"
+import Vuex from "vuex"
 
+Vue.use(Vuex)
+export default new Vuex.store({
+  state: {
+    property: ""
+  },
+  getters: {
+    propertyGetter(state){
+      return state.property
+    },
+    isProperty(state){
+      return state.property !== ""
+    }
+  },
+  mutations: {
+    SOME_MUTATION(state){
+      state.property = ""
+    },
+    SOME2_MUTATION(state, payload){
+      state.property = payload.property
+    }
+  },
+  actions: {
+    async SOME_ACTION({ commit }, requestBody){
+      const { data } = await someApi(requestBody)
+      commit("SOME2_MUTATION", {property: data.property})
+      return data
+    }
+  }
+})
 
 
 ```
 
 - state
-- mutations
 - getters
+- mutations
 - actions
-- commit
-- module
+  - this.$store.commit("mutations안에_함수이름")
+  - { commit }으로 받아 commit("mutations안에_함수이름")
+
+## module
+
 
 
 ## vuex-persistedstate
