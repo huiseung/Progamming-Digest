@@ -1,0 +1,7 @@
+- replica
+- 비동기 회원 탈퇴
+  - springboot async
+- main page banner
+  - cache
+- 한 시간 단위로 best view ranking
+  - redis-rankingset, spring batch

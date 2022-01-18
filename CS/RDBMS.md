@@ -17,13 +17,12 @@
     - [view](#view)
     - [테이블 정규화](#테이블-정규화)
   - [Transaction](#transaction)
-    - [대용량 트래픽 처리](#대용량-트래픽-처리)
-      - [캐시](#캐시)
-      - [복제](#복제)
-      - [파티셔닝](#파티셔닝)
-      - [샤딩](#샤딩)
     - [Concurrency Control](#concurrency-control)
     - [Recovery](#recovery)
+  - [cache](#cache)
+  - [복제 replication](#복제-replication)
+  - [파티셔닝](#파티셔닝)
+  - [샤딩](#샤딩)
   - [NonRDB & NoSQL Intro](#nonrdb--nosql-intro)
 
 ㅏ
@@ -176,9 +175,12 @@
   - 빠른 검색 가능
 - 단점
   - 수정 삭제가 자주 발생하는 컬럼에 대해서는 인덱스를 적용시 오버헤드가 크다
+
 - B+tree
   - B tree: 3개 이상에 자식을 갖는 트리
   - 리프 노드에 값을 리프 노드가 아닌 노드에는 원하는 값이 위치한 리프노드 키까지 찾아가는데 필요한 키가 저장되어 있다
+
+- 결합 인덱스
 
 
 ### view
@@ -225,17 +227,6 @@
   - Durability => 영속성
     - 트랜잭션 처리가 끝나 commit된 결과는 장애가 발생해도 영구 반영되어야 한다
 
-### 대용량 트래픽 처리
-#### 캐시
-
-#### 복제
-- master, slave db
-- 스프링에 @Transelction(readOnly = True)
-
-#### 파티셔닝
-
-#### 샤딩
-
 
 ### Concurrency Control
 - 동시성 제어를 하지 않으면 발생 할 수 있는 문제
@@ -281,6 +272,17 @@
 - redo
 - snapshot
 
+
+## cache
+
+
+## 복제 replication
+- master, slave db
+- 스프링에 @Transelction(readOnly = True)
+
+## 파티셔닝
+
+## 샤딩
 
 ------
 ## NonRDB & NoSQL Intro

@@ -78,6 +78,7 @@
  
 ### ESLint
 - ESLint: JS에서 발생할 수 있는 문법 오류 검사 도구
+- prettier: 코딩 컨벤션을 정의하는 도구, eslint에 넣어 마치 문법 오류 처럼 검사할 수 있다
 - .eslintrc.js 수정
   - rules 값을 다음 처럼 수정
 
@@ -101,6 +102,19 @@
     ],
   },
 ```
+
+- prettier를 eslint에 넣으면 prettier 설정을 지키지 않을때 run은 시킬 수 있으나 애플리케이션 실행시 오류 페이지가 떠 불편해 이를 내리는 설정을 해주어야 한다
+  - vue.config.js 설정
+```js
+module.exports = {
+	devServer: {
+		overlay: false,
+	},
+}
+
+```
+
+
 
 ### jsconfig.json
 - vscode 기능, jsconfig.js 파일을 만든다
@@ -733,8 +747,8 @@ export default new Vuex.store({
 - getters
 - mutations
 - actions
-  - this.$store.commit("mutations안에_함수이름")
   - { commit }으로 받아 commit("mutations안에_함수이름")
+- this.$store.dispatch("actions안에_함수이름")
 
 ## module
 

@@ -1,0 +1,111 @@
+2022-01-17T16:32:08.872894Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.21) starting as process 1
+2022-01-17T16:32:08.895494Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2022-01-17T16:32:09.090829Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2022-01-17T16:32:09.206558Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2022-01-17T16:32:09.261123Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2022-01-17T16:32:09.261950Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2022-01-17T16:32:09.265625Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+2022-01-17T16:32:09.286153Z 0 [Warning] [MY-010604] [Repl] Neither --relay-log nor --relay-log-index were used; so replication may break when this MySQL server acts as a slave and has his hostname changed!! Please use '--relay-log=149031553cd6-relay-bin' to avoid this problem.
+2022-01-17T16:32:09.294383Z 5 [Warning] [MY-010897] [Repl] Storing MySQL user name or password information in the master info repository is not secure and is therefore not recommended. Please consider using the USER and PASSWORD connection options for START SLAVE; see the 'START SLAVE Syntax' in the MySQL Manual for more information.
+2022-01-17T16:32:09.297612Z 5 [System] [MY-010562] [Repl] Slave I/O thread for channel '': connected to master 'repl@mysql_master:3306',replication started in log 'mysql-bin.000002' at position 156
+2022-01-17T16:32:09.298317Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.21'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+2022-01-17T16:32:09.301488Z 5 [ERROR] [MY-010557] [Repl] Error reading packet from server for channel '': Could not find first log file name in binary log index file (server_errno=1236)
+2022-01-17T16:32:09.301906Z 5 [ERROR] [MY-013114] [Repl] Slave I/O for channel '': Got fatal error 1236 from master when reading data from binary log: 'Could not find first log file name in binary log index file', Error_code: MY-013114
+2022-01-17T16:32:24.262496Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.21) starting as process 1
+2022-01-17T16:32:24.275936Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2022-01-17T16:32:24.475520Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2022-01-17T16:32:24.591682Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2022-01-17T16:32:24.640465Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2022-01-17T16:32:24.640941Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2022-01-17T16:32:24.645006Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+2022-01-17T16:32:24.665035Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.21'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+2022-01-17T16:32:28.858368Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.21).
+2022-01-17T16:32:30.731028Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.21)  MySQL Community Server - GPL.
+2022-01-17T16:32:33.309606Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.21) starting as process 1
+2022-01-17T16:32:33.323314Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2022-01-17T16:32:33.507940Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2022-01-17T16:32:33.629645Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2022-01-17T16:32:33.675998Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2022-01-17T16:32:33.676535Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2022-01-17T16:32:33.681111Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+2022-01-17T16:32:33.701148Z 0 [Warning] [MY-010604] [Repl] Neither --relay-log nor --relay-log-index were used; so replication may break when this MySQL server acts as a slave and has his hostname changed!! Please use '--relay-log=149031553cd6-relay-bin' to avoid this problem.
+2022-01-17T16:32:33.709774Z 5 [Warning] [MY-010897] [Repl] Storing MySQL user name or password information in the master info repository is not secure and is therefore not recommended. Please consider using the USER and PASSWORD connection options for START SLAVE; see the 'START SLAVE Syntax' in the MySQL Manual for more information.
+2022-01-17T16:32:33.713008Z 5 [System] [MY-010562] [Repl] Slave I/O thread for channel '': connected to master 'repl@mysql_master:3306',replication started in log 'mysql-bin.000002' at position 156
+2022-01-17T16:32:33.713674Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.21'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+2022-01-17T16:32:33.716367Z 5 [ERROR] [MY-010557] [Repl] Error reading packet from server for channel '': Could not find first log file name in binary log index file (server_errno=1236)
+2022-01-17T16:32:33.716693Z 5 [ERROR] [MY-013114] [Repl] Slave I/O for channel '': Got fatal error 1236 from master when reading data from binary log: 'Could not find first log file name in binary log index file', Error_code: MY-013114
+2022-01-17T16:35:16.894507Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.21).
+2022-01-17T16:35:19.178510Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.21).
+2022-01-17T16:35:19.897347Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 10  user: 'root'.
+2022-01-17T16:35:20.927929Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.21)  MySQL Community Server - GPL.
+2022-01-17T16:35:21.217137Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.21)  MySQL Community Server - GPL.
+2022-01-17T16:35:26.672497Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.21) starting as process 1
+2022-01-17T16:35:26.689480Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2022-01-17T16:35:26.921441Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2022-01-17T16:35:27.031706Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2022-01-17T16:35:27.077217Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2022-01-17T16:35:27.077763Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2022-01-17T16:35:27.081258Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+2022-01-17T16:35:27.101283Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.21'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+2022-01-17T16:35:28.074310Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.21) starting as process 1
+2022-01-17T16:35:28.086324Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2022-01-17T16:35:28.278487Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2022-01-17T16:35:28.389816Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2022-01-17T16:35:28.435682Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2022-01-17T16:35:28.436206Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2022-01-17T16:35:28.439956Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+2022-01-17T16:35:28.459758Z 0 [Warning] [MY-010604] [Repl] Neither --relay-log nor --relay-log-index were used; so replication may break when this MySQL server acts as a slave and has his hostname changed!! Please use '--relay-log=149031553cd6-relay-bin' to avoid this problem.
+2022-01-17T16:35:28.468868Z 5 [Warning] [MY-010897] [Repl] Storing MySQL user name or password information in the master info repository is not secure and is therefore not recommended. Please consider using the USER and PASSWORD connection options for START SLAVE; see the 'START SLAVE Syntax' in the MySQL Manual for more information.
+2022-01-17T16:35:28.472480Z 5 [System] [MY-010562] [Repl] Slave I/O thread for channel '': connected to master 'repl@mysql_master:3306',replication started in log 'mysql-bin.000002' at position 156
+2022-01-17T16:35:28.472900Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.21'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+2022-01-17T18:33:45.518310Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.21).
+2022-01-17T18:33:45.519016Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.21).
+2022-01-17T18:33:47.985486Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 48  user: 'app_user'.
+2022-01-17T18:33:47.990266Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 49  user: 'app_user'.
+2022-01-17T18:33:47.990661Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 50  user: 'app_user'.
+2022-01-17T18:33:47.992158Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 10  user: 'root'.
+2022-01-17T18:33:47.995348Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 51  user: 'app_user'.
+2022-01-17T18:33:47.998873Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 44  user: 'app_user'.
+2022-01-17T18:33:48.001528Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 52  user: 'app_user'.
+2022-01-17T18:33:48.002822Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 45  user: 'app_user'.
+2022-01-17T18:33:48.006316Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 53  user: 'app_user'.
+2022-01-17T18:33:48.007123Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 46  user: 'app_user'.
+2022-01-17T18:33:48.010704Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 47  user: 'app_user'.
+2022-01-17T18:33:51.341946Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.21)  MySQL Community Server - GPL.
