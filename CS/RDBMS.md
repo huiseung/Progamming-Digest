@@ -1,9 +1,11 @@
 # 목차
 - [목차](#목차)
 - [RDBMS](#rdbms)
-  - [SQL](#sql)
-    - [논리적 실행 과정](#논리적-실행-과정)
-    - [MySQL](#mysql)
+- [SQL](#sql)
+  - [논리적 실행 과정](#논리적-실행-과정)
+- [MySQL](#mysql)
+  - [docker container 생성](#docker-container-생성)
+  - [설정 파일](#설정-파일)
     - [데이터 베이스](#데이터-베이스)
     - [테이블 생성](#테이블-생성)
     - [테이블 조회](#테이블-조회)
@@ -11,21 +13,21 @@
     - [테이블 수정](#테이블-수정)
     - [튜플 삽입](#튜플-삽입)
     - [튜플 수정](#튜플-수정)
-  - [테이블 설계](#테이블-설계)
+- [테이블 설계](#테이블-설계)
     - [ER diagram](#er-diagram)
     - [index](#index)
     - [view](#view)
     - [테이블 정규화](#테이블-정규화)
-  - [Transaction](#transaction)
+- [Transaction](#transaction)
     - [Concurrency Control](#concurrency-control)
     - [Recovery](#recovery)
-  - [cache](#cache)
-  - [복제 replication](#복제-replication)
-  - [파티셔닝](#파티셔닝)
-  - [샤딩](#샤딩)
+- [복제 replication](#복제-replication)
+- [파티셔닝](#파티셔닝)
+- [샤딩](#샤딩)
+  - [# cache](#-cache)
   - [NonRDB & NoSQL Intro](#nonrdb--nosql-intro)
 
-ㅏ
+
 # RDBMS
 - 데이터 베이스 기능
   - CRUD, 물리적 위치가 아닌 값을 이용해 참조 가능
@@ -57,9 +59,8 @@
     - FK로 참조되고 있는 PK를 갖고있는 table에서 tuple 삭제는 해당 tuple에 PK와 같은 FK를 갖는 참조 table에 tuple도 같이 삭제
 
 
-
-## SQL
-### 논리적 실행 과정
+# SQL
+## 논리적 실행 과정
 1. 구분 분석
 2. 표준화
 3. 최적화
@@ -72,7 +73,7 @@
    5. SELECT 뽑아냄
    6. ORDER BY 정렬
 
-### MySQL
+# MySQL
 - mysql 접속
   - mysql -u 사용자명 -h 엔드포인트 -P 포트번호
 
@@ -82,7 +83,15 @@
   - Storage Engine
   - OS
 - 쿼리 실행 과정
-  - 
+
+## docker container 생성
+```yml
+
+```
+
+## 설정 파일
+
+
 
 ### 데이터 베이스
 - 데이터 베이스
@@ -166,7 +175,8 @@
 - UPDATE 테이블이름 SET 컬럼=수정값 WHERE 조건문;
 
 -----
-## 테이블 설계
+
+# 테이블 설계
 ### ER diagram
 
 
@@ -215,41 +225,43 @@
 
 ------
 
-## Transaction
+# Transaction
 - DBMS에서 데이터를 다루는 작업 단위
 - 트랜잭션에 특징 ACID
-  - Atomic => fail or commit
+  - 원자성 Atomicity 
     - 데이터베이스는 트랜잭션 처리 전 후 상태로만 존재
-  - Consistency => 무결성
-    - 데이터 베이스를 복제중일때 트랜잭션 발생시 모든 데이터 베이스에 같은 변경이 일어나도록 보장
-  - Isolation => 동시성
-    - 수행중인 트랜잭션을 다른 트랜잭션이 끼어들지 않는다
-  - Durability => 영속성
+  - 일관성 Consistency 
+    - 트랜잭션 수행 후에도 제약사항을 지키고 있다
+  - 격리성 Isolation 
+    - 수행중인 트랜잭션끼리 서로 영향을 주지 않는다
+    - 격리 수준: 어느 정도끼리 영향을 막을 것인가
+  - 지속성 Durability 
     - 트랜잭션 처리가 끝나 commit된 결과는 장애가 발생해도 영구 반영되어야 한다
 
 
 ### Concurrency Control
 - 동시성 제어를 하지 않으면 발생 할 수 있는 문제
-  - Dirty Read, 오손 읽기
+  - 오손 읽기 Dirty Read
     - 수정 작업이 수행 되기전, 해당 데이터를 다른 트랜잭션이 읽음
-  - Unrepeatable Read, 반복불가 읽기
+  - 반복불가 읽기 Unrepeatable Read
     - 트랜잭션1이 수정후 읽으려는데, 트랜잭션2가 트랜잭션1이 수정만하고 읽기전에 해당 데이터에 수정 작업을 진행
-  - Phantom Read, 유령데이터 읽기
+  - 유령데이터 읽기 Phantom Read
     - 트랜잭션1이 연속해서 두번 읽을때, 트랜잭션이2가 트랜잭션1이 처음 읽고 두번째 읽기전 데이터를 수정
-  - Lost Update, 갱신 손실
+  - 갱신 손실 Lost Update
     - 수정 작업이 반영 되기 전, 해당 데이터를 다른 트랜잭션이 수정해 앞선 작업을 덮어씌움
-  - Inconsistency, 모순성
+  - 모순성 Inconsistency
     - 수정 작업을 시작하기 전, 해당 데이터를 다른 트랜잭션이 수정해 앞선 작업이 시작과 다른 값을 기준으로 수정을 해야하는 상황
   - Cascading Rollback
     - 수정 작업을 실패해 롤백하기 전, 해당 데이터를 다른 트랜잭션이 수정해 커밋하는 상황
 
 - Isolaction level
-  - SET TRANSACTION ISOLATION LEVEL 레벨명
+
 |level|설명|막을 수 있는 동시성 문제
-|Read Uncommitted|T1이 commit하지 않는 데이터를 T2가 읽기 가능|없음|
-|Read Commited|T1이 commit한 데이터만 T2가 읽기 가능|Dirty Read|
-|Repeatable Read|T1이 읽은 데이터는 T1이 커밋하기전까지 T2는 수정/삭제 불가|Dirty Read, Unrepeatable Read|
-|serializable|T1이 읽은 데이터는 T1이 커밋하기전까지 T2는 삽입/수정/삭제 불가|Dirty Read, Unrepeatable Read, Phantom Read|
+|---|---|---|
+|Read Uncommitted (level 0)|T1이 처리중인 데이터를 commit하기 전에 T2가 읽기 가능|없음|
+|Read Commited (level 1)|T1이 처리중인 데이터는 commit을 해야 T2가 읽기 가능|Dirty Read|
+|Repeatable Read (level 2)|T1이 읽은(select) 데이터는 T1이 커밋하기전까지 T2는 수정/삭제(update/delete) 불가|Dirty Read, Unrepeatable Read|
+|serializable (level 3)|T1이 읽은(select) 데이터는 T1이 커밋하기전까지 T2는 삽입/수정/삭제(insert/update/delete) 불가|Dirty Read, Unrepeatable Read, Phantom Read|
 
 
 - 공유락 shared lock: read only lock
@@ -273,17 +285,15 @@
 - snapshot
 
 
-## cache
+# 복제 replication
 
 
-## 복제 replication
-- master, slave db
-- 스프링에 @Transelction(readOnly = True)
+# 파티셔닝
 
-## 파티셔닝
+# 샤딩
 
-## 샤딩
 
+# cache
 ------
 ## NonRDB & NoSQL Intro
 

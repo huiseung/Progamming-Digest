@@ -3,43 +3,53 @@
 - [스프링 배치](#스프링-배치)
   - [왜 사용하는가](#왜-사용하는가)
   - [사용 사례](#사용-사례)
-  - [main](#main)
-    - [설정 클래스들](#설정-클래스들)
-      - [SimpleBatchConfiguration extends AbstractBatchConfiguration](#simplebatchconfiguration-extends-abstractbatchconfiguration)
-      - [사용자 정의 JobConfiguration](#사용자-정의-jobconfiguration)
-      - [BatchAutoConfiguration](#batchautoconfiguration)
-  - [Job and Step](#job-and-step)
+- [시작](#시작)
+  - [설정 클래스들](#설정-클래스들)
+    - [SimpleBatchConfiguration](#simplebatchconfiguration)
+    - [사용자 정의 JobConfiguration](#사용자-정의-jobconfiguration)
+    - [BatchAutoConfiguration](#batchautoconfiguration)
+    - [BatchProperties](#batchproperties)
+- [Job](#job)
+  - [JobLauncherApplicationRunncer](#joblauncherapplicationrunncer)
+  - [JobBuilder](#jobbuilder)
+  - [JobInstance](#jobinstance)
+  - [JobParameters](#jobparameters)
+  - [JobExecution](#jobexecution)
+  - [JobExecutionDecider](#jobexecutiondecider)
+  - [JobLauncher](#joblauncher)
+  - [JobRepository](#jobrepository)
+    - [meta data table](#meta-data-table)
+  - [Job 구현체](#job-구현체)
     - [SimpleJob](#simplejob)
-    - [Step](#step)
     - [FlowJob](#flowjob)
-      - [@JobScope와 @StepScope](#jobscope와-stepscope)
-    - [JobParameter](#jobparameter)
-    - [JobInstance](#jobinstance)
-    - [JobLauncher](#joblauncher)
-    - [JobRepository](#jobrepository)
-    - [JobExecution](#jobexecution)
-    - [StepExecution](#stepexecution)
-    - [StepContribution](#stepcontribution)
-    - [ExecutionContext](#executioncontext)
-    - [ItemReader&ItemProcessor&ItemWriter](#itemreaderitemprocessoritemwriter)
-  - [meta data](#meta-data)
-  - [Chunk Process](#chunk-process)
-    - [ItemReader](#itemreader)
-    - [ItemProcessor](#itemprocessor)
-    - [ItemWriter](#itemwriter)
-  - [Repeat, FaultTolerant, Skip, Retry](#repeat-faulttolerant-skip-retry)
-    - [Repeat](#repeat)
-    - [FaultTolerant](#faulttolerant)
-    - [Skip](#skip)
-    - [Retry](#retry)
-  - [MultiThread](#multithread)
-    - [AsyncItemProcess/Writer](#asyncitemprocesswriter)
-    - [MultiThreadStep](#multithreadstep)
-    - [ParallelStep](#parallelstep)
-    - [Partitioning](#partitioning)
-    - [SynchronizedItemStreamReader](#synchronizeditemstreamreader)
-  - [EventListener](#eventlistener)
-  - [Spring Batch Test](#spring-batch-test)
+- [Step](#step)
+  - [StepBuilder](#stepbuilder)
+  - [StepExecution](#stepexecution)
+  - [StepContribution](#stepcontribution)
+  - [Step 구현체](#step-구현체)
+    - [JobStep](#jobstep)
+    - [FlowStep](#flowstep)
+    - [TaskletStep](#taskletstep)
+    - [PartitionStep](#partitionstep)
+  - [ExecutionContext](#executioncontext)
+  - [JobScope와 StepScope](#jobscope와-stepscope)
+- [Chunk Process](#chunk-process)
+  - [ItemReader](#itemreader)
+  - [ItemWriter](#itemwriter)
+  - [ItemProcessor](#itemprocessor)
+- [Repeat, FaultTolerant, Skip, Retry](#repeat-faulttolerant-skip-retry)
+  - [Repeat](#repeat)
+  - [FaultTolerant](#faulttolerant)
+  - [Skip](#skip)
+  - [Retry](#retry)
+- [MultiThread at SpringBatch](#multithread-at-springbatch)
+  - [AsyncItemProcess/Writer](#asyncitemprocesswriter)
+  - [MultiThreadStep](#multithreadstep)
+  - [ParallelStep](#parallelstep)
+  - [Partitioning](#partitioning)
+  - [SynchronizedItemStreamReader](#synchronizeditemstreamreader)
+- [EventListener](#eventlistener)
+- [Spring Batch Test](#spring-batch-test)
 
 # 스프링 배치
 ## 왜 사용하는가
@@ -50,13 +60,18 @@
 - 신뢰: 문제 발생시 추적 가능, 작업 도중 실패시, 실패지점 부터 이어서 재작업 
 
 ## 사용 사례
+- 새롭게 파일들이 추가되는 환경, 매일 정해진 시간에 파일들을 읽어 db에 저장한다. 이미 db에 저장된 파일은 작업하지 않는다
+- 
 - 일매출 집계
   - 배치작업을 통해 일 매출 집계 데이터를 만들어 둬, 사용자가 일 매출 집계 조회시 별도에 집계 처리없이 조회 가능하게 한다
 
+------
 
-## main
+# 시작
+- 라이브러리 추가: implementation 'org.springframework.boot:spring-boot-starter-batch'
 
 ```java
+//main application class
 @EnableBatchProcessing //배치 기능 사용하기
 @SpringBootApplication
 public class BackApplication {
@@ -70,30 +85,44 @@ public class BackApplication {
 
 - @EnableBatchProcessing
   - 설정 클래스들을 실행
+    - SimpleBatchConfiguration
+    - 사용자 정의 JobConfig
+    - BatchAutoConfiguration
   - 스프링 배치 초기화
+    - BatchProperties
   - Job 클래스 초기화, 실행
 
-### 설정 클래스들
-#### SimpleBatchConfiguration extends AbstractBatchConfiguration 
+## 설정 클래스들
+
+### SimpleBatchConfiguration
 - Job과 관련한 Bean 객체 등록
 
-- 메서드
-- void initialize()
-- JobExplorer jobExplorer()
-- JobLauncher jobLauncher()
-- JobRegistry jobRegistry()
-- JobRepository jobRepsitory()
-- PlatformTransactionManager transactionManager()
-<br></br>
-- AbstractBatchConfiguration에서 상속한 메서드
-- afterPropertiesSet()
-- getConfigurer()
-- jobBuilders()
-- setImportMetadata()
-- stepBuilders()
+```java
+//메서드
+void initialize()
+@Bean
+JobExplorer jobExplorer()
+@Bean
+JobLauncher jobLauncher()
+@Bean
+JobRegistry jobRegistry()
+@Bean
+JobRepository jobRepsitory()
+@Bean
+PlatformTransactionManager transactionManager()
 
 
-#### 사용자 정의 JobConfiguration
+@Bean
+JobBuilderFactory jobBuilders()
+@Bean
+StempBuilderFactory stepBuilders()
+void setImportMetadata()
+void afterPropertiesSet()
+BatchConfigurer getConfigurer()
+
+```
+
+### 사용자 정의 JobConfiguration
 - 사용할 Job과 Step을 Bean으로 등록하는 클래스
 
 ```java
@@ -101,7 +130,7 @@ public class BackApplication {
 @RequiredArgsConstructor
 @Configuration
 public class JobConfig{
-	private fianl JobBuilderFactory jobBuilderFactory;
+	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
 
 	@Bean
@@ -114,7 +143,7 @@ public class JobConfig{
 
 	@Bean
 	public Step myStep1(){
-		return stepBUilderFactory.get("myStep1")
+		return stepBuilderFactory.get("myStep1")
 			.tasklet(((contribution, chunkContext)->{
 				return RepeatStatus.FINISHED;
 			}))
@@ -124,106 +153,172 @@ public class JobConfig{
 
 ```
 
-#### BatchAutoConfiguration
+### BatchAutoConfiguration
+- JobLauncherApllicationRunner를 Bean으로 등록하는 클래스
 
-
-
-
-## Job and Step
-- JobBuilderFactory
-- JobParametersBuilder
-- StepBuilderFactory
-
-### SimpleJob
-- start()
-- next()
-- validator()
-- preventRestart()
-- incrementer()
-
-### Step
-- 처리 단계, 입력출력, 비즈니스 로직이 정의 되어 있다
-- 구현체
-  - TaskletStep
-  - PartionStep
-  - JobStep
-  - FlowStep
-- tasklet()
-- startLimit()
-- allowStartIfComplete()
-
-### FlowJob
-- start()
-- next()
-- enum status
-  - BatchSTatus
-  - ExitStatus
-  - FlowExecutionStatus
-- on()
-- to()
-- stop()
-- fail()
-- end()
-- stopAndRestart()
-
-#### @JobScope와 @StepScope
-
-### JobParameter
-- JobParameters = JobParametersBuilder().addString("key","parameter").toJobParameters()
-  - addString(), addLong(), addDate(), addDouble()
-- BATCH_JOB_EXECUTION_PARAMS table에 매핑된다
-- JobParameters는 LinkedHashMap<String, JobParameter> parameters 필드를 갖는다
-- JobParameter
-  - T parameter
-  - ParameterType parameterTye
-    - String, Date, Long, Double
-  - boolean identifying
-- 
-  
-### JobInstance
-- Job 설정은 동일하지만 실행시 처리하는 데이터, 내용(Job Parameter)이 다르기 때문에 이를 구분하는 용도에 객체
-- BATCH_JOB_INSTANCE table에 매핑된다
-- JobLauncher가 Job 실행시, 처음 시작하는 (Job, Job Parameter)일 경우 JobRepository는 JobInstance를 생성하고, 이전과 동일할 경우 존재하는 JobInstance를 반환
-
-### JobLauncher
-- Job과 Job Parameters 객체를 받아 실행(run)시키는 class
-- run(Job, JobParameters)
-  - 이미 JobInstance가 존재하는 (Job, Job Parameter)를 실행시키면 error 발생
-
-### JobRepository
-- meta data 관리
-
-### JobExecution
-- JobInstance 실행시 생성되는 객체
-- 속성
-  - JobParmeters, JobInstance
-  - ExcutionContenxt
-  - Enum BatchStatus: JobInstance 실행 결과를 갖고 있다
-    - COMPLETED: JobInstance 완료라 재 실행 불가. JobInstanceAlreadyCompleteException
-    - FAILED: JobInstance 실패로 JobInstance 재실행, new JobExecution
-    - STARTING, STARTED, STOPPING, STOPPED, ABANDONED, UNKNOWN
-  - ExitStatus: Step이 끝난 후 
-    - COMPLETED, FAILED, STOPPED, EXCUTING, NOOP, UNKNOWN
-  - failureExceptions: JobInstance 실행중 발생한 exception list
-  - startTime, reateTime, endTime, lastUpdated
-- BATCH_JOB_EXECUTIOn table과 매핑
-
-### StepExecution
-- JobExecution을 속성으로 갖는다
-
-### StepContribution
-- StepExecution을 속성으로 갖는다
-- Step에서 JobParameter 값 조회하기
 ```java
-JobParameters = StepContribution.getStepExecution().getJobExecution().getJobParameters()
+@Configuration(proxyBeanMethods = false)
+class BatchAutoConfiguration{
+  @Bean
+  public JobLauncherApplicationRunner jobLauncherApplicationRunner(JobLauncher jobLauncher, JobExplorer jobExplorer,
+			JobRepository jobRepository, BatchProperties properties)
+}
+
 ```
 
-### ExecutionContext
+### BatchProperties
+```java
+@ConfigurationProperties(prefix = "spring.batch")
+class BatchProperties{
+  
+}
+```
 
-### ItemReader&ItemProcessor&ItemWriter
+------
+
+# Job
+## JobLauncherApplicationRunncer
+```java
+class JobLauncherApplicationRunner{
+
+}
+```
 
 
-## meta data
+## JobBuilder
+```java
+public class JobBuilderFactory{
+  private final JobRepository jobRepository;
+
+  public JobBuilder get(string name)
+}
+
+public class JobBuilder{
+  SimpleJobBuilder start(Step step);
+  JobFlowBuilder flow(Step step);
+  JobFlowBuilder start(Flow flow);
+}
+```
+
+
+## JobInstance
+- 논리적 Job 단위 객체
+  - 같은 Job 객체라도 실행시 처리하는 내용(JobParameter)은 다르다
+  - Job + JobParameter
+- BATCH_JOB_INSTANCE table에 매핑된다
+- JobLauncher가 Job 실행시, 처음 시작하는 (Job, Job Parameter)일 경우 JobRepository는 JobInstance를 생성하고, 이전과 동일할 경우 존재하는 JobInstance를 반환한다
+
+
+## JobParameters
+- Job 살행시 설정값을 나타내는 객체
+- BATCH_JOB_EXECUTION_PARAMS table에 매핑된다
+
+```java
+public class JobParameters{
+  LinkedHashMap<String, JobParameter> parameters;
+}
+
+public class JobParameter{
+  T parameter;
+  boolean identifying;
+}
+
+//생성 예제
+JobParamters jobParameters = JobParametersBuilder()
+  .addString("key", "value")
+  .addDate("key", new Date().now())
+  .addLong("key", 1L)
+  .addDouble("key", 0.1)
+  .toJobParameters();
+
+```
+  
+## JobExecution
+- Job 실행을 표현한 객체
+- JobInstance 실행시 생성되는 객체
+- BATCH_JOB_EXECUTIOn table과 매핑
+
+```java
+class JobExecution{
+  JobInstance jobInstance;
+  JobParameters jobPrameters;
+  Collection<StepExecution> stepExecutions;
+
+  String jobConfigurationName
+  
+  BatchStatus batchStatus;
+  /*
+  COMPLETED: JobInstance 완료, 동일 JobInstance 재 실행 불가, 실행 시 JobInstanceAlreadyCompleteException
+  FAILED: JobInstance 실패, new JobExecution를 통한 JobInstance 재실행 
+  STARTING, STARTED, STOPPING, STOPPED, ABANDONED, UNKNOWN
+  */
+  ExitStatus exitStatus;
+  /*
+  COMPLETED, FAILED, STOPPED, EXCUTING, NOOP, UNKNOWN
+  */
+
+  Date startTime;
+  Date createTime;
+  Date endTime;
+  Date lastUpdated;
+
+  ExcutionContext excutionContext;
+
+  List<Exception> failureExceptions;
+
+}
+```
+
+## JobExecutionDecider
+
+
+
+## JobLauncher
+- Job과 Job Parameters 객체를 받아 실행(run)시킨다
+
+```java
+interface JobLauncher{
+  JobExeuction run(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
+  JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException;
+  //이미 JobInstance가 존재하는 (Job, Job Parameter)를 실행시키면 Exception 발생
+
+}
+
+class JobLauncherApplicationRunner{
+  JobLauncher jobLauncher;
+
+  void execute(Job  job, JobParameters jobParameters){
+    JobParameters parameters = getNextJobParameters(job, jobParameters);
+    JobExcution execution = this.jobLauncher.run(job, parameters);
+  }
+}
+
+```
+
+## JobRepository
+- meta data 관리
+
+```java
+public interface JobRepository{
+  //Create
+  JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters)
+  JobInstance createJobInstance(String jobName, JobParameters jobParameters)
+  //Read
+  JobExecution getLastJobExecution(String jobName, JobParameters jobParameters);
+  StepExecution getLastStepExecution(JobInstance jobInstance, String stepName);
+  int getStepExecutionCount(JobInstance jobInstance, String stepName);
+  //Update
+  void update(JobExecution jobExecution);
+  void update(StepExeuction stepExeuction);
+  void updateExeuctionContext(JobExecution jobExecution);
+  void updateExeuctionContext(StepExeuction stepExeuction);
+  void add(StepExecution stepExecution)
+  void addAll(Collection<StepExcution>stepExecutions)
+
+}
+```
+
+### meta data table
 
 ![reference: https://docs.spring.io/spring-batch/docs/3.0.x/reference/html/metaDataSchema.html](./image/batch_metadata.PNG)
 
@@ -242,24 +337,128 @@ JobParameters = StepContribution.getStepExecution().getJobExecution().getJobPara
 - BATCH_STEP_EXECUTION_CONTEXT: step별 데이터를 json형태로 저장
 - BATCH_STEP_EXECUTION_SEQ
 
-## Chunk Process
-### ItemReader
-### ItemProcessor
-### ItemWriter
 
-## Repeat, FaultTolerant, Skip, Retry
-### Repeat
-### FaultTolerant
-### Skip
-### Retry
+## Job 구현체
+### SimpleJob
 
-## MultiThread
-### AsyncItemProcess/Writer
-### MultiThreadStep
-### ParallelStep
-### Partitioning
-### SynchronizedItemStreamReader
+```java
+class SimpleJob{
+  //method
+  void addStep(Step step)
+  void doExecute(JobExecution exeuction)
+  Step getStep(String stepName)
+  Collection<String> getStepNames()
+  void setSteps(List<Step> steps)
+}
 
-## EventListener
+```
 
-## Spring Batch Test
+### FlowJob
+
+
+# Step
+## StepBuilder
+
+## StepExecution
+- Step에 실행을 표현한 객체
+- BATCH_STEP_EXECUTION 테이블에 매핑
+
+```java
+class StepExeuction{
+  String stepName
+  JobExcution parentJobExcution;
+  
+  BatchStatus batchStatus;
+  ExitStatus exitStatus;
+  
+  int readCount;
+  int writeCount;
+  int rollbackCount;
+  int readSkipCount;
+  int processSkipCount;
+  int writeSkipCount;
+  int filterCount;
+  
+  Date startTime;
+  Date endTime;
+  Date lastUpdated;
+  
+  ExecutionContext executionContext;
+
+  boolean terminateOnly;
+
+  List<Throwable> failureException;
+}
+
+```
+
+## StepContribution
+- chunk process 변경사항을 가져와 StepExecution 상태 업데이터하는 객체
+
+```java
+class StepContribution {
+  StepExecution stepExecution;
+  int readCount;
+  int writeCount;
+  int filterCount;
+  int parentSkipCount;
+  int parentSkipCount;
+  int readSkipCount;
+  int writeSkipCount;
+  int processSkipCount;
+  ExitStatus exitStatus;
+}
+```
+
+## Step 구현체
+### JobStep
+
+### FlowStep
+
+### TaskletStep
+
+### PartitionStep
+
+
+## ExecutionContext
+- Excution에 상태를 저장
+- JobExcution에 ExecutionContext: JobExcution간 공유 불가, JobExcution에 연관된 StepExcution과 공유 가능 
+- StepExcution에 ExecutionContext: StepExcution간 공유
+
+```java
+class ExecutionContext implements Serializable{
+  boolean dirty;
+  Map<String, Object> map;
+}
+```
+
+## JobScope와 StepScope
+
+------
+
+# Chunk Process
+## ItemReader
+## ItemWriter
+## ItemProcessor
+
+------
+
+# Repeat, FaultTolerant, Skip, Retry
+## Repeat
+## FaultTolerant
+## Skip
+## Retry
+
+------
+# MultiThread at SpringBatch
+## AsyncItemProcess/Writer
+## MultiThreadStep
+## ParallelStep
+## Partitioning
+## SynchronizedItemStreamReader
+
+------
+# EventListener
+
+------
+# Spring Batch Test

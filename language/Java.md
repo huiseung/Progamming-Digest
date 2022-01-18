@@ -31,6 +31,10 @@
     - [interface와 abstract class에 활용](#interface와-abstract-class에-활용)
     - [Anotation](#anotation)
 - [Exception](#exception)
+  - [상속 구조](#상속-구조)
+  - [Throwable](#throwable)
+  - [checked exception](#checked-exception)
+  - [unchecked exception](#unchecked-exception)
   - [try-finally보다는 try-with-resources를 사용하자](#try-finally보다는-try-with-resources를-사용하자)
   - [NullSafe](#nullsafe)
     - [Optional](#optional)
@@ -42,6 +46,7 @@
 - [java.util.Collections](#javautilcollections)
 - [Stream](#stream)
 - [Lambda](#lambda)
+- [replication](#replication)
 
 
 
@@ -172,6 +177,47 @@
 
 ------
 # Exception
+## 상속 구조
+```
+Object
+|-Throwable
+  |-Exception
+    |-RuntimeException
+      |-NullPointException
+      |-ArithmeticException
+      |-IndexOutOfBoundException
+      |-...
+    |-IOException
+    |-SQLException
+    |-...
+  |-Error
+    |-VirtualMochineError
+      |-StackOverFlowError
+      |-OutOfMemoryError
+      |-...
+    |-...
+
+```
+## Throwable
+```java
+//method
+String printStackTrace();
+
+```
+
+## checked exception
+- compile 시점에 확인 가능
+- 예외 처리를 하지 않으면 컴파일 불가
+- Exception 상속받은 클래스 중 RuntimeException을 제외한 모든 클래스
+
+## unchecked exception
+- compile 시점에 잡아 내지 못해 run time 도중 발생
+- 개발자가 예외 처리 코드를 짜 실행 도중 발생시 처리 문을 받을 수 있게 해야한다
+- RuntimeException과 Error
+
+
+
+
 ## try-finally보다는 try-with-resources를 사용하자
 
 
@@ -240,3 +286,5 @@ str += "world";
 # Stream
 
 # Lambda
+
+# replication

@@ -1,0 +1,28 @@
+version: '3'
+services:
+  master:
+    image: mysql:8.0.22
+    volumes:
+      - ./db/config/master/my.cnf:/etc/my.cnf
+      - ./db/logs/:/var/log/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=devdb
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=1234
+    ports:
+      - "13306:3306"
+  slave:
+    image: mysql:8.0.22
+    volumes:
+      - ./db/config/slave/my.cnf:/etc/my.cnf
+      - ./db/logs/:/var/log/mysql
+    depends_on:
+      - master
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=devdb
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=1234
+    ports:
+      - "13307:3306"
