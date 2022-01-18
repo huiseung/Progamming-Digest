@@ -9,6 +9,8 @@
     - [사용자 정의 JobConfiguration](#사용자-정의-jobconfiguration)
     - [BatchAutoConfiguration](#batchautoconfiguration)
     - [BatchProperties](#batchproperties)
+  - [application.yml](#applicationyml)
+  - [mysql을 이용하고 싶을때](#mysql을-이용하고-싶을때)
 - [Job](#job)
   - [JobLauncherApplicationRunncer](#joblauncherapplicationrunncer)
   - [JobBuilder](#jobbuilder)
@@ -20,19 +22,19 @@
   - [JobRepository](#jobrepository)
     - [meta data table](#meta-data-table)
   - [Job 구현체](#job-구현체)
-    - [SimpleJob](#simplejob)
-    - [FlowJob](#flowjob)
+    - [SimpleJob 과 SimpleJobBuilder](#simplejob-과-simplejobbuilder)
+    - [FlowJob 과 FlowJobBuilder](#flowjob-과-flowjobbuilder)
 - [Step](#step)
   - [StepBuilder](#stepbuilder)
   - [StepExecution](#stepexecution)
   - [StepContribution](#stepcontribution)
   - [Step 구현체](#step-구현체)
+    - [TaskletStep과 TaskletStepBuilder](#taskletstep과-taskletstepbuilder)
     - [JobStep](#jobstep)
-    - [FlowStep](#flowstep)
-    - [TaskletStep](#taskletstep)
     - [PartitionStep](#partitionstep)
-  - [ExecutionContext](#executioncontext)
-  - [JobScope와 StepScope](#jobscope와-stepscope)
+    - [FlowStep](#flowstep)
+- [ExecutionContext](#executioncontext)
+- [JobScope와 StepScope](#jobscope와-stepscope)
 - [Chunk Process](#chunk-process)
   - [ItemReader](#itemreader)
   - [ItemWriter](#itemwriter)
@@ -170,9 +172,130 @@ class BatchAutoConfiguration{
 ```java
 @ConfigurationProperties(prefix = "spring.batch")
 class BatchProperties{
+  public static class Job{
+
+    public String getNames() { return this.name}
+  }
   
 }
 ```
+
+
+## application.yml
+```yml
+
+
+```
+
+
+
+## mysql을 이용하고 싶을때
+- table을 미리 만들어 둬야한다
+  - schema-mysql.sql에 내용을 이용해 table 생성
+
+```sql
+CREATE TABLE BATCH_JOB_INSTANCE  (
+    JOB_INSTANCE_ID BIGINT  NOT NULL PRIMARY KEY ,
+    VERSION BIGINT ,
+    JOB_NAME VARCHAR(100) NOT NULL,
+    JOB_KEY VARCHAR(32) NOT NULL,
+    constraint JOB_INST_UN unique (JOB_NAME, JOB_KEY)
+) ENGINE=InnoDB;
+
+CREATE TABLE BATCH_JOB_EXECUTION  (
+    JOB_EXECUTION_ID BIGINT  NOT NULL PRIMARY KEY ,
+    VERSION BIGINT  ,
+    JOB_INSTANCE_ID BIGINT NOT NULL,
+    CREATE_TIME DATETIME NOT NULL,
+    START_TIME DATETIME DEFAULT NULL ,
+    END_TIME DATETIME DEFAULT NULL ,
+    STATUS VARCHAR(10) ,
+    EXIT_CODE VARCHAR(2500) ,
+    EXIT_MESSAGE VARCHAR(2500) ,
+    LAST_UPDATED DATETIME,
+    JOB_CONFIGURATION_LOCATION VARCHAR(2500) NULL,
+    constraint JOB_INST_EXEC_FK foreign key (JOB_INSTANCE_ID)
+    references BATCH_JOB_INSTANCE(JOB_INSTANCE_ID)
+) ENGINE=InnoDB;
+
+CREATE TABLE BATCH_JOB_EXECUTION_PARAMS  (
+    JOB_EXECUTION_ID BIGINT NOT NULL ,
+    TYPE_CD VARCHAR(6) NOT NULL ,
+    KEY_NAME VARCHAR(100) NOT NULL ,
+    STRING_VAL VARCHAR(250) ,
+    DATE_VAL DATETIME DEFAULT NULL ,
+    LONG_VAL BIGINT ,
+    DOUBLE_VAL DOUBLE PRECISION ,
+    IDENTIFYING CHAR(1) NOT NULL ,
+    constraint JOB_EXEC_PARAMS_FK foreign key (JOB_EXECUTION_ID)
+    references BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
+) ENGINE=InnoDB;
+
+CREATE TABLE BATCH_STEP_EXECUTION  (
+    STEP_EXECUTION_ID BIGINT  NOT NULL PRIMARY KEY ,
+    VERSION BIGINT NOT NULL,
+    STEP_NAME VARCHAR(100) NOT NULL,
+    JOB_EXECUTION_ID BIGINT NOT NULL,
+    START_TIME DATETIME NOT NULL ,
+    END_TIME DATETIME DEFAULT NULL ,
+    STATUS VARCHAR(10) ,
+    COMMIT_COUNT BIGINT ,
+    READ_COUNT BIGINT ,
+    FILTER_COUNT BIGINT ,
+    WRITE_COUNT BIGINT ,
+    READ_SKIP_COUNT BIGINT ,
+    WRITE_SKIP_COUNT BIGINT ,
+    PROCESS_SKIP_COUNT BIGINT ,
+    ROLLBACK_COUNT BIGINT ,
+    EXIT_CODE VARCHAR(2500) ,
+    EXIT_MESSAGE VARCHAR(2500) ,
+    LAST_UPDATED DATETIME,
+    constraint JOB_EXEC_STEP_FK foreign key (JOB_EXECUTION_ID)
+    references BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
+) ENGINE=InnoDB;
+
+CREATE TABLE BATCH_STEP_EXECUTION_CONTEXT  (
+    STEP_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY,
+    SHORT_CONTEXT VARCHAR(2500) NOT NULL,
+    SERIALIZED_CONTEXT TEXT ,
+    constraint STEP_EXEC_CTX_FK foreign key (STEP_EXECUTION_ID)
+    references BATCH_STEP_EXECUTION(STEP_EXECUTION_ID)
+) ENGINE=InnoDB;
+
+CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT  (
+    JOB_EXECUTION_ID BIGINT NOT NULL PRIMARY KEY,
+    SHORT_CONTEXT VARCHAR(2500) NOT NULL,
+    SERIALIZED_CONTEXT TEXT ,
+    constraint JOB_EXEC_CTX_FK foreign key (JOB_EXECUTION_ID)
+    references BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
+) ENGINE=InnoDB;
+
+CREATE TABLE BATCH_STEP_EXECUTION_SEQ (
+    ID BIGINT NOT NULL,
+    UNIQUE_KEY CHAR(1) NOT NULL,
+    constraint UNIQUE_KEY_UN unique (UNIQUE_KEY)
+) ENGINE=InnoDB;
+
+INSERT INTO BATCH_STEP_EXECUTION_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_STEP_EXECUTION_SEQ);
+
+CREATE TABLE BATCH_JOB_EXECUTION_SEQ (
+    ID BIGINT NOT NULL,
+    UNIQUE_KEY CHAR(1) NOT NULL,
+    constraint UNIQUE_KEY_UN unique (UNIQUE_KEY)
+) ENGINE=InnoDB;
+
+INSERT INTO BATCH_JOB_EXECUTION_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_EXECUTION_SEQ);
+
+CREATE TABLE BATCH_JOB_SEQ (
+    ID BIGINT NOT NULL,
+    UNIQUE_KEY CHAR(1) NOT NULL,
+    constraint UNIQUE_KEY_UN unique (UNIQUE_KEY)
+) ENGINE=InnoDB;
+
+INSERT INTO BATCH_JOB_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_SEQ);
+
+```
+
 
 ------
 
@@ -186,18 +309,61 @@ class JobLauncherApplicationRunner{
 
 
 ## JobBuilder
+- job 생성 객체
 ```java
 public class JobBuilderFactory{
   private final JobRepository jobRepository;
 
-  public JobBuilder get(string name)
+  public JobBuilder get(string jobName)
 }
 
 public class JobBuilder{
-  SimpleJobBuilder start(Step step);
-  JobFlowBuilder flow(Step step);
-  JobFlowBuilder start(Flow flow);
+  SimpleJobBuilder start(Step step){
+		return new SimpleJobBuilder(this).start(step);
+  }
+  JobFlowBuilder start(Flow flow){
+    return new FlowJobBuilder(this).start(flow);
+  }
+  JobFlowBuilder flow(Step step) {
+		return new FlowJobBuilder(this).start(step);
+	}
 }
+
+public abstract class JobBuilderHelper<B extends JobBuilderHelper<B>>{
+  B incrementer(JobParametersIncrementer jobParametersIncrementer) //JobParameter값 자동 증가
+  B validator(JobParametersValidator jobParametersValidator) //JobParameter 검증
+  B listener(Object listener)
+  B listener(JobExecutionListener listener)
+  B preventRestart() //실패 Job 재시작 가능 여부, 해당 메서드를 호출하지 않은상태엔 true, 호출시 false가 된다
+  B repository(JobRepository jobRepository)
+  String getName()
+  JobRepository getJobRepository()
+  boolean isRestartable()
+  void enhance(Job target)
+}
+
+class CustomJobParametersIncrementer implements JobParametersIncrementer{
+  static final SImpleDateFormat format = new SImpleDateFormat("yyyy-mm-dd-hh:mm:ss");
+  
+  @Override
+  public JobParameters getNext(JobParameters parameters){
+    String id = format.format(new Date());
+    return new JobParametersBuilder().addString("run.id", id).toJobParameters();
+  }
+}
+//사용법
+.incrementer(new CustomJobParametersIncrementer())
+//.incrmenter(new RunIdIncrementer()), Custom을 만들기 귀찮다면, 이를 사용, 최초 1 이후 1씩 증가
+
+class CustomJobParametersValidator implements JobParametersValidator{
+  @Override
+  public void validate(JobParameters parameters) throws JobParametersInvalidException{
+    if(parameters.getString("key") == null){
+      throw new JobParametersInvalidException("");
+    }
+  }
+}
+
 ```
 
 
@@ -339,25 +505,97 @@ public interface JobRepository{
 
 
 ## Job 구현체
-### SimpleJob
-
+### SimpleJob 과 SimpleJobBuilder
+- 여러개에 Step을 순차적으로 실행하는 Job
+  - 실행중인 Step이 COMPLETED되어야 다음 Step으로 넘어간다
+  - 모든 Step이 COMPLETED되어야 Job이 COMPLETED된다
 ```java
 class SimpleJob{
-  //method
+  List<Step> steps
+
+  void setSteps(List<Step> steps)
   void addStep(Step step)
   void doExecute(JobExecution exeuction)
   Step getStep(String stepName)
   Collection<String> getStepNames()
-  void setSteps(List<Step> steps)
+}
+
+
+public class SimpleJobBuilder extends JobBuilderHelper<SimpleJobBuilder>{
+  List<Step> steps;
+  JobFlowBuilder builder;
+
+  Job build() //SimpleJob 생성
+  SimpleJobBuilder start(Step step) //처음 시작하는 Step 설정, 최초 한번 호출
+  SimpleJobBuilder next(Step step) //다음 실행할 Step 설정, 호출 횟수 제한 없음
+  TransitionBuilder<FlowJobBuilder> on(String pattern) 
+  JobFlowBuilder start(JobExecutionDecider decider)
+  JobFlowBuilder next(JobExecutionDecider decider)
+  SplitBuilder<FlowJObBUilder> split(taskExecutor)
 }
 
 ```
 
-### FlowJob
+### FlowJob 과 FlowJobBuilder
+
+```java
+public class FlowJobBuilder extends JobBuilderHelper<FlowJobBuilder>{
+  Flow flow;
+
+  Job build()
+  JobFlowBuilder start(Step step)
+  JobFlowBuilder start(Flow flow)
+  FlowJobBuilder flow(Flow flow)
+}
+
+public class JobFlowBuilder{
+  FlowJobBuilder parent;
+
+  FlowJobBuilder build()
+}
+
+```
 
 
 # Step
 ## StepBuilder
+```java
+class StepBuilderFactory{
+  JobRepository jobRepository;
+  PlaformTransactionManager transactionManager;
+
+
+  StepBuilder get(String name){
+    StepBuilder builder = new StepBuilder(name).repository(jobRepository).transactionManager(
+				transactionManager);
+		return builder;
+  }
+}
+
+class StepBuilder{
+  TaskletStepBuilder tasklet(Tasklet tasklet) //TaskletStep 생성
+  SimpleStepBuilder<I, O> chunk(int chunkSize) //TaskletStep, ChunkOrientedTasklet 생성
+  SimpleStepBuilder<I, O> chunk(CompletionPolicy completionPolicy)
+  PartitionStepBuilder partitioner(String stepName, Partitioner partitioner) //PartitionStep 생성
+  PartitionStepBuilder partitioner(Step step)
+  JobStepBuilder job(Job job) //step안에서 job을 생성
+  FlowStepBuilder flow(Flow flow) //step안에서 flow를 생성
+}
+
+abstract class StepBuilderHelper<B extends StepBuilderHelper<B>>{
+  B repository(JobRepository jobRepository)
+  B transactionManager(PlatformTransactionManager transactionManager)
+  B startLimit(int startLimit) //Step 실행 최대 횟수, 기본값은 INTEGER.MAX_VALUE, 설정값 초과시 오류 발생
+  B listener(Object listener) 
+  B listener(StepExecutionListener listener)
+  B allowStartIfComplete(boolean allowStartIfComplete) //Job실패후 재 시작시, 성공했던 Step도 재 시작하는지 여부 
+  String getName()
+  JobRepository getJobRepository()
+  PlatformTransactionManager getTransactionManager()
+  boolean isAllowStartIfComplete()
+  void enhance(Step target)
+}
+```
 
 ## StepExecution
 - Step에 실행을 표현한 객체
@@ -411,16 +649,87 @@ class StepContribution {
 ```
 
 ## Step 구현체
+### TaskletStep과 TaskletStepBuilder
+- RepeatTemplate를 사용해 TaskletStep에 동작을 트랜잭션 안에서 반복 실행
+  - RepeatStatus.FINISHED가 리턴되거나, 예외가 발생하기 전까지 반복
+- Tasklet과 ChunkOrientedTasklet 두가지 동작 방식이 있다
+  - Tasklet: 단일 작업 처리
+  - ChunkOrientedTakslet: 하나에 큰 데이터를 n 개에 chunk로 나누어 처리. ItemReader, Processor, Writer 와 같이 사용
+```java
+class TaskletStep{
+
+}
+
+class TaskletStepBuilder{
+  public TaskletStepBuilder tasklet(Tasklet tasklet)
+  TaskletStep build()
+}
+
+
+interface Tasklet {
+	@Nullable
+	RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception;
+}
+
+enum RepeatStatus{
+  FINISHED,
+  CONTINUABLE;
+}
+
+//사용법
+stepBuilderFactory
+.get("")
+.tasklet(new Tasklet() {
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        return RepeatStatus.FINISHED;
+    }
+})
+.build();
+})
+```
+
 ### JobStep
+```java
+class JobStepBuilder{
+  JobStepBuilder job(job job)
+  JobStepBuilder launcher(JobLauncher jobLauncher) //Job 실행할 Launcher 설정
+  JobStepBuilder parametersExtractor(JobParametersExtractor jobParametersExtractor) //StepExcutionContext를 JobParameters로 변경
+  Step build()
+}
 
-### FlowStep
+//사용법
+@Bean
+Step jobStep(JobLauncher jobLauncher){
+  return stepBuilderFactory
+  .get("")
+  .job(childJob())
+  .launcher(jobLauncher)
+  .parameterExtractor(jobPrametersExtractor())
+  .build()
+}
 
-### TaskletStep
+@Bean
+Job childJob(){
+  return 
+}
+
+private DefaultJobParametersExtractor jobPrametersExtractor(){
+  DefaultJobParametersExtractor extractor = new DefaultJobParametersExtractor();
+  extractor.setKeys(new String[]{"name"});
+  return extractor;
+}
+```
+
 
 ### PartitionStep
 
 
-## ExecutionContext
+### FlowStep
+
+
+
+# ExecutionContext
 - Excution에 상태를 저장
 - JobExcution에 ExecutionContext: JobExcution간 공유 불가, JobExcution에 연관된 StepExcution과 공유 가능 
 - StepExcution에 ExecutionContext: StepExcution간 공유
@@ -432,7 +741,7 @@ class ExecutionContext implements Serializable{
 }
 ```
 
-## JobScope와 StepScope
+# JobScope와 StepScope
 
 ------
 
