@@ -24,6 +24,9 @@
   - [Job 구현체](#job-구현체)
     - [SimpleJob 과 SimpleJobBuilder](#simplejob-과-simplejobbuilder)
     - [FlowJob 과 FlowJobBuilder](#flowjob-과-flowjobbuilder)
+      - [JobExecutionDecider](#jobexecutiondecider-1)
+      - [FlowExecution](#flowexecution)
+      - [SimpleFlow](#simpleflow)
 - [Step](#step)
   - [StepBuilder](#stepbuilder)
   - [StepExecution](#stepexecution)
@@ -31,10 +34,12 @@
   - [Step 구현체](#step-구현체)
     - [TaskletStep과 TaskletStepBuilder](#taskletstep과-taskletstepbuilder)
     - [JobStep](#jobstep)
-    - [PartitionStep](#partitionstep)
     - [FlowStep](#flowstep)
+    - [PartitionStep](#partitionstep)
 - [ExecutionContext](#executioncontext)
-- [JobScope와 StepScope](#jobscope와-stepscope)
+- [Scope](#scope)
+  - [@JobScope](#jobscope)
+  - [@StepScope](#stepscope)
 - [Chunk Process](#chunk-process)
   - [ItemReader](#itemreader)
   - [ItemWriter](#itemwriter)
@@ -183,10 +188,31 @@ class BatchProperties{
 
 ## application.yml
 ```yml
+spring:
+  profiles:
+    active: local
 
+---
 
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/데이터베이스
+    username: 이름
+    password: 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  batch:
+    jdbc:
+      initialize-schema: never
+    job:
+      names: ${job.name:None}
 ```
 
+```
+--job.name = 
+```
 
 
 ## mysql을 이용하고 싶을때
@@ -414,12 +440,14 @@ class JobExecution{
   
   BatchStatus batchStatus;
   /*
+  최종 종료 결과 상태
   COMPLETED: JobInstance 완료, 동일 JobInstance 재 실행 불가, 실행 시 JobInstanceAlreadyCompleteException
   FAILED: JobInstance 실패, new JobExecution를 통한 JobInstance 재실행 
   STARTING, STARTED, STOPPING, STOPPED, ABANDONED, UNKNOWN
   */
   ExitStatus exitStatus;
   /*
+  실행 종료 결과 상태
   COMPLETED, FAILED, STOPPED, EXCUTING, NOOP, UNKNOWN
   */
 
@@ -528,7 +556,7 @@ public class SimpleJobBuilder extends JobBuilderHelper<SimpleJobBuilder>{
   Job build() //SimpleJob 생성
   SimpleJobBuilder start(Step step) //처음 시작하는 Step 설정, 최초 한번 호출
   SimpleJobBuilder next(Step step) //다음 실행할 Step 설정, 호출 횟수 제한 없음
-  TransitionBuilder<FlowJobBuilder> on(String pattern) 
+  TransitionBuilder<FlowJobBuilder> on(String pattern) //
   JobFlowBuilder start(JobExecutionDecider decider)
   JobFlowBuilder next(JobExecutionDecider decider)
   SplitBuilder<FlowJObBUilder> split(taskExecutor)
@@ -537,8 +565,27 @@ public class SimpleJobBuilder extends JobBuilderHelper<SimpleJobBuilder>{
 ```
 
 ### FlowJob 과 FlowJobBuilder
-
+- 진행중이던 Step 결과를 조건으로 다음 실행할 Step에 흐름을 바꾸는 Job
 ```java
+//사용법 ex1
+@Bean
+public Job ConditionJob(){
+  return jobBuilderFactory.get("conditionJob")
+  .start(conditionStep1())
+    .on("FAILED") //conditionStep1에 ExitStatus가 실패일때,
+    .to(conditionStep3()) //conditionStep3로 이동
+    .on("*")
+    .end()
+  .from(conditionStep1())
+    .on("*") ////conditionStep1에 ExitStatus가 실패이외의 결과일때,
+    .to(conditionStep2()) //conditionStep2로 이동
+    .on("*")
+    .end()
+  .end()
+  .build()
+}
+
+///
 public class FlowJobBuilder extends JobBuilderHelper<FlowJobBuilder>{
   Flow flow;
 
@@ -552,6 +599,121 @@ public class JobFlowBuilder{
   FlowJobBuilder parent;
 
   FlowJobBuilder build()
+}
+
+public class FlowBuilder<Q> {
+  Q build()
+  FlowBuilder<Q> next(Step step)
+  FlowBuilder<Q> start(Step step)
+  FlowBuilder<Q> from(Step step) 
+
+  FlowBuilder<Q> next(Flow flow) 
+  FlowBuilder<Q> from(Flow flow)
+  FlowBuilder<Q> start(Flow flow)
+
+  UnterminatedFlowBuilder<Q> next(JobExecutionDecider decider)
+  UnterminatedFowBuilder<Q> start(JobExecutionDecider decider)
+  UnterminatedFlowBuilder<Q> from(JobExecutionDecider decider)
+
+  SplitBuilder<Q> split(TaskExecutor executor)
+
+  TransitionBuilder<Q> on(String pattern) //Step ExitStatus를 읽음
+  Q end()
+  void stop(String pattern) //Flow 중지
+  void end(String pattern) //Flow 종료
+  void fail(String pattern) //Flow 실패
+
+  Flow flow()
+
+  void doNext(Object input)
+  void doStart(Object input)
+  void doFrom(Object input)
+
+  State createState(Object input)
+  SplitState createState(Collection<Flow> flows, TaskExecutor executor)
+
+  void addDanglingEndStates()
+
+  static class TransitionBuilder<Q>{
+    FlowBuilder<Q> to(Step step) //다음 이동할 Step 지정
+    FlowBuilder<Q> to(Flow flow)
+    FlowBuilder<Q> to(JobExecutionDecider decider)
+    FlowBuilder<Q> stop()
+    FlowBuilder<Q> stopAndRestart(Flow flow)
+    FlowBuilder<Q> stopAndRestart(JobExecutionDecider decider)
+    FlowBuilder<Q> stopAndRestart(Step restart)
+    FlowBuilder<Q> end()
+    FlowBuilder<Q> end(String status)
+    FlowBuilder<Q> fail() 
+  }
+
+  static class SplibBuilder<Q>{
+    FlowBuilder<Q> add(Flow... flows)
+  }
+}
+
+public class FlowJob{
+  Flow flow;
+  Map<String, Step> stepMap;
+}
+
+
+```
+
+#### JobExecutionDecider
+- Transition 전용 클래스
+  - Transition 조건으로 Step 클래스를 사용하지 않고 해당 클래스를 사용하길 권장
+
+```java
+//사용법
+@Bean
+public Job job(){
+  return jobBuilderFactory.get("job")
+  .start(Step1())
+  .next(decider())
+  .from(decider()).on("condition1").to(Condition1Step())
+  .from(decider()).on("condition2").to(Condition2Step())
+  .end()
+  .build();
+}
+
+@Bean
+public JobExecutionDecider decider(){
+  return new CustomDecider();
+}
+
+public static calss CustomDecider implements JobExecutionDecider{
+  @Override
+  public FlowExecutionStatus decide(JobExecution jobExcution, StepExecution stepExcution){
+    if(){
+      return new FlowExecutionStatus("condition1");
+    }
+    else if{
+      return new FlowExecutionStatus("condition2");
+    }
+
+  }
+}
+
+```
+
+#### FlowExecution
+```java
+class FlowExecution implements Comparable<FlowExecution>{
+  private final String name;
+  private final FlowExecutionStatus status;
+  /*COMPLETED, STOPPED, FAILED, UNKNOWN*/
+}
+```
+
+#### SimpleFlow
+- Flow 구현체
+
+```java
+class SimpleFlow{
+  String name;
+  State startState;
+
 }
 
 ```
@@ -690,6 +852,7 @@ stepBuilderFactory
 ```
 
 ### JobStep
+- job을 실행시키는 steo
 ```java
 class JobStepBuilder{
   JobStepBuilder job(job job)
@@ -721,11 +884,11 @@ private DefaultJobParametersExtractor jobPrametersExtractor(){
 }
 ```
 
+### FlowStep
+- flow를 실행시키는 step
+
 
 ### PartitionStep
-
-
-### FlowStep
 
 
 
@@ -741,7 +904,24 @@ class ExecutionContext implements Serializable{
 }
 ```
 
-# JobScope와 StepScope
+# Scope
+- Scopde: 빈이 관리되는 범위
+- 기본 Job, Step은 애플리케이션 실행 시점에 Singleton 빈으로 생성된다
+- Scope를 설정하면, 애플리케이션 실행시점에는 Job, Step에 프록시 객체만 만들어 두고, 사용 시점에 빈을 생성한다
+  - JobParameter를 Lazy Binding 가능해 진다
+  - 멀티스레드 사용시 StepScope를 활용하면 thread safe하게 객체 사용이 가능하다
+- @Value(): Job, Step에 파라미터에 붙이는 어노테이션, Scope선언시 사용 가능하다
+  - @Value(#{jobParameters[]}")
+  - @Value("#{jobExecutionContext[]}")
+  - @Value("#{stepExecutionContext[]}")
+
+## @JobScope
+- Step에 선언
+- @Value(#{jobParameters[]}"), @Value("#{jobExecutionContext[]}") 선언 가능
+
+## @StepScope
+- Tasklet, ItemReader, ItemWriter, ItemProcess에 선언
+- @Value(#{jobParameters[]}"), @Value("#{jobExecutionContext[]}"), @Value("#{stepExecutionContext[]}") 선언가능
 
 ------
 
@@ -749,6 +929,7 @@ class ExecutionContext implements Serializable{
 ## ItemReader
 ## ItemWriter
 ## ItemProcessor
+- 필수 클래스는 아니다
 
 ------
 
@@ -768,6 +949,27 @@ class ExecutionContext implements Serializable{
 
 ------
 # EventListener
+
+```java
+class CustomListener implements JobExecutionListenr{
+  @Override
+  public void beforeJob(JobExcution jobExecution){
+
+  }
+
+  @Override
+  public void afterJob(JobExcution jobExcution){
+
+  }
+}
+
+
+jobBuilder
+.get()
+.start()
+.listener(new CustomListenr())
+.build()
+```
 
 ------
 # Spring Batch Test

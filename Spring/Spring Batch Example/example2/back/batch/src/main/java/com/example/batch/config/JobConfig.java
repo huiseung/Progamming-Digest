@@ -2,6 +2,7 @@ package com.example.batch.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -39,6 +40,53 @@ public class JobConfig {
                 .end()
                 .build();
     }
+
+    @Bean
+    public Job conditionJob1(){
+        return this.jobBuilderFactory.get("conditionJob1")
+                .start(conditionStep1())
+                    .on("FAILED")
+                    .to(conditionStep3())
+                    .on("*")
+                    .end()
+                .from(conditionStep1())
+                    .on("*")
+                    .to(conditionStep2())
+                    .next(conditionStep3())
+                    .on("*")
+                    .end()
+                .end()
+                .build();
+    }
+
+    @Bean
+    public Step conditionStep1(){
+        return stepBuilderFactory.get("conditionStep1")
+                .tasklet((contribution, chunkContext) -> {
+                    log.info("condition step1");
+                    contribution.setExitStatus(ExitStatus.FAILED);
+                    return RepeatStatus.FINISHED;
+                }).build();
+    }
+
+    @Bean
+    public Step conditionStep2(){
+        return stepBuilderFactory.get("conditionStep2")
+                .tasklet((contribution, chunkContext) -> {
+                    log.info("condition step2");
+                    return RepeatStatus.FINISHED;
+                }).build();
+    }
+
+    @Bean
+    public Step conditionStep3(){
+        return stepBuilderFactory.get("conditionStep3")
+                .tasklet((contribution, chunkContext) -> {
+                    log.info("condition step3");
+                    return RepeatStatus.FINISHED;
+                }).build();
+    }
+
 
     @Bean
     public Step step1(){
