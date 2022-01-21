@@ -49,8 +49,6 @@
 - [replication](#replication)
 
 
-
-
 # OOP
 
 

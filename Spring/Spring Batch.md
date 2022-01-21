@@ -35,28 +35,62 @@
     - [TaskletStep과 TaskletStepBuilder](#taskletstep과-taskletstepbuilder)
     - [JobStep](#jobstep)
     - [FlowStep](#flowstep)
-    - [PartitionStep](#partitionstep)
 - [ExecutionContext](#executioncontext)
 - [Scope](#scope)
   - [@JobScope](#jobscope)
   - [@StepScope](#stepscope)
 - [Chunk Process](#chunk-process)
   - [ItemReader](#itemreader)
-  - [ItemWriter](#itemwriter)
+    - [JdbcCursorItemReader](#jdbccursoritemreader)
+    - [JdbcPagingItemReader](#jdbcpagingitemreader)
+    - [JpaCursorItemReader](#jpacursoritemreader)
+    - [JpaPagingItemReader](#jpapagingitemreader)
+    - [FlatFileItemReader](#flatfileitemreader)
+    - [StaxEventItemReader](#staxeventitemreader)
+    - [JsonItemReader](#jsonitemreader)
+    - [ItemReaderAdapter](#itemreaderadapter)
   - [ItemProcessor](#itemprocessor)
+    - [CompositeItemProcessor](#compositeitemprocessor)
+    - [ClassifierCompositeItemProcessor](#classifiercompositeitemprocessor)
+  - [ItemWriter](#itemwriter)
+    - [JdbcBatchItemWriter](#jdbcbatchitemwriter)
+    - [JpaItemWriter](#jpaitemwriter)
+    - [FlatFileItemWriter](#flatfileitemwriter)
+    - [StaxEventItemWriter](#staxeventitemwriter)
+    - [JsonFileItemWriter](#jsonfileitemwriter)
+    - [ItemWriterAdapter](#itemwriteradapter)
+  - [CompletionPolicy](#completionpolicy)
 - [Repeat, FaultTolerant, Skip, Retry](#repeat-faulttolerant-skip-retry)
   - [Repeat](#repeat)
   - [FaultTolerant](#faulttolerant)
   - [Skip](#skip)
   - [Retry](#retry)
-- [MultiThread at SpringBatch](#multithread-at-springbatch)
-  - [AsyncItemProcess/Writer](#asyncitemprocesswriter)
+- [Scailing at SpringBatch](#scailing-at-springbatch)
   - [MultiThreadStep](#multithreadstep)
   - [ParallelStep](#parallelstep)
   - [Partitioning](#partitioning)
+  - [AsyncItemProcess/Writer](#asyncitemprocesswriter)
   - [SynchronizedItemStreamReader](#synchronizeditemstreamreader)
-- [EventListener](#eventlistener)
+- [Listener](#listener)
+  - [JobExecutionListener](#jobexecutionlistener)
+  - [StepExecutionListener](#stepexecutionlistener)
+  - [ChunkListener](#chunklistener)
+  - [ItemReaderListener, ItemProcessListener, ItemWriteListener](#itemreaderlistener-itemprocesslistener-itemwritelistener)
+  - [SkipListener](#skiplistener)
+  - [RetryListener](#retrylistener)
 - [Spring Batch Test](#spring-batch-test)
+  - [JobExplorer](#jobexplorer)
+  - [JobRegistry](#jobregistry)
+  - [JobOperator](#joboperator)
+- [지연 처리되는 Job 모니터링](#지연-처리되는-job-모니터링)
+- [](#)
+- [Jenkins를 이용한 스케줄링](#jenkins를-이용한-스케줄링)
+- [Quartz를 이용한 스케줄링](#quartz를-이용한-스케줄링)
+  - [Scheduler](#scheduler)
+    - [SchedulerFactory](#schedulerfactory)
+  - [Trigger](#trigger)
+  - [Job](#job-1)
+    - [JobDetails](#jobdetails)
 
 # 스프링 배치
 ## 왜 사용하는가
@@ -574,10 +608,10 @@ public Job ConditionJob(){
   .start(conditionStep1())
     .on("FAILED") //conditionStep1에 ExitStatus가 실패일때,
     .to(conditionStep3()) //conditionStep3로 이동
-    .on("*")
+    .on("*") 
     .end()
   .from(conditionStep1())
-    .on("*") ////conditionStep1에 ExitStatus가 실패이외의 결과일때,
+    .on("*") //정규표현식 0개 이상에 문자를 의미, conditionStep1에 ExitStatus가 실패이외의 결과일때,
     .to(conditionStep2()) //conditionStep2로 이동
     .on("*")
     .end()
@@ -639,12 +673,14 @@ public class FlowBuilder<Q> {
     FlowBuilder<Q> to(Flow flow)
     FlowBuilder<Q> to(JobExecutionDecider decider)
     FlowBuilder<Q> stop()
+
+    //진행중인 Flow ExistStatus를 어떻게 할것인가
+    FlowBuilder<Q> end() 
+    FlowBuilder<Q> end(String status)
+    FlowBuilder<Q> fail() 
     FlowBuilder<Q> stopAndRestart(Flow flow)
     FlowBuilder<Q> stopAndRestart(JobExecutionDecider decider)
     FlowBuilder<Q> stopAndRestart(Step restart)
-    FlowBuilder<Q> end()
-    FlowBuilder<Q> end(String status)
-    FlowBuilder<Q> fail() 
   }
 
   static class SplibBuilder<Q>{
@@ -888,10 +924,6 @@ private DefaultJobParametersExtractor jobPrametersExtractor(){
 - flow를 실행시키는 step
 
 
-### PartitionStep
-
-
-
 # ExecutionContext
 - Excution에 상태를 저장
 - JobExcution에 ExecutionContext: JobExcution간 공유 불가, JobExcution에 연관된 StepExcution과 공유 가능 
@@ -909,8 +941,10 @@ class ExecutionContext implements Serializable{
 - 기본 Job, Step은 애플리케이션 실행 시점에 Singleton 빈으로 생성된다
 - Scope를 설정하면, 애플리케이션 실행시점에는 Job, Step에 프록시 객체만 만들어 두고, 사용 시점에 빈을 생성한다
   - JobParameter를 Lazy Binding 가능해 진다
+    - 외부에서 값을 주입하는 방식으로 멱등성을 구현한다
   - 멀티스레드 사용시 StepScope를 활용하면 thread safe하게 객체 사용이 가능하다
 - @Value(): Job, Step에 파라미터에 붙이는 어노테이션, Scope선언시 사용 가능하다
+  - import org.springframework.beans.factory.annotation.Value;
   - @Value(#{jobParameters[]}")
   - @Value("#{jobExecutionContext[]}")
   - @Value("#{stepExecutionContext[]}")
@@ -926,32 +960,277 @@ class ExecutionContext implements Serializable{
 ------
 
 # Chunk Process
+```java
+stepBuilder.get("")
+.<String, String>chunk(10) //10개 단위로 Item이 처되면 commit 
+.reader(itemReder(null))
+.process(itemProcessor())
+.writer(itemWriter(null))
+.build();
+
+@Bean
+@StepScope
+public FlatFileItemReder<String> itemReader(@Value("#{jobParameters['inputFile']}")Resource inputFile){
+  return new FlatFileItemReaderBuilder<String>()
+  .name("itemReader")
+  .resource(inputFile)
+  .lineMapper(new PassThroughLineMapper())
+  .build();
+}
+
+
+@Bean
+class ItemProcessorAdapter<> itemProcessor(){
+  ItemProcessorAdapter<> adapter;
+  return adapter;
+}
+
+@Bean
+@StepScope
+public FlatFileItemWriter<String> itemWriter(@Value("#{jobParameters['outputFile']}")Resource outputFile){
+  return new FlatFileItemWriterBuilder<String>()
+  .name("itemWriter")
+  .resource(outputFile)
+  .lineAggregator(new PassThroughLineAggregator<>())
+  .build();
+}
+```
+
+
 ## ItemReader
-## ItemWriter
+- 다양한 종류에 데이터를 읽어 들일 수 있는 기능 제공
+- Cursor 기반:
+- Paging 기반:
+
+```java
+package org.springframework.batch.item.ItemReader //import시 중복 인터페이스 있으니 주의
+
+interface ItemReader{
+  T read() throws Exception
+}
+```
+
+### JdbcCursorItemReader
+
+### JdbcPagingItemReader
+
+### JpaCursorItemReader
+
+### JpaPagingItemReader
+```java
+
+```
+
+### FlatFileItemReader
+```java
+class FlatFileItemReader{
+  IneMapper{
+    LineTokenizer
+    FielSetMapper
+  }
+}
+
+class FlatFileItemReaderBuilder<T>{
+
+}
+```
+
+### StaxEventItemReader
+
+### JsonItemReader
+```java
+
+```
+
+### ItemReaderAdapter
+
+
+
+
+
 ## ItemProcessor
-- 필수 클래스는 아니다
+- Chunk 처리 인터페이스
+
+```java
+interface ItemProcessor{
+  O process(I item) throws Exception
+}
+
+@Bean
+class ItemProcessorAdapter<> itemProcessor(){
+  ItemProcessorAdapter<> adapter;
+  return adapter;
+}
+```
+
+### CompositeItemProcessor
+
+### ClassifierCompositeItemProcessor
+
+
+## ItemWriter
+
+### JdbcBatchItemWriter
+
+### JpaItemWriter
+
+### FlatFileItemWriter
+
+### StaxEventItemWriter
+
+### JsonFileItemWriter
+
+### ItemWriterAdapter
+
+
+## CompletionPolicy
+- 구현체
+  - CompositeCompletionPolicy
+  - SimpleCompletionPolicy
+  - TimeoutTerminationPolicy
+```java
+interface CompletionPolicy{
+  boolean isComplete(RepeatContext context, RepeatStatus result)
+  boolean isComplete(RepeatContext context)
+  RepeatContext start(RepeatContext parent)
+  void update(RepeatContext context)
+}
+```
+
+
+```java
+// 사용법
+stepBuilder.get("")
+.<String, String>chunk(completionPolicy)  
+.reader(itemReder(null))
+.writer(itemWriter(null))
+.build();
+
+@Bean
+public CompletionPolicy completionPolicy(){
+  CompositionCompletionPolicy policy =  new CompositeCompletionPolicy();
+  policysetPolicies(
+    new CompletionPolicy[]{
+      new TimeoutTerminationPolicy(3),
+      new SimpleCompletionPolicy(1000)
+    }
+  )
+  return policy;
+}
+
+```
+
+
 
 ------
-
 # Repeat, FaultTolerant, Skip, Retry
+- 작업 중간 실패하면 어떻게 처리할까에 대한 고민
 ## Repeat
 ## FaultTolerant
 ## Skip
 ## Retry
 
 ------
-# MultiThread at SpringBatch
-## AsyncItemProcess/Writer
-## MultiThreadStep
-## ParallelStep
-## Partitioning
-## SynchronizedItemStreamReader
+# Scailing at SpringBatch
+- 처리해야할 데이터가 많아질때 고민
 
-------
-# EventListener
+
+## MultiThreadStep
+- 단일 Step에 각 Chunk별로 별도에 thread를 할당해 계산
+
 
 ```java
-class CustomListener implements JobExecutionListenr{
+stepBuilderFactory
+.get("")
+.<,>chunk()
+.reader()
+.processor()
+.writer()
+.taskExecutor(taskExecutor) //
+.throttleLimit() //
+.build();
+
+@Bean TaskExecutor taskExecutor(){
+  return new SimpleAsyncTaskExecutor("");
+}
+```
+
+## ParallelStep
+- 여러 Step을 병렬로 계산
+
+## Partitioning
+- Manager, Worker
+
+```java
+//사용법
+public TaskExecutorPartitionHandler partitionHandler(){
+  TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
+  
+  partitionHandler.setStep(workerStep());
+  partitionHandler.setTaskExecutor(taskExecutor());
+  partitionHandler.setGridSize(poolSzie);
+  
+  return partitionHandler
+}
+
+@Bean
+public Step managerStep(){
+  return stepBuilderFactory.get()
+  .partitioner("", partitioner(null, null))
+  .step(workerStep())
+  .partitionHandler(partitionHandler())
+  .build();
+}
+
+@Bean
+public Step workerStep(){
+  return stepBuilderFactory.get()
+  .<,>chunk(chunkSize)
+  .reader(itemReader(null, null))
+  .processor(itemProcessor())
+  .writer(itemWriter(null, null))
+  .build();
+}
+
+
+```
+
+
+```java
+interface Partitioner{
+
+}
+
+
+```
+
+```java
+interface PartitionerHandler{
+  
+}
+
+//구현체
+class TaskExecutorPartitionHandler implments PartitionerHandler{}
+
+class MessageChannelPartitionHandler implments PartitionerHandler{} 
+
+
+```
+
+## AsyncItemProcess/Writer
+
+
+
+## SynchronizedItemStreamReader
+- thread safe 한 reader를 만드는 방법
+
+
+
+------
+# Listener
+## JobExecutionListener
+```java
+class CustomListener implements JobExecutionListener{
   @Override
   public void beforeJob(JobExcution jobExecution){
 
@@ -971,5 +1250,92 @@ jobBuilder
 .build()
 ```
 
+## StepExecutionListener
+
+```java
+class CustomStepListener{
+  @BeforeStep
+  public void beforeStep(StepExecution stepExecution){}
+  
+  @AfterStep
+  public ExitStatus afterStep(StepExecution stepExecution){}
+
+
+}
+
+```
+
+## ChunkListener
+
+## ItemReaderListener, ItemProcessListener, ItemWriteListener
+
+## SkipListener
+
+## RetryListener
+
+
+
+
 ------
 # Spring Batch Test
+## JobExplorer
+## JobRegistry
+## JobOperator
+
+----
+# 지연 처리되는 Job 모니터링
+
+
+----
+# 
+
+
+
+-----
+# Jenkins를 이용한 스케줄링
+
+
+
+
+
+# Quartz를 이용한 스케줄링
+```java
+@Configuration
+public class QuartzConfig{
+  @Bean
+  public JobDetail quartzJobDetail(){
+    return JobBuilder.newJob(BatchScheduledJob.class)
+    .storeDurably()
+    .build();
+  }
+
+  @Bean
+  public Trigger jobTrigger(){
+    SimpleScheduleBuilder scheduleBuilder = ;
+    return TriggerBuilder.newTrigger()
+      .forJob(quartJobDetail())
+      .withSchedule(scheduleBuilder)
+      .build();
+  }
+}
+
+
+public class BatchScheduledJob extends QuartzJobBean{
+  private final Job job;
+  private final JobExplorer jobExplorer;
+  private final JobLauncher jobLauncher;
+
+  @Override
+  protected void executeInternal(JobExeuctionContext context){}
+}
+
+```
+
+
+## Scheduler
+### SchedulerFactory
+
+## Trigger
+
+## Job
+### JobDetails
