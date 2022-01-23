@@ -29,8 +29,9 @@ public class AnswerService {
         Question question = questionRepository.findById(requestDto.getQuestionId())
                 .orElseThrow(() -> new IllegalArgumentException("don't find question"));
         question.checkComplete();
+        question.setAnswer(answer);
+        questionRepository.save(question);
         answer.setAdmin(admin);
-        answer.setQuestion(question);
         return answerRepository.save(answer).getId();
     }
 }

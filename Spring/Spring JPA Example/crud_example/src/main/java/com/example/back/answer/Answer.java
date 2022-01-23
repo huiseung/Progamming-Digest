@@ -1,7 +1,6 @@
 package com.example.back.answer;
 
 import com.example.back.admin.Admin;
-import com.example.back.question.Question;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +25,6 @@ public class Answer {
     @JoinColumn(name="admin_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Admin admin;
-    @JoinColumn(name="question_id", nullable = false)
-    @OneToOne(fetch = FetchType.LAZY)
-    private Question question;
     @Column
     private String content;
     //
@@ -53,8 +49,5 @@ public class Answer {
         this.admin = admin;
         admin.addAnswer(this);
     }
-    public void setQuestion(Question question){
-        this.question = question;
-        question.setAnswer(this);
-    }
+
 }

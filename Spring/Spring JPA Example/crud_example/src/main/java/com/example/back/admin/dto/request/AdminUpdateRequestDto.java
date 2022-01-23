@@ -1,13 +1,13 @@
 package com.example.back.admin.dto.request;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 
+@ToString
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class AdminUpdateRequestDto {
     private Long adminId;

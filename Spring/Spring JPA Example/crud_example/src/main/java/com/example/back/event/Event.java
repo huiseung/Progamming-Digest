@@ -50,6 +50,7 @@ public class Event {
     //
     public void setAdmin(Admin admin){
         this.admin = admin;
+        admin.addEvent(this);
     }
     public void update(EventUpdateRequestDto requestDto){
         this.title = requestDto.getTitle();

@@ -63,7 +63,11 @@ public class Admin {
         this.events.add(event);
     }
     public void update(AdminUpdateRequestDto requestDto){
-        this.name = requestDto.getName();
-        this.password = requestDto.getPassword();
+        if(requestDto.getName() != null){
+            this.name = requestDto.getName();
+        }
+        if(requestDto.getPassword() != null){
+            this.password = requestDto.getPassword();
+        }
     }
 }

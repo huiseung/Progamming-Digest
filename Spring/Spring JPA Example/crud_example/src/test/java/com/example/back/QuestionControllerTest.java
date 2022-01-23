@@ -2,9 +2,10 @@ package com.example.back;
 
 import com.example.back.question.QuestionService;
 import com.example.back.question.dto.request.QuestionSaveRequestDto;
-import com.example.back.user.User;
+import com.example.back.question.dto.request.QuestionUpdateRequestDto;
 import com.example.back.user.UserService;
 import com.example.back.user.dto.request.UserSaveRequestDto;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class QuestionControllerTest {
     private ObjectMapper objectMapper;
 
     public static Long userId;
+    public static Long questionId;
 
     @BeforeAll
     public static void initDb(
@@ -46,7 +48,7 @@ public class QuestionControllerTest {
                     .title("pre title"+i)
                     .content("pre content"+i)
                     .build();
-            questionService.saveQuestion(userId, questionSaveRequestDto);
+            questionId = questionService.saveQuestion(userId, questionSaveRequestDto);
         }
     }
 
@@ -76,6 +78,25 @@ public class QuestionControllerTest {
 
     @Order(2)
     @Nested
+    @DisplayName("get question test")
+    class getQuestion{
+        @Test
+        @DisplayName("success")
+        public void success() throws Exception{
+            MvcResult result = mockMvc.perform(
+                            MockMvcRequestBuilders.get("/questions/"+questionId)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON)
+                    )
+                    .andExpect(status().isOk())
+                    .andDo(MockMvcResultHandlers.print())
+                    .andReturn();
+            JsonNode resultJson = objectMapper.readTree(result.getResponse().getContentAsString());
+        }
+    }
+
+    @Order(3)
+    @Nested
     @DisplayName("get my questions test")
     class getMyQuestions{
         @Test
@@ -89,6 +110,33 @@ public class QuestionControllerTest {
             .andExpect(status().isOk())
             .andDo(MockMvcResultHandlers.print())
             .andReturn();
+            JsonNode resultJson = objectMapper.readTree(result.getResponse().getContentAsString());
+        }
+    }
+
+    @Order(4)
+    @Nested
+    @DisplayName("update question test")
+    class updateQuestion{
+        @Test
+        @DisplayName("success")
+        public void success() throws Exception{
+            QuestionUpdateRequestDto requestDto = QuestionUpdateRequestDto.builder()
+                    .questionId(questionId)
+                    .title("update title")
+                    .content("update content")
+                    .build();
+            String requestBody = objectMapper.writeValueAsString(requestDto);
+            System.out.println(requestBody);
+            MvcResult result = mockMvc.perform(
+                            MockMvcRequestBuilders.patch("/questions?userId="+userId)
+                                    .content(requestBody)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON)
+                    )
+                    .andExpect(status().isOk())
+                    .andDo(MockMvcResultHandlers.print())
+                    .andReturn();
         }
     }
 }

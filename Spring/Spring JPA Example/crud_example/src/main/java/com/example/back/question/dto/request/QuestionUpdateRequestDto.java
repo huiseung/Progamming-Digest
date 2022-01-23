@@ -1,13 +1,12 @@
 package com.example.back.question.dto.request;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-
+@ToString
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class QuestionUpdateRequestDto {
     private Long questionId;

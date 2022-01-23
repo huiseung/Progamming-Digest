@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -66,9 +68,12 @@ public class QuestionService {
     }
 
     @Transactional
-    public Long updateQuestion(QuestionUpdateRequestDto requestDto){
+    public Long updateQuestion(Long userId, QuestionUpdateRequestDto requestDto){
         Question question = findQuestionById(requestDto.getQuestionId());
         log.info("question memory address: "+question);
+        if(!Objects.equals(question.getUser().getId(), userId)){
+            throw new IllegalArgumentException("don't match user");
+        }
         question.update(requestDto);
         log.info("transactional: saveQuestion");
         return questionRepository.save(question).getId();

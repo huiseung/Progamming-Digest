@@ -9,9 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +20,7 @@ public class UserService {
         log.info("findUserById");
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("don't find user"));
-        log.info("user: "+ user);
+        log.info("user memory address: "+ user);
         return user;
     }
 
@@ -34,7 +31,7 @@ public class UserService {
                 .password(requestDto.getPassword())
                 .name(requestDto.getName())
                 .build();
-        log.info("user: "+user);
+        log.info("user memory address: "+user);
         log.info("transactional: saveUser");
         return userRepository.save(user).getId();
     }
@@ -43,6 +40,4 @@ public class UserService {
     public UserProfileDto getUser(Long userId){
         return UserProfileDto.of(findUserById(userId));
     }
-
-
 }

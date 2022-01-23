@@ -27,7 +27,8 @@ public class Question {
     @JoinColumn(name="user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    @OneToOne(mappedBy = "question", fetch = FetchType.LAZY)
+    @JoinColumn(name="answer_id")
+    @OneToOne(fetch = FetchType.LAZY)
     private Answer answer;
     //
     @Column
