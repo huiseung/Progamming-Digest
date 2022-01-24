@@ -39,26 +39,30 @@
 - [Scope](#scope)
   - [@JobScope](#jobscope)
   - [@StepScope](#stepscope)
-- [Chunk Process](#chunk-process)
+- [Chunk](#chunk)
+  - [ChunkOrientedTasklet](#chunkorientedtasklet)
+  - [ChunkProvider](#chunkprovider)
+  - [ChunkProcessor](#chunkprocessor)
   - [ItemReader](#itemreader)
     - [JdbcCursorItemReader](#jdbccursoritemreader)
     - [JdbcPagingItemReader](#jdbcpagingitemreader)
     - [JpaCursorItemReader](#jpacursoritemreader)
     - [JpaPagingItemReader](#jpapagingitemreader)
+    - [N+1 해결을 위한 CustomJpaPagingItemReader](#n1-해결을-위한-customjpapagingitemreader)
     - [FlatFileItemReader](#flatfileitemreader)
     - [StaxEventItemReader](#staxeventitemreader)
     - [JsonItemReader](#jsonitemreader)
-    - [ItemReaderAdapter](#itemreaderadapter)
   - [ItemProcessor](#itemprocessor)
     - [CompositeItemProcessor](#compositeitemprocessor)
     - [ClassifierCompositeItemProcessor](#classifiercompositeitemprocessor)
   - [ItemWriter](#itemwriter)
     - [JdbcBatchItemWriter](#jdbcbatchitemwriter)
     - [JpaItemWriter](#jpaitemwriter)
+  - [process로부터 List 객체 받기](#process로부터-list-객체-받기)
+  - [CustomItemWriter](#customitemwriter)
     - [FlatFileItemWriter](#flatfileitemwriter)
     - [StaxEventItemWriter](#staxeventitemwriter)
     - [JsonFileItemWriter](#jsonfileitemwriter)
-    - [ItemWriterAdapter](#itemwriteradapter)
   - [CompletionPolicy](#completionpolicy)
 - [Repeat, FaultTolerant, Skip, Retry](#repeat-faulttolerant-skip-retry)
   - [Repeat](#repeat)
@@ -84,13 +88,13 @@
   - [JobOperator](#joboperator)
 - [지연 처리되는 Job 모니터링](#지연-처리되는-job-모니터링)
 - [](#)
-- [Jenkins를 이용한 스케줄링](#jenkins를-이용한-스케줄링)
 - [Quartz를 이용한 스케줄링](#quartz를-이용한-스케줄링)
   - [Scheduler](#scheduler)
     - [SchedulerFactory](#schedulerfactory)
   - [Trigger](#trigger)
   - [Job](#job-1)
     - [JobDetails](#jobdetails)
+- [Jenkins를 이용한 스케줄링](#jenkins를-이용한-스케줄링)
 
 # 스프링 배치
 ## 왜 사용하는가
@@ -101,8 +105,6 @@
 - 신뢰: 문제 발생시 추적 가능, 작업 도중 실패시, 실패지점 부터 이어서 재작업 
 
 ## 사용 사례
-- 새롭게 파일들이 추가되는 환경, 매일 정해진 시간에 파일들을 읽어 db에 저장한다. 이미 db에 저장된 파일은 작업하지 않는다
-- 
 - 일매출 집계
   - 배치작업을 통해 일 매출 집계 데이터를 만들어 둬, 사용자가 일 매출 집계 조회시 별도에 집계 처리없이 조회 가능하게 한다
 
@@ -959,92 +961,361 @@ class ExecutionContext implements Serializable{
 
 ------
 
-# Chunk Process
-```java
-stepBuilder.get("")
-.<String, String>chunk(10) //10개 단위로 Item이 처되면 commit 
-.reader(itemReder(null))
-.process(itemProcessor())
-.writer(itemWriter(null))
-.build();
-
-@Bean
-@StepScope
-public FlatFileItemReder<String> itemReader(@Value("#{jobParameters['inputFile']}")Resource inputFile){
-  return new FlatFileItemReaderBuilder<String>()
-  .name("itemReader")
-  .resource(inputFile)
-  .lineMapper(new PassThroughLineMapper())
-  .build();
-}
-
-
-@Bean
-class ItemProcessorAdapter<> itemProcessor(){
-  ItemProcessorAdapter<> adapter;
-  return adapter;
-}
-
-@Bean
-@StepScope
-public FlatFileItemWriter<String> itemWriter(@Value("#{jobParameters['outputFile']}")Resource outputFile){
-  return new FlatFileItemWriterBuilder<String>()
-  .name("itemWriter")
-  .resource(outputFile)
-  .lineAggregator(new PassThroughLineAggregator<>())
-  .build();
-}
-```
-
-
-## ItemReader
-- 다양한 종류에 데이터를 읽어 들일 수 있는 기능 제공
-- Cursor 기반:
-- Paging 기반:
+# Chunk
+- chunk: 하나에 트랜잭션에서 처리하는 data 수, 단위
+- 하나에 item씩 읽고, 처리해, chunk size만큼 item이 쌓이면 쓰기 작업 후 commit
 
 ```java
-package org.springframework.batch.item.ItemReader //import시 중복 인터페이스 있으니 주의
+public class ChunkJobConfig{
+  private final JobBuilderFactory jobBuilderFactory;
+  private final StepBuilderFactory stepBuilderFactory;
+  private final DataSource dataSource;
+  private static final int chunkSize = 10;
 
-interface ItemReader{
-  T read() throws Exception
-}
-```
+  @Bean
+  public Job job(){
+    return jobBuilderFactory.get("job")
+        .start(step())
+        .build();
+  }
+  @Bean 
+  Step step(){
+    return stepBuilderFactory.get("step")
+        .<ReaderEntity, WriterEntity>chunk(chunkSize)
+        .reader(itemReader())
+        .process(itemProcesss())
+        .writer(itemWriter())
+        .build();
+  }
 
-### JdbcCursorItemReader
+  @Bean
+  public ItemReader<ReaderEntity> itemReader(){
+    return null;
+  }
 
-### JdbcPagingItemReader
+  @Bean
+  public ItemProcess<ReaderEntity, WriterEntity> itemProcess(){
+    return null;
+  }
 
-### JpaCursorItemReader
-
-### JpaPagingItemReader
-```java
-
-```
-
-### FlatFileItemReader
-```java
-class FlatFileItemReader{
-  IneMapper{
-    LineTokenizer
-    FielSetMapper
+  @Bean ItemWriter<WriterEntity> itemWriter(){
+    return null;
   }
 }
 
-class FlatFileItemReaderBuilder<T>{
+```
 
+## ChunkOrientedTasklet
+```java
+public class ChunkOrientedTasklet<I> implements Tasklet{
+  private final ChunkProvider<I> chunkProvider;
+  private final ChunkProcessor<I> chunkProcessor;
+
+  @Override
+  public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext){
+    //reader
+    Chunk<I> inputs = (Chunk<I>) chunkContext.getAttribute(INPUTS_KEY);
+    if(inputs == null){
+      inputs = chunkProvider.provide(contribution); 
+    }
+    //process, writer
+    chunkProcessor.process(contribution, inputs); 
+  }
+}
+
+```
+## ChunkProvider
+```java
+public interface ChunkProvider<T> {
+
+	Chunk<T> provide(StepContribution contribution) throws Exception;
+	
+	void postProcess(StepContribution contribution, Chunk<T> chunk);
+	
 }
 ```
 
-### StaxEventItemReader
-
-### JsonItemReader
 ```java
+//구현체
+public class SimpleChunkProvider<I> implements ChunkProvider<I> {
+  protected final ItemReader<? extends I> itemReader;
+  private final RepeatOperations repeatOperations;
+
+  	@Override
+	public Chunk<I> provide(final StepContribution contribution) throws Exception {
+
+		final Chunk<I> inputs = new Chunk<>();
+    //Chunk Size만큼 쌓일때까지 read 반복
+		repeatOperations.iterate(new RepeatCallback() {
+			@Override
+			public RepeatStatus doInIteration(final RepeatContext context) throws Exception {
+				I item = null;
+				Timer.Sample sample = Timer.start(Metrics.globalRegistry);
+
+			  //
+        item = read(contribution, inputs);
+				//
+        if (item == null) {
+					inputs.setEnd();
+					return RepeatStatus.FINISHED;
+				}
+				
+        inputs.add(item);
+				
+        contribution.incrementReadCount();
+				
+        return RepeatStatus.CONTINUABLE;
+			}
+    });
+    return inputs;
+  }
+}
 
 ```
 
-### ItemReaderAdapter
+## ChunkProcessor
+```java
+public interface ChunkProcessor<I> {
+	void process(StepContribution contribution, Chunk<I> chunk) throws Exception;
+}
+
+```
+
+```java
+//구현체
+public class SimpleChunkProcessor<I, O> implements ChunkProcessor<I>, InitializingBean {
+	private ItemProcessor<? super I, ? extends O> itemProcessor;
+	private ItemWriter<? super O> itemWriter;
+	private final MulticasterBatchListener<I, O> listener = new MulticasterBatchListener<>();
+
+  
+  @Override
+	public final void process(StepContribution contribution, Chunk<I> inputs) throws Exception {
+		initializeUserData(inputs);
+    if (isComplete(inputs)) {
+			return;
+		}
+
+		Chunk<O> outputs = transform(contribution, inputs);
+		contribution.incrementFilterCount(getFilterCount(inputs, outputs));
+		
+    write(contribution, inputs, getAdjustedOutputs(inputs, outputs));
+	}
+  //trasnform
+  protected Chunk<O> transform(StepContribution contribution, Chunk<I> inputs){
+    Chunk<O> outputs = new Chunk<>();
+    for (Chunk<I>.ChunkIterator iterator = inputs.iterator(); iterator.hasNext();) {
+      output = doProcess(item);
+    }
+  }
+  protected final O doProcess(I item){
+    if (itemProcessor == null) {
+			@SuppressWarnings("unchecked")
+			O result = (O) item;
+			return result;
+		}
+    //
+    listener.beforeProcess(item);
+    O result = itemProcessor.process(item);
+    listener.afterProcess(item, result);
+		return result;
+  }
+  //write
+  protected void write(StepContribution contribution, Chunk<I> inputs, Chunk<O> outputs){
+    doWrite(outputs.getItems());
+  }
+  protected void doWrite(List<O> items){
+    if (itemWriter == null) {
+			return;
+		}
+    listener.beforeWrite(items);
+    writeItems(items);
+    doAfterWrite(items);
+  }
+  protected void writeItems(List<O> items) throws Exception {
+		if (itemWriter != null) {
+			itemWriter.write(items);
+		}
+	}
+}
+```
+
+## ItemReader
+- 다양한 종류에 데이터를 읽어 들일 수 있는 기능 제공
+  - JDBC, JPA, FlatFile, XML, Json 
+- Cursor 기반: Streaming으로 fetch size 만큼 가져온다
+
+- Paging 기반: 한번에 page size 만큼 가져온다, offset(가져올 데이터 시작 위치)과 limit(가져올 양)을 이용해 가져올 데이터 구분
+  - 상당히 큰 페이지 크기를 설정하고, 페이지 크기와 Chunk Size를 같게 하면 성능 향상에 좋다
+  - 
+
+```java
+//interface
+package org.springframework.batch.item.ItemReader; //import시 중복 인터페이스 있으니 주의
+
+public interface ItemReader {
+  T read() throws Exception; //data 읽기
+}
+
+public interface ItemStream{
+  void open(ExecutionContext executionContext) throws ItemStreamException; //stream 열기
+  void update(ExecutionContext executionContext) throws ItemStreamException; //작업 처리 상태 업테이트
+  void close() throws ItemStreamException; //stream 닫기
+}
+
+public interface ItemStreamReader<T> extends ItemStream, ItemReader<T> {}
+
+//abstract class
+public abstract class ItemStreamSupport implements ItemStream {}
+
+public abstract class AbstractItemStreamItemReader<T> extends ItemStreamSupport implements ItemStreamReader<T> {}
+
+public abstract class AbstractItemCountingItemStreamItemReader<T> 
+extends AbstractItemStreamItemReader<T> {
+  public T read() throws Exception, UnexpectedInputException, ParseException {
+		if (currentItemCount >= maxItemCount) {
+			return null;
+		}
+		currentItemCount++;
+		T item = doRead();
+		if(item instanceof ItemCountAware) {
+			((ItemCountAware) item).setItemCount(currentItemCount);
+		}
+		return item;
+	}
+
+  protected abstract T doRead() throws Exception;
+}
+
+public abstract class AbstractPagingItemReader<T> extends AbstractItemCountingItemStreamItemReader<T>{
+
+  protected T doRead() throws Exception {
+    synchronized (lock){
+      //처음 읽는 상활일때 ,results == null
+      //
+      if (results == null || current >= pageSize) {
+				doReadPage();
+        page++;
+        if (current >= pageSize) {
+					current = 0;
+				}
+      }
+    }
+  }
+
+  abstract protected void doReadPage();
+}
+
+public abstract class AbstractCursorItemReader<T> extends AbstractItemCountingItemStreamItemReader<T>{
+  protected T doRead() throws Exception {
+    if (!rs.next()) {
+      return null;
+    }
+    int currentRow = getCurrentItemCount();
+    T item = readCursor(rs, currentRow);
+    verifyCursorPosition(currentRow);
+    return item;
+	}
+  protected abstract T readCursor(ResultSet rs, int currentRow) throws SQLException;
+}
+
+```
+### JdbcCursorItemReader
+```java
+private final DataSource dataSource;
+private static final int chunkSize = 10;
+
+@Bean
+public JdbcCursorItemReader<ReaderEntity> readerEntityJdbcCursorItemReader(){
+  return new JdbcCursorItemReaderBuilder<ReaderEntity>()
+  .fetchSize(chunkSize) //
+  .dataSource(dataSource) //읽어올 data에 접근하는 기능이 있는 객체
+  .rowMapper(new BeanPropertyRowMapper<>(ReaderEntity.class)) //쿼리 결과를 객체에 매핑
+  .sql("SELECT id, col1, col2 FROM ReaderEntity") //read 쿼리문
+  .name("readerEntityJdbcCursorItemReader") //ExecutionContext에 저장될 Reader에 이름
+  .build();
+} 
+```
+### JdbcPagingItemReader
+
+```java
+private final DataSource dataSource;
+private static final int chunkSize = 10;
+
+@Bean
+public JdbcPagingItemReader<ReaderEntity> readerEntityjdbcPagingItemReader() throws Exception {
+    Map<String, Object> parameterValues = new HashMap<>();
+    parameterValues.put("col1", 2000);
+
+    return new JdbcPagingItemReaderBuilder<ReaderEntity>()
+            .pageSize(chunkSize) //
+            .fetchSize(chunkSize) //
+            .dataSource(dataSource) //
+            .rowMapper(new BeanPropertyRowMapper<>(ReaderEntity.class)) //
+            .queryProvider(createQueryProvider()) //
+            .parameterValues(parameterValues) //
+            .name("readerEntityjdbcPagingItemReader")
+            .build();
+}
 
 
+@Bean
+public PagingQueryProvider createQueryProvider() throws Exception {
+    SqlPagingQueryProviderFactoryBean queryProvider = new SqlPagingQueryProviderFactoryBean();
+    queryProvider.setDataSource(dataSource);
+    queryProvider.setSelectClause("id, col1, col2");
+    queryProvider.setFromClause("from ReaderEntity");
+    queryProvider.setWhereClause("where col1 >= :col1");
+
+    Map<String, Order> sortKeys = new HashMap<>(1);
+    sortKeys.put("id", Order.ASCENDING);
+
+    queryProvider.setSortKeys(sortKeys);
+
+    return queryProvider.getObject();
+}
+
+
+```
+
+### JpaCursorItemReader
+- SpringBatch 4.3 release
+
+```java
+private final EntityManagerFactory entityManagerFactory;
+
+@Bean
+public JpaCursorItemReader<ReaderEntity> jpaCursorItemReader() {
+    return new JpaCursorItemReaderBuilder<ReaderEntity>()
+            .name("jpaCursorItemReader")
+            .entityManagerFactory(entityManagerFactory)
+            .queryString("SELECT r FROM ReaderEntity r")
+            .build();
+}
+```
+
+### JpaPagingItemReader
+```java
+private final EntityManagerFactory entityManagerFactory;
+private int chunkSize = 10;
+
+@Bean
+public JpaPagingItemReader<ReaderEntity> jpaPagingItemReader() {
+    return new JpaPagingItemReaderBuilder<ReaderEntity>()
+            .name("jpaPagingItemReader")
+            .entityManagerFactory(entityManagerFactory)
+            .pageSize(chunkSize)
+            .queryString("SELECT r FROM ReaderEntity r WHERE col1 >= 1000 ORDER BY r.id ASCENDING")
+            .build();
+}
+```
+
+### N+1 해결을 위한 CustomJpaPagingItemReader
+
+
+### FlatFileItemReader
+### StaxEventItemReader
+### JsonItemReader
 
 
 
@@ -1069,18 +1340,169 @@ class ItemProcessorAdapter<> itemProcessor(){
 
 
 ## ItemWriter
+- DB에 저장, API 응답 역활
+- chunk size 만큼 item이 쌓이면 동작
+
+```java
+public interface ItemWriter<T>{
+  void write(List<? extends T> items) throws Exception;
+}
+```
 
 ### JdbcBatchItemWriter
+- JdbcBatchItemWriter는 process로 부터 Entity가 아니라 Dto를 받아도 처리 가능하다
+```java
+//두가지 방식으로 사용 가능
+@Bean
+public JdbcBatchItemWriter<WriterEntity> itemWriter(){
+  return new JdbcBatchItemWriterBuilder<WriterEntity>()
+    .beanMapped()
+    .dataSource(dataSource)
+    .sql("insert into WriterEntity(col1, col2) values (:col1, :col2)") //dto에 getter에 대응
+    .build();
+}
+//
+```java
+@Bean
+public JdbcBatchItemWriter<WriterEntity> itemWriter(){
+  return new JdbcBatchItemWriterBuilder<Map<String, Object>>()
+    .columnMapped()
+    .dataSource(dataSource)
+    .sql("insert into WriterEntity(col1, col2) values (:col1, :col2)") //Map에 key에 대응
+    .build();
+}
+
+```
+
+
+```java
+public class JdbcBatchItemWriter<T> implements ItemWriter<T>, InitializingBean{
+  @Override
+	public void write(final List<? extends T> items) throws Exception {
+		if (!items.isEmpty()) {
+			int[] updateCounts;
+
+			if (usingNamedParameters) {
+				if(items.get(0) instanceof Map && this.itemSqlParameterSourceProvider == null) {
+					updateCounts = namedParameterJdbcTemplate.batchUpdate(sql, items.toArray(new Map[items.size()]));
+				} else {
+					SqlParameterSource[] batchArgs = new SqlParameterSource[items.size()];
+					int i = 0;
+					for (T item : items) {
+						batchArgs[i++] = itemSqlParameterSourceProvider.createSqlParameterSource(item);
+					}
+					updateCounts = namedParameterJdbcTemplate.batchUpdate(sql, batchArgs);
+				}
+			}
+			else {
+				updateCounts = namedParameterJdbcTemplate.getJdbcOperations().execute(sql, new PreparedStatementCallback<int[]>() {
+					@Override
+					public int[] doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
+						for (T item : items) {
+							itemPreparedStatementSetter.setValues(item, ps);
+							ps.addBatch();
+						}
+						return ps.executeBatch();
+					}
+				});
+			}
+		}
+	}
+}
+```
+
 
 ### JpaItemWriter
+- 반드시 process로 부터 Entity 객체를 받아야 한다
+
+```java
+//사용법
+@Bean
+public JpaItemWriter<WriterEntity> jpaItemWriter() {
+    JpaItemWriter<WriterEntity> jpaItemWriter = new JpaItemWriter<>();
+    jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+    return jpaItemWriter;
+}
+```
+
+```java
+public class JpaItemWriter<T> implements ItemWriter<T>, InitializingBean{
+  public void write(List<? extends T> items) {
+    EntityManager entityManager = EntityManagerFactoryUtils.getTransactionalEntityManager(this.entityManagerFactory);
+    if (entityManager == null) {
+        throw new DataAccessResourceFailureException("Unable to obtain a transactional EntityManager");
+    } else {
+        this.doWrite(entityManager, items);
+        entityManager.flush();
+    }
+  }
+
+  protected void doWrite(EntityManager entityManager, List<? extends T> items) {
+    if (!items.isEmpty()) {
+        long addedToContextCount = 0L;
+        Iterator var5 = items.iterator();
+
+        while(var5.hasNext()) {
+            T item = var5.next();
+            if (!entityManager.contains(item)) {
+                if (this.usePersist) {
+                    entityManager.persist(item);
+                } else {
+                    entityManager.merge(item);
+                }
+                ++addedToContextCount;
+            }
+        }
+    }
+  }
+
+}
+
+```
+
+## process로부터 List 객체 받기
+```java
+public class JpaItemListWriter<T> extends JpaItemWriter<List<T>>{
+  private JpaItemWriter<T> jpaItemWriter;
+
+  public JpaItemListWriter(JpaItemWriter<T> jpaItemWriter){
+    this.jpaItemWriter = jpaItemWriter;
+  }
+
+  @Override
+  public void write(List<? extends List<T>> items){
+    List<T> totlaList = new ArrayList<>();
+    for(List<T> list : items){
+      totalList.addAll(list);
+    }
+    jpaItemWriter.write(totalList);
+  }
+}
+
+@Bean
+public JpaItemListWriter<List<>> writer(){
+  JpaItemWriter<> writer = new JpaItemWriter<>();
+  writer.setEntityManagerFactory(entityManagerFactory);
+  return new JpaItemListWriter<>(writer);
+}
+```
+
+## CustomItemWriter
+```java
+@Bean
+public ItemWriter<WriterEntity> itemWriter(){
+  return items -> {
+    for(WriterEntity item : items){
+
+    }
+  }
+}
+```
 
 ### FlatFileItemWriter
-
 ### StaxEventItemWriter
-
 ### JsonFileItemWriter
 
-### ItemWriterAdapter
 
 
 ## CompletionPolicy
@@ -1292,10 +1714,6 @@ class CustomStepListener{
 
 
 -----
-# Jenkins를 이용한 스케줄링
-
-
-
 
 
 # Quartz를 이용한 스케줄링
@@ -1339,3 +1757,10 @@ public class BatchScheduledJob extends QuartzJobBean{
 
 ## Job
 ### JobDetails
+
+
+
+# Jenkins를 이용한 스케줄링
+
+
+

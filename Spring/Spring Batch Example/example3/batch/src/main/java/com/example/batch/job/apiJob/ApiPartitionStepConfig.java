@@ -7,7 +7,14 @@ import com.example.batch.job.apiJob.chunk.processor.ApiItemProcessor1;
 import com.example.batch.job.apiJob.chunk.processor.ApiItemProcessor2;
 import com.example.batch.job.apiJob.chunk.processor.ApiItemProcessor3;
 import com.example.batch.job.apiJob.chunk.processor.ProcessorClassifier;
+import com.example.batch.job.apiJob.chunk.writer.ApiItemWriter1;
+import com.example.batch.job.apiJob.chunk.writer.ApiItemWriter2;
+import com.example.batch.job.apiJob.chunk.writer.ApiItemWriter3;
+import com.example.batch.job.apiJob.chunk.writer.WriterClassifier;
 import com.example.batch.job.apiJob.partition.ProductPartitioner;
+import com.example.batch.job.apiJob.service.ApiItemService1;
+import com.example.batch.job.apiJob.service.ApiItemService2;
+import com.example.batch.job.apiJob.service.ApiItemService3;
 import com.example.batch.job.apiJob.util.QueryGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -42,9 +49,9 @@ public class ApiPartitionStepConfig {
 
     @Bean
     public Step apiManagerStep() throws Exception{
-        ProductDto[] productDtos;
+        ProductDto[] productDtos = QueryGenerator.getProductList(dataSource);
         return stepBuilderFactory.get("apiManagerStep")
-                .partitioner(apiWorkerStep().getName(), partitioner())
+                .partitioner(apiWorkerStep().getName(), productPartitioner())
                 .step(apiWorkerStep())
                 .gridSize(productDtos.length)
                 .taskExecutor(taskExecutor())
@@ -109,12 +116,20 @@ public class ApiPartitionStepConfig {
         ClassifierCompositeItemWriter<ApiRequestDto> writer = new ClassifierCompositeItemWriter<>();
         WriterClassifier<ApiRequestDto, ItemWriter<? super ApiRequestDto>> classifier = new WriterClassifier();
 
+        Map<String, ItemWriter<ApiRequestDto>> writerMap = new HashMap<>();
+        writerMap.put("1", new ApiItemWriter1(new ApiItemService1()));
+        writerMap.put("2", new ApiItemWriter2(new ApiItemService2()));
+        writerMap.put("3", new ApiItemWriter3(new ApiItemService3()));
+
+        classifier.setWriterMap(writerMap);
+        writer.setClassifier(classifier);
+
         return writer;
     }
 
     @Bean
     public ProductPartitioner productPartitioner(){
-        ProductPartitioner productPartitioner = new ProductPartitioner()();
+        ProductPartitioner productPartitioner = new ProductPartitioner();
         productPartitioner.setDataSource(dataSource);
         return productPartitioner;
     }

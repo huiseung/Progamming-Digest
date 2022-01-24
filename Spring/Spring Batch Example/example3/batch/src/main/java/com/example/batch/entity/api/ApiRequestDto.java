@@ -13,4 +13,8 @@ public class ApiRequestDto {
     private Long id;
     private ProductDto productDto;
     private ApiResponseDto apiResponseDto;
+
+    public void setApiResponseDto(ApiResponseDto responseDto){
+        this.apiResponseDto = apiResponseDto;
+    }
 }

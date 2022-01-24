@@ -22,6 +22,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.persistence.EntityManagerFactory;
 
+
 @RequiredArgsConstructor
 @Configuration
 public class FileJobConfig {
@@ -75,5 +76,4 @@ public class FileJobConfig {
                 .usePersist(true)
                 .build();
     }
-
 }
