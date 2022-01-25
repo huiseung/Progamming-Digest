@@ -72,7 +72,7 @@
 version: "3"
 services:
   이름:
-    build: 도커파일경로
+    build: 도커파일경로   //혹은 image: 이미지이름
     container_name: 컨테이너이름
     ports:
       - "호스트포트:컨테이너포트"

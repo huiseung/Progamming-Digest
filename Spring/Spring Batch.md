@@ -48,7 +48,6 @@
     - [JdbcPagingItemReader](#jdbcpagingitemreader)
     - [JpaCursorItemReader](#jpacursoritemreader)
     - [JpaPagingItemReader](#jpapagingitemreader)
-    - [N+1 해결을 위한 CustomJpaPagingItemReader](#n1-해결을-위한-customjpapagingitemreader)
     - [FlatFileItemReader](#flatfileitemreader)
     - [StaxEventItemReader](#staxeventitemreader)
     - [JsonItemReader](#jsonitemreader)
@@ -1309,8 +1308,6 @@ public JpaPagingItemReader<ReaderEntity> jpaPagingItemReader() {
             .build();
 }
 ```
-
-### N+1 해결을 위한 CustomJpaPagingItemReader
 
 
 ### FlatFileItemReader
