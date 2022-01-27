@@ -37,8 +37,10 @@
     - [FlowStep](#flowstep)
 - [ExecutionContext](#executioncontext)
 - [Scope](#scope)
+  - [멱등성](#멱등성)
   - [@JobScope](#jobscope)
   - [@StepScope](#stepscope)
+  - [LocalDateTime, Enum을 JobParameter로 사용하기](#localdatetime-enum을-jobparameter로-사용하기)
 - [Chunk](#chunk)
   - [ChunkOrientedTasklet](#chunkorientedtasklet)
   - [ChunkProvider](#chunkprovider)
@@ -97,9 +99,10 @@
 
 # 스프링 배치
 ## 왜 사용하는가
-- 호출 빈도는 낮지만, 호출시 처리 시간이 오래 걸리는 작업을 API server에서 진행하는건 자원 낭비다
 - 배치 처리를 위한 표준 아키테처
-- 배치 처리: 대용량 데이터를 배치단위로 나눠 동일 작업을 반복
+  - 배치 처리: 사용자에 개입 없이 대용량 데이터를 배치단위로 나눠 정해진 작업흐름을 반복
+- 호출 빈도는 낮지만, 호출시 처리 시간이 오래 걸리는 작업을 API server에서 진행하는건 자원 낭비다
+  - 일정 주기로, 대량에 데이터를 처리하기
 - 자동화: 심각한 문제를 제외하고 사용자 개입 없이 지속적으로 동작
 - 신뢰: 문제 발생시 추적 가능, 작업 도중 실패시, 실패지점 부터 이어서 재작업 
 
@@ -950,6 +953,8 @@ class ExecutionContext implements Serializable{
   - @Value("#{jobExecutionContext[]}")
   - @Value("#{stepExecutionContext[]}")
 
+## 멱등성
+
 ## @JobScope
 - Step에 선언
 - @Value(#{jobParameters[]}"), @Value("#{jobExecutionContext[]}") 선언 가능
@@ -957,6 +962,32 @@ class ExecutionContext implements Serializable{
 ## @StepScope
 - Tasklet, ItemReader, ItemWriter, ItemProcess에 선언
 - @Value(#{jobParameters[]}"), @Value("#{jobExecutionContext[]}"), @Value("#{stepExecutionContext[]}") 선언가능
+
+## LocalDateTime, Enum을 JobParameter로 사용하기
+
+```java
+@Getter
+@NoArgsConstructor
+public class CreateDateJobParameter{
+  private LocalDateTime createDate;
+
+  @Value("#{jobParameters[createDate]}")
+  public void setCreateDate(String crateDate){
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd");
+    this.createDate = LocalDate.parse(createDate, formatter);
+  }
+}
+///
+public class JobConfig{
+  private final CreateDateJobParameter jobParameter;
+
+  @Bean
+  @JobScope
+  public CreateDateJobParameter jobParameter(){
+    return new CreateDateJobParameter();
+  }
+}
+```
 
 ------
 
@@ -1142,11 +1173,11 @@ public class SimpleChunkProcessor<I, O> implements ChunkProcessor<I>, Initializi
 ## ItemReader
 - 다양한 종류에 데이터를 읽어 들일 수 있는 기능 제공
   - JDBC, JPA, FlatFile, XML, Json 
-- Cursor 기반: Streaming으로 fetch size 만큼 가져온다
-
-- Paging 기반: 한번에 page size 만큼 가져온다, offset(가져올 데이터 시작 위치)과 limit(가져올 양)을 이용해 가져올 데이터 구분
+- Cursor 기반: Streaming으로 현재 cursor가 가르키는 데이터를 가져온다 
+  - 가져오고 싶은 데이터를 다 가져올 때 까지 처음 연결한 DB Connection을 유지한다
+- Paging 기반: 한번에 page size 만큼 가져온다, offset(가져올 데이터 시작 위치)과 limit(page size)을 이용해 가져올 데이터 구분
   - 상당히 큰 페이지 크기를 설정하고, 페이지 크기와 Chunk Size를 같게 하면 성능 향상에 좋다
-  - 
+  - 한 페이지를 가져오고 DB Connection을 끊는다
 
 ```java
 //interface

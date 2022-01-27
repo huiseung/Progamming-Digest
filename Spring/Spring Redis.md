@@ -1,5 +1,8 @@
 # 목차
 - [목차](#목차)
+- [Redis](#redis)
+  - [Redis 사용 목적](#redis-사용-목적)
+  - [Cache 사용 목적](#cache-사용-목적)
 - [Redis setting](#redis-setting)
     - [설치](#설치)
     - [연결 설정](#연결-설정)
@@ -9,11 +12,25 @@
   - [sets](#sets)
   - [sorted sets](#sorted-sets)
   - [lists](#lists)
-  - [hashes](#hashes)
+  - [dict](#dict)
 - [RedisRepository](#redisrepository)
 - [spring cache](#spring-cache)
-  - [사용목적](#사용목적)
   - [어노테이션](#어노테이션)
+
+# Redis
+- key-value nosql database
+  - 저장 데이터 구조로 string, int, set, sorted set, list, dict 지원
+## Redis 사용 목적
+- cache
+- shared memory 
+- message queu
+
+## Cache 사용 목적
+- 적용 대상: 빈번한 조회가 발생하며, 변경이 자주 일어나지 않는 데이터
+  - 공지사항
+  - 베스트 셀러
+- 목표: db 조회 횟수를 줄여 애플리케이션에 성능 높이기
+
 
 # Redis setting
 ### 설치
@@ -107,8 +124,24 @@ Set<String> eSet = setOperations.members("key");
 ## sorted sets
 ```java
 ZSetOperations<String, String> zsetOperations = redisTemplate.opForZSet();
-
 ```
+
+- Create
+  - zadd [sortedSetKey] [score] [element] : (score, element) 형태로 저장
+- Read
+  - zscore [sortedSetKey] [element] : element의 score 조회
+  - zrange [sortedSetKey] [start] [end] : start ~ end 등수 score오름차순 조회
+  - zrevrange [sortedSetKey] [start] [end] : start ~ end 등수 score내림차순 조회
+  - zrank [sortedSetKey] [element] : element의 score오름차순 순위를 조회
+  - zrevrank [sortedSetKey] [element] : element의 score내림차순 순위를 조회
+  - zrangebyscore [sortedSetKey] [min] [max] : min ~ max 범위에 있는 score오름차순 조회 
+  - zrevrangescore [sortedSetKey] [max] [min] : max ~ min 범위에 있는 score내림차순 조회
+- Update
+  - zincrby [sortedSetKey] [term] [element]: element의 score를 해당 term 만큼 증가(term이 양수)/감소(term이 음수)시킨다
+- Delete
+  - zremrangebyrank [sortedSetKey] [rank] : 해당 rank의 element 제거
+  - zremrangebyscore [sortedSetKey] [min] [max] : min ~ max 범위에 있는 score를 갖는 element 제거
+
 
 ## lists
 
@@ -122,7 +155,11 @@ Long size = listOperations.size("key");
 
 ```
 
-## hashes
+- rpush [listKey] [element...]
+- lpush [listKey] [element...]
+- lrange [listKey] [stant] [end]
+
+## dict
 
 ```java
 HashOperations<String, Object, Object> hashOperations = redisTemplate.opForHash();
@@ -130,6 +167,13 @@ hashOperations.put("key1", "ckey1", "val1");
 hashOperations.put("key1", "ckey2", "val1");
 Map<Object, Object> map = redisTemplate.entries("key1");
 ```
+
+- hset [dictKey] [field] [value] : field에 value 저장, 이미 값이 있을 경우 덮어쓰여진다.
+- hget [dictKey] [field] : field에 대응하는 value를 반환
+- hgetall [dictKey] : dict에 저장된 모든 (field, value)를 반환
+
+
+
 
 # RedisRepository
 ```java
@@ -145,11 +189,6 @@ public interface SomeRedisRepository extends CrudRepository<Some, String>{}
 
 
 # spring cache
-## 사용목적
-- 적용 대상: 빈번한 조회가 발생하며, 변경이 자주 일어나지 않는 데이터
-  - 공지사항
-  - 베스트 셀러
-- 목표: db 조회 횟수를 줄여 애플리케이션에 성능 높이기
 ## 어노테이션
 - import org.springframework.cache.annotation.Cacheable;
 - @Cacheable(key="#", value=)
