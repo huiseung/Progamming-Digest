@@ -2,6 +2,8 @@
 - [목차](#목차)
 - [input/output](#inputoutput)
 - [Bruth Forth](#bruth-forth)
+  - [경우의 수 후보 생성](#경우의-수-후보-생성)
+  - [Back Tracking](#back-tracking)
 - [Divide and conquer](#divide-and-conquer)
 - [Dynamic Programming](#dynamic-programming)
 - [Greedy Algorithm](#greedy-algorithm)
@@ -25,9 +27,8 @@
   - [구현](#구현)
     - [인접행렬](#인접행렬)
     - [인접리스트](#인접리스트)
-  - [순회](#순회-1)
-    - [DFS](#dfs)
-    - [BFS](#bfs)
+  - [DFS](#dfs)
+  - [BFS](#bfs)
   - [Shortest Path](#shortest-path)
   - [Minimum Spanning Tree](#minimum-spanning-tree)
   - [Maximum Flow](#maximum-flow)
@@ -35,6 +36,50 @@
 # input/output
 
 # Bruth Forth
+## 경우의 수 후보 생성
+- combinations
+  - 비복원, 순서 의미 없음
+  - $\frac{n!}{(n-r)!r!}$
+```python
+from itertools import combinations
+population = [1, 2, 3, 4]
+r = len(population)
+cand_list = combinations(population, r)
+```
+
+- permutaions
+  - 순열: 비복원, 순서 의미 있음
+  - $\frac{n!}{(n-r)!}$
+```python
+from itertools import permutaions
+population = [1, 2, 3, 4]
+r = len(population)
+cand_list = permutations(population, r)
+```
+
+- combinations_with_replacement
+  - 중복 조합: 복원, 순서 의미 없음
+  - $\frac{(n+r-1)!}{(n-1)!r!}$
+```python
+from itertools import combinations_with_replacement
+population = [1, 2, 3, 4]
+r = len(population)
+cand_list = combinations_with_replacement(population, r)
+```
+
+- product
+  - 중복 순열: 복원, 순서 의미 있음
+  - $n^r$
+```python
+from itertools import product
+population = [1, 2, 3, 4]
+r = len(population)
+cand_list = product(population, repeat=r)
+```
+
+
+## Back Tracking
+
 
 # Divide and conquer
 
@@ -89,11 +134,9 @@
 ### 인접행렬
 
 ### 인접리스트
+## DFS
 
-## 순회
-### DFS
-
-### BFS
+## BFS
 
 ## Shortest Path
 
