@@ -1,6 +1,10 @@
 # 목차
 - [목차](#목차)
-- [input/output](#inputoutput)
+- [자세](#자세)
+- [input/outpu](#inputoutpu)
+- [누적합](#누적합)
+  - [배열 구간에 덧셈, 뺄셈 적용하기](#배열-구간에-덧셈-뺄셈-적용하기)
+    - [2D-Matrix](#2d-matrix)
 - [완전 탐색](#완전-탐색)
   - [경우의 수 후보 생성](#경우의-수-후보-생성)
   - [DFS](#dfs)
@@ -34,8 +38,57 @@
   - [Segment Tree](#segment-tree)
   - [union find disjoint set](#union-find-disjoint-set)
   - [Trie](#trie)
+# 자세
 
-# input/output
+
+# input/outpu
+
+
+# 누적합
+## 배열 구간에 덧셈, 뺄셈 적용하기
+
+```python
+"""
+[1, 2, 4, 8, 9]에 [0:4] 구간에 -2 적용
+"""
+opList = 
+```
+
+### 2D-Matrix
+```python
+"""
+공격받으면, 내구도 감소, 파괴되도 감소 가능
+회복되면 내구도 증가, 파괴되도 증가 가능
+0이하면 파괴 상태
+최종가서 파괴 되지 않은 상태
+"""
+
+def solution(board, skill):
+    answer = 0
+    nRow = len(board)
+    nCol = len(board[0])
+    sumMatrix = [[0 for _ in range(nCol+1)] for _ in range(nRow+1)]
+    for s in skill:
+        cmd, r1, c1, r2, c2, degree = s
+        if cmd == 1:
+            degree *= -1
+        sumMatrix[r1][c1] += degree
+        sumMatrix[r2+1][c1] += -1*degree
+        sumMatrix[r1][c2+1] += -1*degree
+        sumMatrix[r2+1][c2+1] += degree
+    for c in range(1, nCol):
+        for r in range(nRow):
+            sumMatrix[r][c] += sumMatrix[r][c-1]
+    for r in range(1, nRow):
+        for c in range(nCol):
+            sumMatrix[r][c] += sumMatrix[r-1][c]
+    for r in range(nRow):
+        for c in range(nCol):
+            if board[r][c] + sumMatrix[r][c] > 0:
+                answer += 1
+    return answer
+```
+
 
 # 완전 탐색
 ## 경우의 수 후보 생성
