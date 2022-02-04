@@ -36,6 +36,8 @@
   - [Binary Search Tree](#binary-search-tree)
   - [Heap](#heap)
   - [Segment Tree](#segment-tree)
+    - [1D-Array Segment Tree](#1d-array-segment-tree)
+    - [2D-Matrix Segment Tree](#2d-matrix-segment-tree)
   - [union find disjoint set](#union-find-disjoint-set)
   - [Trie](#trie)
 # 자세
@@ -60,7 +62,7 @@ opList =
 공격받으면, 내구도 감소, 파괴되도 감소 가능
 회복되면 내구도 증가, 파괴되도 증가 가능
 0이하면 파괴 상태
-최종가서 파괴 되지 않은 상태
+최종가서 파괴 되지 않은 갯수 리턴
 """
 
 def solution(board, skill):
@@ -232,6 +234,102 @@ def solution(info, edges):
 ## Heap
 
 ## Segment Tree
+
+![](../image/segmenttree.PNG)
+
+- 숫자로 이루어진 배열이나 행렬에서 임의에 영역과 관련한 질의를 작은 시간복잡도로 처리하는 자료구조
+- 숫자 변경도 가능하다
+- 트리 형태로 leaf는 주어진 숫자들을, non-leaf는 자식들로 이루어진 질의 결과 값을 저장한다
+
+### 1D-Array Segment Tree
+- 1차원 배열로 표현한 이진 트리를 활용 
+  - root는 index 1, i-vertex에 왼쪽 자식은 index 2i, 오른쪽 자식은 index 2i + 1에 vertex 값을 저장한다  
+- 각 vertex마다 대응하는 영역이 있고, 영역에 질의를 처리한 결과를 저장한다
+
+```python
+import math
+
+BREAK_NUM = 0
+INIT_VAL = 0
+
+def init(tree, numList, vertex, left, right):
+    if left == right:
+        tree[vertex] = numList[left]
+        return tree[vertex]
+    mid = (left+right)//2
+    leftVal = init(tree, numList, vertex*2, left, mid)
+    rightVal = init(tree, numList, vertex*2+1, mid+1, right)
+    tree[vertex] = operation(leftVal, rightVal)
+    return tree[vertex]
+
+
+def operation(leftVal, rightVal):
+    return leftVal + rightVal
+
+
+
+# O(lgN)
+def select(tree, b, c, n):
+    # index b이상, c이하 범위의 값의 operation 결과
+    return treeSelect(tree, b-1, c-1, 1, 0, n-1)
+
+
+def treeSelect(tree, left, right, vertex, vertexLeft, vertexRight):
+    if right < vertexLeft or vertexRight < left:
+        return BREAK_NUM
+    if left <= vertexLeft and vertexRight <= right:
+        return tree[vertex]
+    vertexMid = (vertexLeft+vertexRight)//2
+    leftVal = treeSelect(tree, left, right, vertex*2, vertexLeft, vertexMid)
+    rightVal = treeSelect(tree, left, right, vertex *
+                          2+1, vertexMid+1, vertexRight)
+    return operation(leftVal, rightVal)
+
+# O(lgN)
+def update(tree, b, c, n):
+    # index b-1에 해당하는 숫자를 c로 바꿈
+    return treeUpdate(tree, b-1, c, 1, 0, n-1)
+
+
+def treeUpdate(tree, numIndex, newVal, vertex, vertexLeft, vertexRight):
+    if numIndex < vertexLeft or vertexRight < numIndex:
+        return tree[vertex]
+    if vertexLeft == vertexRight:
+        tree[vertex] = newVal
+        return tree[vertex]
+    vertexMid = (vertexLeft+vertexRight)//2
+    leftVal = treeUpdate(tree, numIndex, newVal, vertex*2, vertexLeft, vertexMid)
+    rightVal = treeUpdate(tree, numIndex, newVal, vertex*2+1, vertexMid+1, vertexRight)
+    tree[vertex] = operation(leftVal, rightVal)
+    return tree[vertex]
+
+def printTree(tree):
+    # 1
+    # 2~3
+    # 4~7
+
+    for h in range(int(math.log2(len(tree)))):
+        print(tree[2**h:2**(h+1)])
+
+
+n, m, k = map(int, input().split(" "))
+
+tree = [INIT_VAL for _ in range(4*n)]
+numList = [int(input()) for _ in range(n)]
+init(tree, numList, 1, 0, n-1)
+printTree(tree)
+
+for _ in range(m+k):
+    a, b, c = map(int, input().split(" "))
+    if a == 1:
+        update(tree, b, c, n)
+        printTree(tree)
+    elif a == 2:
+        print(select(tree, b, c, n))
+```
+
+### 2D-Matrix Segment Tree
+
 
 ## union find disjoint set
 
