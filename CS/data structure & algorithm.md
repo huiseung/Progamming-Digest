@@ -1,17 +1,25 @@
 # 목차
 - [목차](#목차)
 - [자세](#자세)
-- [input/outpu](#inputoutpu)
+- [input/output](#inputoutput)
+- [사칙 연산](#사칙-연산)
+- [range](#range)
+- [자연수 각 자리수 돌기](#자연수-각-자리수-돌기)
+- [http request](#http-request)
+- [two pointer](#two-pointer)
+  - [제시된 배열 aList에서 sort 없이 O(N) 시간안에  가장 큰 수, 두번째 큰 수, 가장 작은 수, 두번째 작은 수 찾기](#제시된-배열-alist에서-sort-없이-on-시간안에--가장-큰-수-두번째-큰-수-가장-작은-수-두번째-작은-수-찾기)
 - [누적합](#누적합)
-  - [배열 구간에 덧셈, 뺄셈 적용하기](#배열-구간에-덧셈-뺄셈-적용하기)
+  - [연속된 구간에 같은 값을 더하거나 빼는 쿼리](#연속된-구간에-같은-값을-더하거나-빼는-쿼리)
+    - [1D-Matrix](#1d-matrix)
     - [2D-Matrix](#2d-matrix)
 - [완전 탐색](#완전-탐색)
   - [경우의 수 후보 생성](#경우의-수-후보-생성)
-  - [DFS](#dfs)
   - [Back Tracking](#back-tracking)
-- [Divide and conquer](#divide-and-conquer)
+  - [MinMaxTree](#minmaxtree)
 - [Dynamic Programming](#dynamic-programming)
+- [Memoization](#memoization)
 - [Greedy Algorithm](#greedy-algorithm)
+- [Divide and conquer](#divide-and-conquer)
 - [List](#list)
   - [Linked List](#linked-list)
 - [Queue](#queue)
@@ -22,7 +30,7 @@
   - [구현](#구현)
     - [인접행렬](#인접행렬)
     - [인접리스트](#인접리스트)
-  - [DFS](#dfs-1)
+  - [DFS](#dfs)
   - [BFS](#bfs)
   - [Shortest Path](#shortest-path)
   - [Minimum Spanning Tree](#minimum-spanning-tree)
@@ -37,26 +45,162 @@
   - [Heap](#heap)
   - [Segment Tree](#segment-tree)
     - [1D-Array Segment Tree](#1d-array-segment-tree)
-    - [2D-Matrix Segment Tree](#2d-matrix-segment-tree)
   - [union find disjoint set](#union-find-disjoint-set)
   - [Trie](#trie)
+
 # 자세
+- 방법이 바로 안 떠오를땐 작은 케이스부터 문제 크기를 키워가며 풀이법을 생각해보자
 
 
-# input/outpu
-
-
-# 누적합
-## 배열 구간에 덧셈, 뺄셈 적용하기
-
+# input/output
 ```python
-"""
-[1, 2, 4, 8, 9]에 [0:4] 구간에 -2 적용
-"""
-opList = 
+# 상하좌우
+direction = [(-1, 0), (0, 1), (11, 0), (0, -1)]
+# 팔방
+direction = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
+
+# 프로그래머스 matrix
+nRow = 0
+nCol = 0
+
+def solution(board):
+  global nRow, nCol
+  nRow = len(board)
+  nCol = len(board[0])
+
+# 백준형 matirx
+# 한줄에 두개 이상 문자형숫자를 각각의 정수형 숫자로 받기
+nRow, nCol = map(int, input().split())
+# 한줄에 두개 이상 문자형숫자를 정수형숫자로 구성된 리스트로 받기
+matrix = [[0 for _ in range(nRow)] for _ in range(nCol)]
+for c in range(nCol):
+  row = list(map(int, input().split()))
+  for r in range(nRow):
+    matrix[r][c] = row[r]
 ```
 
+# 사칙 연산
+```python
+#정수 연산
+num = 5
+print(num / 2)  #2.5		소수점연산 살아있는 나누기
+print(num // 2)  #2		몫, 소수점 버리는 나누기
+print(num % 2)  #1		나머지
+
+
+num = -5
+print(num / 2)  #-2.5
+print(int(num/2)) #-2
+print(num // 2)  #-3	
+print(num % 2)  #1	
+
+```
+
+# range
+```python
+# range(start=0, stop, step=1)
+# start부터 시작해 stop이 되기 직전까지 step씩 차이나는 등차 수열을 원소로 갖는 리스트 반환
+# 실제로는 range엔 parmeter_name이 없다. 몇 개의 paramter가 기입되었는가에 의해 작동이 정해진다.
+
+
+for i in range(5):
+  print(i)
+	# 0, 1, 2, 3, 4
+
+for i in range(2, 5):
+  print(i)
+	# 2, 3, 4
+
+# 내림차순
+for i in range(5, 0, -1):
+  print(i)
+  # 5, 4, 3, 2, 1
+
+# 내림차순
+for i in range(5, -1, -1):
+  print(i)
+  # 5, 4, 3, 2, 1, 0
+
+
+# stride 
+aList = []
+stride = 3
+for i in range(0, 5, stride):
+	print(aList[i:i+stride])
+	# aList[0:3], aList[3:6]
+
+
+```
+
+# 자연수 각 자리수 돌기
+```python
+#369 박수 세기
+import sys
+input = sys.stdin.readline
+N = int(input())
+numbers  = [i for i in range(1, N+1)]
+answer = 0
+for num in numbers:
+    while num != 0:
+        if num%10 == 3 or num%10==6 or num%10==9: # 일의 자리 수 확인
+            answer +=1
+        num = num//10  # 일의 자리수를 버리고 모든 자리수 하나씩 내리기
+print(answer)
+
+```
+
+# http request
+```python
+import requests
+import json
+
+url = "http://"
+params = {"key1": "value1", "key2": "value2"}
+data = json.dumps({'outer': {'inner': 'value'})
+
+//get
+response = requests.get(url=url, params=params)
+//post
+response = request.post(url=url, data=data)
+```
+
+# two pointer
+## 제시된 배열 aList에서 sort 없이 O(N) 시간안에  가장 큰 수, 두번째 큰 수, 가장 작은 수, 두번째 작은 수 찾기
+```python
+def find(aList):
+  first_max_val = -1
+  second_max_val = -1
+  first_min_val = sys.maxsize
+  second_min_val = sys.maxsize
+  
+  for num in aList:
+    if num > first_max_val:
+		first_max_val = num
+        second_max_val = first_max_val
+   elif second_max_val < num < first_max_val:
+   		second_max_val = num
+   
+   if first_min_val < num:
+   		first_min_val = num
+        second_min_val = first_min_val
+   elif first_min_val > num > second_min_val:
+		second_min_val = num
+   
+   return first_max_val, second_max_val, first_min_val, second_min_val
+```
+
+# 누적합
+## 연속된 구간에 같은 값을 더하거나 빼는 쿼리
+### 1D-Matrix
+![](./image/cumulSum1D.PNG)
+
+
 ### 2D-Matrix
+![](./image/cumulSum2D-1.PNG)
+
+![](./image/cumulSum2D-2.PNG)
+
+
 ```python
 """
 공격받으면, 내구도 감소, 파괴되도 감소 가능
@@ -94,55 +238,130 @@ def solution(board, skill):
 
 # 완전 탐색
 ## 경우의 수 후보 생성
-- combinations
-  - 비복원, 순서 의미 없음
+- 조합 combinations
+  - 비복원: 한번 사용한 원소는 다시 사용 불가
+  - 순서 의미 없음: 같은 원소구성이면 순서가 달라도 같은 경우의 수로 인정
   - $\frac{n!}{(n-r)!r!}$
+
 ```python
 from itertools import combinations
 population = [1, 2, 3, 4]
 r = len(population)
 cand_list = combinations(population, r)
+
+"""
+(1, 2, 3, 4)
+"""
 ```
 
-- permutaions
-  - 순열: 비복원, 순서 의미 있음
+- 순열 permutaions
+  - 비복원
+  - 순서 의미 있음: 같은 원소구성이여도 순서가 다르면 다른 경우의 수로 인정
   - $\frac{n!}{(n-r)!}$
 ```python
 from itertools import permutaions
 population = [1, 2, 3, 4]
 r = len(population)
 cand_list = permutations(population, r)
+"""
+(1, 2, 3, 4)
+(1, 2, 4, 3)
+...
+(1, 4, 3, 2)
+(2, 1, 3, 4)
+(2, 1, 4, 3)
+...
+(4, 3, 1, 2)
+(4, 3, 2, 1)
+"""
 ```
 
-- combinations_with_replacement
-  - 중복 조합: 복원, 순서 의미 없음
+- 중복 조합 combinations_with_replacement
+  - 복원: 한번 사용한 원소를 다시 사용 가능
+  - 순서 의미 없음
   - $\frac{(n+r-1)!}{(n-1)!r!}$
 ```python
 from itertools import combinations_with_replacement
 population = [1, 2, 3, 4]
 r = len(population)
 cand_list = combinations_with_replacement(population, r)
+"""
+(1, 1, 1, 1)
+(1, 1, 1, 2)
+...
+(1, 4, 4, 4)
+(2, 2, 2, 2)
+(2, 2, 2, 3)
+...
+(3, 4, 4, 4)
+(4, 4, 4, 4)
+"""
 ```
 
-- product
-  - 중복 순열: 복원, 순서 의미 있음
+- 중복 순열 product
+  - 복원
+  - 순서 의미 있음
   - $n^r$
 ```python
 from itertools import product
 population = [1, 2, 3, 4]
 r = len(population)
 cand_list = product(population, repeat=r)
+"""
+(1, 1, 1, 1)
+(1, 1, 1, 2)
+...
+(1, 4, 4, 4)
+(2, 1, 1, 1)
+(2, 1, 1, 2)
+...
+(4, 4, 4, 4)
+"""
 ```
-## DFS
 
 ## Back Tracking
+
+## MinMaxTree
+
+
+
+# Dynamic Programming
+- bottom up 
+- 점화식
+  - f(1), f(2)는 구하기 쉽다
+  - f(n)은 n보다 작은 변수 x들에 대한 함수값 f들의 합으로 구성된다
+  - n은 일 변수가 아니라 이변수일 수 있다
+
+```python
+# 일변수
+table = [0 for _ in range(n+1)]
+table[0] = ZERO_VAL
+for i in range(1, n+1):
+  table[i] = table[i-1] 
+
+
+# 이변수
+table = [[0 for _ in range(numRow+1)] for _ in range(numCol+1)]
+table[0][0] = ZERO_ZERO_VAL
+table[0][1] = ZERO_ONE_VAL
+table[1][0] = ONE_ZERO_VAL 
+for r in range(1, numRow+1):
+  for c in range(1, numCol+1):
+    table[r][c] = table[r-1][c] + table[r-1][c-1] + table[r][c-1]
+
+```
+ 
+
+# Memoization
+- top down
+- 
+
+# Greedy Algorithm
 
 
 # Divide and conquer
 
-# Dynamic Programming
 
-# Greedy Algorithm
 
 # List
 ## Linked List
@@ -327,8 +546,6 @@ for _ in range(m+k):
     elif a == 2:
         print(select(tree, b, c, n))
 ```
-
-### 2D-Matrix Segment Tree
 
 
 ## union find disjoint set
