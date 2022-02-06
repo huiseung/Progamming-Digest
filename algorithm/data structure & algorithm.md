@@ -14,8 +14,10 @@
     - [2D-Matrix](#2d-matrix)
 - [완전 탐색](#완전-탐색)
   - [경우의 수 후보 생성](#경우의-수-후보-생성)
+    - [정수로 이루어진 두 배열에 각 부분 배열의 합들이 정수 T가 되는 부분 배열 쌍 수](#정수로-이루어진-두-배열에-각-부분-배열의-합들이-정수-t가-되는-부분-배열-쌍-수)
   - [Back Tracking](#back-tracking)
   - [MinMaxTree](#minmaxtree)
+- [이분 탐색](#이분-탐색)
 - [Dynamic Programming](#dynamic-programming)
 - [Memoization](#memoization)
 - [Greedy Algorithm](#greedy-algorithm)
@@ -110,6 +112,10 @@ for i in range(5):
 for i in range(2, 5):
   print(i)
 	# 2, 3, 4
+
+for i in range(5, 5):
+  print(i)
+  # 아무 동작 안함
 
 # 내림차순
 for i in range(5, 0, -1):
@@ -236,6 +242,8 @@ def solution(board, skill):
 ```
 
 
+
+
 # 완전 탐색
 ## 경우의 수 후보 생성
 - 조합 combinations
@@ -319,10 +327,58 @@ cand_list = product(population, repeat=r)
 """
 ```
 
+
+### 정수로 이루어진 두 배열에 각 부분 배열의 합들이 정수 T가 되는 부분 배열 쌍 수
+```python
+"""
+n <= 1000
+m <= 1000
+"""
+n = 0
+m = 0
+T = 0
+
+T = int(input())
+n = int(input())
+aList = list(map(int, input().split()))
+m = int(input())
+bList = list(map(int, input().split()))
+
+def solution(aList, bList):
+    answer = 0
+    global T, n, m
+    aDict = {}
+    bDict = {}
+    for start in range(n):
+        for end in range(start+1, n+1):
+            subList = aList[start:end]
+            key = sum(subList)
+            if key not in aDict:
+                aDict[key] = 0
+            aDict[key] += 1
+    for start in range(m):
+        for end in range(start+1, m+1):
+            subList = bList[start:end]
+            key = sum(subList)
+            if key not in bDict:
+                bDict[key] = 0
+            bDict[key] += 1
+    for key in aDict.keys():
+        opKey = T-key
+        if opKey in bDict:
+            answer += aDict[key]*bDict[opKey]            
+    return answer
+
+print(solution(aList, bList))
+
+```
+
 ## Back Tracking
 
 ## MinMaxTree
 
+
+# 이분 탐색
 
 
 # Dynamic Programming
