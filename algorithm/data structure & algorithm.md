@@ -116,6 +116,9 @@ for i in range(2, 5):
 for i in range(5, 5):
   print(i)
   # 아무 동작 안함
+for i in range(5, 3):
+  print(i)
+  # 아무 동작 안함
 
 # 내림차순
 for i in range(5, 0, -1):
@@ -263,7 +266,7 @@ cand_list = combinations(population, r)
 ```
 
 - 순열 permutaions
-  - 비복원
+  - 비복원: 한번 사용한 원소를 다시 사용 불가
   - 순서 의미 있음: 같은 원소구성이여도 순서가 다르면 다른 경우의 수로 인정
   - $\frac{n!}{(n-r)!}$
 ```python
@@ -307,7 +310,7 @@ cand_list = combinations_with_replacement(population, r)
 ```
 
 - 중복 순열 product
-  - 복원
+  - 복원: 한번 사용한 원소를 다시 사용 가능
   - 순서 의미 있음
   - $n^r$
 ```python
