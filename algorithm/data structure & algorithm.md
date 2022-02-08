@@ -5,6 +5,7 @@
 - [사칙 연산](#사칙-연산)
 - [range](#range)
 - [자연수 각 자리수 돌기](#자연수-각-자리수-돌기)
+- [이진수](#이진수)
 - [http request](#http-request)
 - [달팽이 채우기](#달팽이-채우기)
 - [two pointer](#two-pointer)
@@ -156,6 +157,15 @@ for num in numbers:
             answer +=1
         num = num//10  # 일의 자리수를 버리고 모든 자리수 하나씩 내리기
 print(answer)
+
+```
+
+# 이진수
+```python
+num = 6
+biString = bin(num) # "0b110"
+
+num = int("0b110", 2) # 6
 
 ```
 
