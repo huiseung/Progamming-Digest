@@ -6,6 +6,7 @@
 - [range](#range)
 - [자연수 각 자리수 돌기](#자연수-각-자리수-돌기)
 - [http request](#http-request)
+- [달팽이 채우기](#달팽이-채우기)
 - [two pointer](#two-pointer)
   - [제시된 배열 aList에서 sort 없이 O(N) 시간안에  가장 큰 수, 두번째 큰 수, 가장 작은 수, 두번째 작은 수 찾기](#제시된-배열-alist에서-sort-없이-on-시간안에--가장-큰-수-두번째-큰-수-가장-작은-수-두번째-작은-수-찾기)
 - [누적합](#누적합)
@@ -172,6 +173,83 @@ response = requests.get(url=url, params=params)
 //post
 response = request.post(url=url, data=data)
 ```
+
+# 달팽이 채우기
+![](./image/정삼각형달팽이.PNG)
+
+- 정삼각형을 달팽이 채우기 할땐 3-방향으로 채울 생각을 한다
+
+```python
+# 정삼각형
+
+def print_matrix(matrix):
+    for row in matrix:
+        print(row)
+    print()
+
+def center(board, r, c, num):
+    board[r][c] = num
+    return
+
+def toDown(board, r, c, length, num):
+    for dr in range(length):
+        nr = r+dr
+        board[nr][c] = num
+        num += 1
+    nr += 1
+    nc = c
+    return nr, nc, num
+
+def toRight(board, r, c, length, num):
+    for dc in range(length):
+        nc = c+dc
+        board[r][nc] = num
+        num += 1
+    nc += 1
+    nr = r
+    return nr, nc, num
+
+def toUp(board, r, c, length, num):
+    for d in range(length):
+        nr = r-d
+        nc = c-d
+        board[r-d][c-d] = num
+        num += 1
+    nr += 1        
+    return nr, nc, num
+
+def triangle(board, r, c, length, num):
+    if length == 0:
+        board[r][c] = num
+        return
+    while length >= 3:
+        r, c, num = toDown(board, r, c, length, num)
+        r, c, num = toRight(board, r, c, length, num)
+        r, c, num = toUp(board, r, c, length, num)
+        length -= 3
+    if length == 0:
+        center(board, r, c, num)
+    else:
+        r, c, num = toDown(board, r, c, length, num)
+        r, c, num = toRight(board, r, c, length, num)
+        r, c, num = toUp(board, r, c, length, num)
+    return
+
+def solution(n):
+    answer = []
+    board = [[0 for _ in range(i+1)] for i in range(n)]   
+    num = 1
+    length = n-1
+    r = 0
+    c = 0
+    triangle(board, r, c, length, num)   
+    for row in board:
+        for e in row:
+            answer.append(e)     
+    return answer
+
+```
+
 
 # two pointer
 ## 제시된 배열 aList에서 sort 없이 O(N) 시간안에  가장 큰 수, 두번째 큰 수, 가장 작은 수, 두번째 작은 수 찾기
