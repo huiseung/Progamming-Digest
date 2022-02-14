@@ -19,7 +19,6 @@ def solution(a):
         if endNum < minEnd:
             minEnd = endNum
             boolList[-1-i] = 1
-        print(boolList)
     answer = sum(boolList)
     return answer
 
