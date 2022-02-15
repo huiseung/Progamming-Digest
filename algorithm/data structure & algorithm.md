@@ -3,7 +3,9 @@
 - [자세](#자세)
 - [input/output](#inputoutput)
 - [사칙 연산](#사칙-연산)
+- [문자열 셔플](#문자열-셔플)
 - [range](#range)
+- [리스트를 stack으로 사용](#리스트를-stack으로-사용)
 - [Counter](#counter)
 - [자연수 각 자리수 돌기](#자연수-각-자리수-돌기)
 - [이진수](#이진수)
@@ -103,6 +105,16 @@ print(num % 2)  #1
 
 ```
 
+# 문자열 셔플
+
+```python
+
+def shuffle(s):
+    string = s[1:] + s[0]
+    return string
+
+```
+
 # range
 ```python
 # range(start=0, stop, step=1)
@@ -144,6 +156,30 @@ for i in range(0, 5, stride):
 	# aList[0:3], aList[3:6]
 
 
+```
+
+# 리스트를 stack으로 사용
+```python
+# 올바른 괄호문 확인
+def check(s):
+    stack = []
+    for c in s:
+        if len(stack) > 0:
+            if c == ")" and stack[-1] == "(":
+                stack.pop()
+            elif c == "]" and stack[-1] == "[":
+                stack.pop()
+            elif c == "}" and stack[-1] == "{":
+                stack.pop()
+            else:
+                stack.append(c)
+        else:
+            stack.append(c)
+    if len(stack) == 0:
+        return True
+    else:
+        return False
+        
 ```
 
 # Counter
