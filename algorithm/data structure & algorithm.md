@@ -4,6 +4,7 @@
 - [input/output](#inputoutput)
 - [사칙 연산](#사칙-연산)
 - [문자열 셔플](#문자열-셔플)
+- [slice](#slice)
 - [range](#range)
 - [리스트를 stack으로 사용](#리스트를-stack으로-사용)
 - [Counter](#counter)
@@ -113,6 +114,12 @@ def shuffle(s):
     string = s[1:] + s[0]
     return string
 
+```
+
+# slice
+```python
+aList = [1,2,3]
+print(aList[5:]) # [], 인덱스 범위밖에서부터 슬라이싱
 ```
 
 # range
