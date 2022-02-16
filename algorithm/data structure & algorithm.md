@@ -14,6 +14,7 @@
 - [달팽이 채우기](#달팽이-채우기)
 - [쿼드 트리](#쿼드-트리)
 - [정형화된 알고리즘 지식을 요구하지 않는 경우](#정형화된-알고리즘-지식을-요구하지-않는-경우)
+  - [110옮기기](#110옮기기)
 - [two pointer](#two-pointer)
   - [제시된 배열 aList에서 sort 없이 O(N) 시간안에  가장 큰 수, 두번째 큰 수, 가장 작은 수, 두번째 작은 수 찾기](#제시된-배열-alist에서-sort-없이-on-시간안에--가장-큰-수-두번째-큰-수-가장-작은-수-두번째-작은-수-찾기)
 - [누적합](#누적합)
@@ -393,6 +394,38 @@ def solution(a):
     return answer
 
 
+```
+
+## 110옮기기
+```python
+# 되는대로 구현해, 시간 초과
+
+pattern1 = "1110"
+pattern2 = "1100"
+
+def hasPattern(string):
+    for i in range(len(string)):
+        if string[i:i+4] == pattern1:
+            return i
+        elif string[i:i+4] == pattern2:
+            return i
+    return -1
+
+def change(string, startIdx):
+    pattern = string[startIdx:startIdx+4]
+    if pattern == pattern1:
+        retString = string[:startIdx] + "1101" + string[startIdx+4:]
+    elif pattern == pattern2:
+        retString = string[:startIdx] + "0110" + string[startIdx+4:]
+    return retString
+
+def solve(string):
+    while True:
+        startIdx = hasPattern(string)
+        if startIdx == -1:
+            break
+        string = change(string, startIdx)
+    return string
 ```
 
 # two pointer

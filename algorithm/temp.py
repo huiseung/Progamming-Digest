@@ -1,5 +1,2 @@
-a = "12345"
-b = "".join(a)
-print(b)
-b = b.rfind('3')
-print(b)
+a = "1101101"
+print(a[3:3])
