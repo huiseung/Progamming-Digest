@@ -397,9 +397,71 @@ def solution(a):
 ```
 
 ## 110옮기기
+- 다시 풀어보기
+```python
+# stack, deque 이용
+
+from collections import deque
+
+def solution(s):
+    answer = []
+    for string in s :
+        stack = []
+        count = 0
+        for s in string:            
+            # 문자열이 0이면
+            if s == '0':                
+                # 앞에 2개가 1, 1인지 확인
+                if stack[-2:] == ['1', '1']:
+                    count += 1
+                    stack.pop()
+                    stack.pop()
+                # 앞에 2개가 1, 1이 아니면 그냥 0을 추가
+                else:
+                    stack.append(s)
+            # 문자열이 0이 아니면 그냥 추가
+            else:
+                stack.append(s)
+        # 110이 없기 때문에 변화 불가능
+        if count == 0:
+            answer.append(string)
+        
+        # 110이 있다면
+        else:
+            final = deque()
+            
+            # 0이 나오기 전까지는 append
+            while stack:
+                if stack[-1] == '1':
+                    final.append(stack.pop())
+                elif stack[-1] == '0':
+                    break
+            
+            # 0이 나왔다면 110을 주어진 count만큼 append
+            while count > 0:
+                final.appendleft('0')
+                final.appendleft('1')
+                final.appendleft('1')
+                count -= 1
+            
+            # stack에 남아있는거 다 추가
+            while stack:
+                final.appendleft(stack.pop())
+            answer.append(''.join(final))
+    return answer
+```
+
 ```python
 # 되는대로 구현해, 시간 초과
+"""
+문자열 x에 110을 자리 이동 시켜 사전순상 가장 앞에 놓이도록 바꾼 결과 리턴
 
+앞에서부터 1110, 1100을 찾는다
+1110은 1101로 변경
+1100은 0110으로 변경
+다시 탐색진행
+탐색 결과 1110, 1100이 없을때 까지 반복
+"""
 pattern1 = "1110"
 pattern2 = "1100"
 
