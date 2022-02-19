@@ -5,7 +5,8 @@ R: 우회전
 벽에 다을시 반대쪽으로 나옴
 격자위에서 생길수 있는 모든 사이클에 각각에 경로 길이를 계산 
 """
-
+import sys
+sys.setrecursionlimit(10 ** 6)
 
 def move(matrix, state):
     direction = {
@@ -68,6 +69,6 @@ def solution(grid):
                 start = (r, c, d)
                 state = (r, c, d)
                 search(grid, start, state, 1)
-    return answer
+    return sorted(answer)
 
 print(solution(["R","R"]))
