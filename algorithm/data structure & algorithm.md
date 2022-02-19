@@ -41,7 +41,9 @@
   - [구현](#구현)
     - [인접행렬](#인접행렬)
     - [인접리스트](#인접리스트)
+    - [matrix](#matrix)
   - [DFS](#dfs)
+    - [Cycle](#cycle)
   - [BFS](#bfs)
   - [Shortest Path](#shortest-path)
   - [Minimum Spanning Tree](#minimum-spanning-tree)
@@ -753,15 +755,60 @@ for r in range(1, numRow+1):
 # Graph
 - vertex
 - edge
+
 ## 구현
 ### 인접행렬
 
 ### 인접리스트
+
+
+### matrix
+```python
+def solution(grid):
+    global nRow, nCol, answer, visisted, direction
+    nRow = len(grid)
+    nCol = len(grid[0])
+    visited = [[[False]*4 for _ in range(nCol)] for _ in range(nRow)]
+    answer = []
+    direction = {
+        0: (-1, 0), #상
+        1: (0, 1), #우
+        2: (1, 0), #하
+        3: (0, -1) #좌
+    }
+
+
+def changeDirection(d, cmd):
+    if cmd == "S": #직진
+        nd = d
+    elif cmd == "L": #좌회전
+        nd = (d+3)%4
+    elif cmd == "R":
+        nd = (d+1)%4
+    return nd
+```
+
 ## DFS
+
+```python
+#사이즈 큰 문제를 대비해 재귀 제한을 여유롭게 잡아두자
+import sys
+sys.setrecursionlimit(10 ** 6)
+```
+
+### Cycle
+- 하나에 (방향성 따져서) 엣지가 정해지면 사이클 경로가 결정된다
+  - 이미 방문한 엣지에 대해선 어느 사이클인지 탐색을 하지 않아도 된다 
+
+- 예시 문제
+  - 프로그래머스 
+    - lv2 빛의 경로 사이클
 
 ## BFS
 
 ## Shortest Path
+
+
 
 ## Minimum Spanning Tree
 
