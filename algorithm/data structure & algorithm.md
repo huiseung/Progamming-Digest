@@ -27,6 +27,7 @@
   - [Back Tracking](#back-tracking)
   - [MinMaxTree](#minmaxtree)
 - [이분 탐색](#이분-탐색)
+  - [Parameter Search](#parameter-search)
 - [Dynamic Programming](#dynamic-programming)
 - [Memoization](#memoization)
 - [Greedy Algorithm](#greedy-algorithm)
@@ -701,6 +702,29 @@ print(solution(aList, bList))
 
 
 # 이분 탐색
+## Parameter Search
+- 이분 탐색으로 해를 찾는 문제
+- 시간복잡도 lgN
+
+- 다음 조건을 만족하는 문제에 최소값 찾기
+  - 해 x는 음이 아닌 정수
+  - 해 x에 상한, 하한이 있다
+  - 해 x가 조건 충족시, x보다 큰 모든 음이 아닌 정수대해서도 조건을 만족
+  - 해 x가 조건을 만족하지 않을때, x보다 작은 모든 음이 아닌 정수에 대해서도 조건을 만족하지 않는다
+
+- 다음 조건을 만족하는 문제에 최댓값 찾기
+  - 해 x는 음이 아닌 정수
+  - 해 x에 상한, 하한이 있다
+  - 해 x가 조건 충족시, x보다 작은 음이 아닌 정수대해서도 조건을 만족
+  - 해 x가 조건을 만족하지 않을때, x보다 큰 모든 음이 아닌 정수에 대해서도 조건을 만족하지 않는다
+
+
+
+```python
+# 금과 은 운반하기
+
+
+```
 
 
 # Dynamic Programming
