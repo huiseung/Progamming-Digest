@@ -20,6 +20,7 @@
   - [문제 파악](#문제-파악-4)
   - [풀이](#풀이-4)
   - [예제](#예제-4)
+  - [- 백준 골드4 가장 큰 정사각형](#--백준-골드4-가장-큰-정사각형)
 - [Parameter Search](#parameter-search)
   - [문제 파악](#문제-파악-5)
   - [풀이](#풀이-5)
@@ -28,7 +29,7 @@
   - [문제 파악](#문제-파악-6)
   - [풀이](#풀이-6)
   - [예제](#예제-6)
-- [상태공간트리](#상태공간트리)
+- [?](#)
   - [문제 파악](#문제-파악-7)
   - [풀이](#풀이-7)
   - [예제](#예제-7)
@@ -36,6 +37,9 @@
   - [문제 파악](#문제-파악-8)
   - [풀이](#풀이-8)
   - [예제](#예제-8)
+- [정수론](#정수론)
+  - [문제 파악](#문제-파악-9)
+  - [예제와 풀이](#예제와-풀이)
 
 ------
 
@@ -90,11 +94,13 @@
 
 # Dynamic Programming
 ## 문제 파악
-
+- 문제 해를 작은 문제 해들로 구성 가능
+- 한번 구한 부분해가 하나에 큰 문제 해를 구할때 뿐 아니라 다른 문제 해를 구할때도 사용된다
+  
 ## 풀이
 
 ## 예제
-
+- 백준 골드4 가장 큰 정사각형
 ------
 
 # Parameter Search
@@ -147,46 +153,12 @@
 
 ------
 
-# 상태공간트리
+# ?
 ## 문제 파악
 
 ## 풀이
 
 ## 예제
-```python
-max_num_sheep = 0
-
-def solve(info, graph, num_sheep, num_wolf, now_node, next_nodes):
-    global max_num_sheep
-    if info[now_node] == 0: 
-        num_sheep += 1
-    else:
-        num_wolf += 1
-    #
-    max_num_sheep = max(max_num_sheep, num_sheep)
-    #
-    if(num_sheep <= num_wolf):
-        return
-    #
-    copy_next_nodes = next_nodes.copy()
-    copy_next_nodes.remove(now_node)
-    for adj_node in graph[now_node]:
-        copy_next_nodes.add(adj_node)
-    for next_node in copy_next_nodes:
-        solve(info, graph, num_sheep, num_wolf, next_node, copy_next_nodes)
-
-def solution(info, edges):
-    answer = 0
-    global max_num_sheep
-    graph = {i: [] for i in range(len(info))}
-    for parent, child in edges:
-        graph[parent].append(child)
-    next_nodes = set()
-    next_nodes.add(0)
-    solve(info, graph, 0, 0, 0, next_nodes)
-    return max_num_sheep
-
-```
 
 
 ------
@@ -205,3 +177,18 @@ def solution(info, edges):
 
 ## 예제
 - 프로그래머스 lv3 파괴되지 않은 건물
+
+
+----
+# 정수론
+## 문제 파악
+- 정수 성질과 관련한 다양한 문제가 존재한다
+
+## 예제와 풀이
+- 프로그래머스 lv3 최고의 집합
+  - 자연수 n개로 이루어진 숫자쌍(중복 존재 가능)중 원소 합이 S면서 원소 곱이 최대인 숫자쌍 찾기
+  - 풀이
+    - 숫자간에 차이가 작을 수록 곱이 최대이다
+    - s//n이 n개인 숫자쌍에 s%n개에 원소에 각 1씩 더한 숫자쌍이 찾는 숫자쌍이다
+    - n > s이면 조건을 만족하는 숫자쌍이 없다  
+
