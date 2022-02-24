@@ -22,7 +22,9 @@ def solution(matrix):
             if matrix[r][c] == 1:
                 val = min(dp[r-1][c-1], dp[r-1][c], dp[r][c-1])+1
                 dp[r][c] = val
-                answer = max(answer, val)    
+    for row in dp:
+        for num in row:
+            answer = max(answer, num)
     return answer**2
 
 def printMatrix(matrix):
