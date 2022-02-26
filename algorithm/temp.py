@@ -1,2 +1,2 @@
-a = list(input())
-print(a)
+a = "1234"
+print(a[7:])
