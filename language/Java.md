@@ -11,6 +11,7 @@
 - [언어 공부 목적](#언어-공부-목적)
 - [목차](#목차)
 - [OOP](#oop)
+  - [S.O.L.I.D](#solid)
 - [Java version update 중요 사항](#java-version-update-중요-사항)
 - [JVM](#jvm)
 - [Keyword](#keyword)
@@ -47,10 +48,18 @@
 - [Stream](#stream)
 - [Lambda](#lambda)
 - [replication](#replication)
+- [regex](#regex)
 
 
 # OOP
-
+## S.O.L.I.D
+- Single Responsibility Principle
+  - 하나에 클래스는 하나에 기능, 책임만 갖는다
+- Open Close Principle
+  - 요구사항 변경되더라도 기존 코드가 수정되지 말아야한다
+- Liskov Subtitution Principle
+- Interface Segregation Principle
+- Dependency Inversion Principle
 
 # Java version update 중요 사항
 - version 5
@@ -286,3 +295,13 @@ str += "world";
 # Lambda
 
 # replication
+
+
+# regex
+
+문자 | 의미
+|---|---|
+| | |
+| | |
+
+
