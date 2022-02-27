@@ -7,6 +7,7 @@
 - [문자열 조작](#문자열-조작)
 - [stack 이용](#stack-이용)
   - [예제](#예제-1)
+- [queue 이용](#queue-이용)
 - [Linked List 이용](#linked-list-이용)
 - [완전탐색](#완전탐색)
   - [문제 파악](#문제-파악-1)
@@ -89,6 +90,23 @@ def solution(s):
     return 0
 ```
 
+# queue 이용
+
+```python
+from collections import deque
+# 파이썬 List의 pop(0)은 O(N)이 소요된다, O(1)에 pop(0)을 지원하는 deque 사용하자
+
+q = deque()
+# 삽입
+q.appendleft("e") #왼쪽
+q.append("e") #오른쪽
+# 삭제후 반환
+e = q.popleft() #왼쪽
+e = q.pop() #오른쪽
+# 조회
+e = q[0] #왼쪽
+e = q[-1] #오른쪽
+```
 
 
 # Linked List 이용
@@ -108,6 +126,8 @@ def solution(s):
   - permutations
 - 프로그래머스 lv2 양궁대회
   - combinations_with_replacement
+- 프로그래머스 lv2 카펫
+  - 정수 연립 방정식 해 찾기
 
 ------
 # BackTracking
@@ -132,6 +152,7 @@ def solution(s):
 ## 풀이
 
 ## 예제
+- 프로그래머스 lv2 구명보트
 
 ------
 
