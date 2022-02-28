@@ -1,2 +1,3 @@
-a = "1234"
-print(a[7:])
+print(ord("a"))
+print(ord("A"))
+print(chr(65))

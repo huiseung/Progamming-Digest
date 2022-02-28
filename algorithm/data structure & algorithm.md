@@ -316,7 +316,6 @@ def solution(n):
         for e in row:
             answer.append(e)     
     return answer
-
 ```
 
 # 쿼드 트리
