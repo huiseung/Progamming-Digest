@@ -4,9 +4,10 @@
 - [input/output](#inputoutput)
 - [사칙 연산](#사칙-연산)
 - [문자열 셔플](#문자열-셔플)
-- [slice](#slice)
-- [range](#range)
-- [리스트를 stack으로 사용](#리스트를-stack으로-사용)
+- [ArrayList](#arraylist)
+  - [slice](#slice)
+  - [range](#range)
+- [ArrayList를 stack으로 사용](#arraylist를-stack으로-사용)
 - [Counter](#counter)
 - [자연수 각 자리수 돌기](#자연수-각-자리수-돌기)
 - [이진수](#이진수)
@@ -123,13 +124,14 @@ def shuffle(s):
 
 ```
 
-# slice
+# ArrayList
+## slice
 ```python
 aList = [1,2,3]
 print(aList[5:]) # [], 인덱스 범위밖에서부터 슬라이싱
 ```
 
-# range
+## range
 ```python
 # range(start=0, stop, step=1)
 # start부터 시작해 stop이 되기 직전까지 step씩 차이나는 등차 수열을 원소로 갖는 리스트 반환
@@ -172,7 +174,7 @@ for i in range(0, 5, stride):
 
 ```
 
-# 리스트를 stack으로 사용
+# ArrayList를 stack으로 사용
 ```python
 # 올바른 괄호문 확인
 def check(s):

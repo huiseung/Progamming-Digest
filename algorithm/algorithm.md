@@ -6,6 +6,7 @@
   - [문제 파악](#문제-파악)
   - [풀이](#풀이)
   - [예제](#예제)
+- [LinkedList](#linkedlist)
 - [stack 이용](#stack-이용)
   - [예제](#예제-1)
 - [queue 이용](#queue-이용)
@@ -90,7 +91,8 @@ def printMatrix(matrix):
 ```
 
 # 리스트 활용
-
+- 파이썬의 리스트는 ArrayList
+  
 |method|example|big O|note|
 |----|---|---|---|
 |조회|l[i]|O(1)||
@@ -100,6 +102,7 @@ def printMatrix(matrix):
 |변화|l[i] = e|O(1)||
 |마지막 삭제|e = l.pop()|O(1)|l.pop(-1)|
 |k번째 삭제|e = l.pop(k)|O(k)||
+
 
 
 # 숫자칸 채우기, 돌리기, 뒤집기
@@ -188,7 +191,11 @@ def solution(n):
 ## 예제
 
 
-
+# LinkedList
+- 파이썬 기본 제공 링크드 리스트는 없다
+- LinkedList 활용: 2가지 조건을 만족
+  - 빈번한 아이템 삭제
+  - 현재 조회중인 아이템 다음으로 앞, 뒤를 조회하는 경우가 빈번한 경우(임의의 위치 검색은 느리다) 
 
 # stack 이용
 ## 예제
