@@ -215,7 +215,8 @@ String printStackTrace();
 ## checked exception
 - compile 시점에 확인 가능
 - 예외 처리를 하지 않으면 컴파일 불가
-- Exception 상속받은 클래스 중 RuntimeException을 제외한 모든 클래스
+- Exception을 상속한 클래스중 RuntimeException을 제외한 모든 클래스
+  - ex) IOException, SQLException
 
 ## unchecked exception
 - compile 시점에 잡아 내지 못해 run time 도중 발생
