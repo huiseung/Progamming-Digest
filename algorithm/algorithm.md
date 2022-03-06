@@ -8,13 +8,16 @@
     - [풀이](#풀이)
   - [가로, 세로 한칸씩 옮기기](#가로-세로-한칸씩-옮기기)
   - [가로, 세로, y=x, y=-x 구간 확인](#가로-세로-yx-y-x-구간-확인)
+  - [직각 라인별로 배열 바라보기](#직각-라인별로-배열-바라보기)
 - [LinkedList](#linkedlist)
 - [stack 이용](#stack-이용)
   - [예제](#예제)
 - [queue 이용](#queue-이용)
   - [예제](#예제-1)
 - [Linked List 이용](#linked-list-이용)
+- [산수](#산수)
 - [문자열 조작](#문자열-조작)
+- [날짜](#날짜)
 - [완전탐색](#완전탐색)
   - [문제 파악](#문제-파악-1)
   - [풀이](#풀이-1)
@@ -198,12 +201,129 @@ def solution(n):
 
 
 ## 가로, 세로 한칸씩 옮기기
+- 행렬에서 특정 행 혹은 특정 열을 한칸씩 민다
+- 끝에 있는 원소는 반대로 밀린다
+- 행은 오른쪽 또는 왼쪽으로 열은 위 또는 아래쪽으로 밀 수 있다
+
+```python
+
+def moveRow(board, rowIdx, cmd):
+  retBoard = [row[::] for row in board]
+  nCol = len(retBoard[0])
+  if cmd == "toRight":
+    temp = retBoard[rowIdx][-1]
+    for colIdx in range(nCol-1, 0, -1):
+      retBoard[rowIdx][colIdx] = retBoard[rowIdx][colIdx-1]
+    retBoard[rowIdx][0]=temp
+  elif cmd == "toLeft":
+    temp = retBoard[rowIdx][0]
+    for colIdx in range(0, nCol-1, 1):
+      retBoard[rowIdx][colIdx] = retBoard[rowIdx][colIdx+1]
+    retBoard[rowIdx][-1] = temp
+  return retBoard
+
+def moveCol(board, colIdx, cmd):
+  retBoard = [row[::] for row in board]
+  nRow = len(retBoard)
+  if cmd == "toDown":
+    temp = retBoard[-1][colIdx]
+    for rowIdx in range(nRow-1, 0, 1):
+      retBoard[rowIdx][colIdx] = retBoard[rowIdx-1][colIdx]
+    retBoard[0][colIdx] = temp
+  elif cmd == "toUp":
+    temp = retBoard[0][colIdx]
+    for rowIdx in range(0, nRow-1, 1):
+      retBoard[rowIdx][colIdx] = retBoard[rowIdx+1][colIdx]
+    retBoard[-1][colIdx] = temp
+  return retBoard
+
+```
 
 
 ## 가로, 세로, y=x, y=-x 구간 확인
+- 1과 0으로 구성된 행렬
+- 원하는 한 줄에 연속된 1의 갯수 확인 
+
+```python
+
+matrix [
+  [1, 1, 0, 1, 1],
+  [0, 1, 1, 1, 1],
+  [0, 1, 1, 0, 0],
+  [1, 1, 1, 1, 1],
+  [1, 1, 0, 1, 1]
+]
+target = 5 # target초과로 연속된건 치지 않는다
+nRow = len(matrix)
+nCol = len(matrix[0])
+totalCount = 0
+# 가로
+for rowIdx in range(nRow):
+  count = 0
+  for colIdx in range(nCol):
+    num = matrix[rowIdx][colIdx]
+    if num == 1:
+      count += 1
+    elif num == 0 and count > 0:
+      if count == target:
+        totalCount += 1
+      count = 0
+  if count == target:
+    totalCount += 1
+# 세로
+for colIdx in range(nCol):
+  count = 0
+  for rowIdx in range(nRow):
+    num = matrix[rowIdx][colIdx]
+    if num == 1:
+      count += 1
+    elif num == 0 and count > 0:
+      if count == target:
+        totalCount += 1
+      count = 0
+  if count == target:
+    totalCount += 1
+# y=x
+for rowStart in range(nRow+nCol):
+  count = 0
+  for colIdx in range(nCol):
+    rowIdx = rowStart-colIdx
+    if 0 <= rowIdx < nRow:
+      num = matrix[rowIdx][colIdx]
+      if num == 1:
+        count += 
+  
 
 
 
+# y=-x
+
+```
+
+## 직각 라인별로 배열 바라보기
+
+```python
+"""
+#
+1 2 3 4
+2 2 3 4
+3 3 3 4
+4 4 4 4
+
+# max(i//n, i%n) 을 이용하면 직각 라인 별로 값을 만들 수 있다
+#
+(0, 0) (0, 1) (0, 2) (0, 3) 
+(1, 0) (1, 1) (1, 2) (1, 3)
+(2, 0) (2, 1) (2, 2) (2, 3)
+(3, 0) (3, 1) (3, 2) (3, 3) 
+"""
+
+def solution(n, left, right):
+    answer = []
+    for i in range(left, right+1):
+        answer.append(max(i//n,i%n)+1)
+    return answer
+```
 
 # LinkedList
 - 파이썬 기본 제공 링크드 리스트는 없다
@@ -256,6 +376,18 @@ e = q[-1] #오른쪽
 # Linked List 이용
 
 
+# 산수
+```python
+# 내림(주어진 수보다 작은 수중 가장 큰 정수), 반올림, 올림(주어진 수보다 큰 수중 가장 작은 정수)
+from math import floor, ceil
+
+num = floor(3.5) # 3
+num = round(3.5) #4
+num = ceil(3.5) #4
+
+```
+
+
 # 문자열 조작
 ```python
 # 대문자는 소문자로(그외는 유지)
@@ -268,6 +400,16 @@ string = string.lower()
 ord('a') # 97
 chr('97') # a
 ```
+
+
+# 날짜
+```python
+from datetime import datetime
+
+
+```
+
+
 ------
 
 # 완전탐색

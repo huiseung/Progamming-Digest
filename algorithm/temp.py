@@ -1,4 +1,4 @@
-a = [1,2,3]
-b = [1,2,3]
-if a == b:
-    print("es")
+from math import floor, ceil
+
+a = -3.5
+print(ceil(a))
