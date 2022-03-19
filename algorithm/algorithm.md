@@ -12,8 +12,9 @@
 - [LinkedList](#linkedlist)
 - [stack 이용](#stack-이용)
   - [예제](#예제)
-- [queue 이용](#queue-이용)
+- [deque 이용](#deque-이용)
   - [예제](#예제-1)
+- [heap, priority queu 이용](#heap-priority-queu-이용)
 - [Linked List 이용](#linked-list-이용)
 - [산수](#산수)
 - [문자열 조작](#문자열-조작)
@@ -26,14 +27,13 @@
   - [문제 파악](#문제-파악-2)
   - [풀이](#풀이-2)
   - [예제](#예제-3)
-- [Greedy Algorithm](#greedy-algorithm)
+- [탐욕법 Greedy Algorithm](#탐욕법-greedy-algorithm)
   - [문제 파악](#문제-파악-3)
   - [풀이](#풀이-3)
   - [예제](#예제-4)
 - [동적 계획법 Dynamic Programming](#동적-계획법-dynamic-programming)
   - [문제 파악및 풀이](#문제-파악및-풀이)
   - [예제](#예제-5)
-  - [- 프로그래머스 lv3 2 x n 타일링](#--프로그래머스-lv3-2-x-n-타일링)
 - [Parameter Search](#parameter-search)
   - [문제 파악](#문제-파악-4)
   - [풀이](#풀이-4)
@@ -42,7 +42,7 @@
   - [문제 파악](#문제-파악-5)
   - [풀이](#풀이-5)
   - [예제](#예제-7)
-- [?](#)
+- [BFS tree에서 path를 갖는 노드쌍 찾기](#bfs-tree에서-path를-갖는-노드쌍-찾기)
   - [문제 파악](#문제-파악-6)
   - [풀이](#풀이-6)
   - [예제](#예제-8)
@@ -63,6 +63,11 @@
 - 날짜 구간
 - 대각 누적합 확인
 - 이동에 완전탐색
+
+- 가장 짧은 고유 검색어 찾기(단어풀중 전체문자열을 특정할 수 있는 부분문자열)
+- 배열 읽기/쓰기 멀티 프로세스 구현
+- 하나에 트리를 다른 트리와 같은 모양으로 바꾸는데 드는 동작 횟수
+- 오름차순 생성
 
 
 # input
@@ -117,7 +122,8 @@ def printMatrix(matrix):
 # 여러가지 행렬 조작
 ## 숫자칸 채우기
 ### 문제 파악
-- 달팽이 채우기
+- 달팽이 채우기(시계, 반시계)
+- 회오리 채우기(시계, 반시계)
 - 정삼각형 채우기
 - 직사각형 태두리 돌리기
 
@@ -347,7 +353,7 @@ def solution(s):
     return 0
 ```
 
-# queue 이용
+# deque 이용
 
 ```python
 from collections import deque
@@ -368,6 +374,11 @@ e = q[-1] #오른쪽
 
 ## 예제
 - 프로그래머스 lv2 프린터
+
+# heap, priority queu 이용
+```python
+
+```
 
 
 # Linked List 이용
@@ -395,7 +406,10 @@ string = string.lower()
 
 # 문자와 아스키코드
 ord('a') # 97
-chr('97') # a
+chr(65) # A
+chr(90) # Z
+chr(97) # a
+chr(122) # z
 ```
 
 
@@ -518,7 +532,7 @@ cand_list = product(population, repeat=r)
 
 
 ------
-# Greedy Algorithm
+# 탐욕법 Greedy Algorithm
 ## 문제 파악
 - 최적화 문제
 - 최적 부분 구조
@@ -544,6 +558,7 @@ cand_list = product(population, repeat=r)
   - f(1), f(2), 등 작은 n에 대해 f값은 구하기 쉽다
   - f(n)은 n보다 작은 변수 x들에 대한 함수값 f들의 합으로 구성된다
   - n은 일 변수가 아니라 이변수일 수 있다
+
 - n이 클경우 f값이 너무 커 정해진 큰 수로 나눈 나머지를 요구하는 경우가 있다
   - 그럴경우 점화식 자체에도 큰 수로 나누는 식을 사용하면 된다
   - $A_1 = p*Q_1 + r_1$
@@ -553,6 +568,10 @@ cand_list = product(population, repeat=r)
 ## 예제
 - 프로그래머스 lv2 가장 큰 정사각형
 - 프로그래머스 lv3 2 x n 타일링
+- 최소 생산 비용
+- 최단 경로
+  - 반드시 한번 대각선을 지나는 최단 경로
+- 
 ------
 
 # Parameter Search
@@ -605,10 +624,11 @@ cand_list = product(population, repeat=r)
 
 ------
 
-# ?
+# BFS tree에서 path를 갖는 노드쌍 찾기
 ## 문제 파악
 
 ## 풀이
+- 각 노드들을 root삼아 BFS를 돌린다
 
 ## 예제
 
