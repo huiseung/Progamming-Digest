@@ -25,6 +25,7 @@
 - [Transport Layer](#transport-layer)
   - [socket](#socket)
   - [TCP](#tcp)
+    - [다중화와 역다중화 multiplexing and demutiplexing](#다중화와-역다중화-multiplexing-and-demutiplexing)
     - [3 hand shake](#3-hand-shake)
     - [4 hand shake](#4-hand-shake)
   - [UDP](#udp)
@@ -264,9 +265,15 @@ response body
 --------
 
 # Transport Layer
+- 프로세스간 논리적 통신 제공: 서로 다른 호스트에서 동작중인 애플리케이션이 직접 연결된 것처럼 통신한다.
+  - 실제론 호스트와 호스트 사이에 수많은 라우터와 링크들이 존재한다
+- segment: transport layer에 packet 단위
+  - 애플리케이션 message를 분해한 후 header를 붙인다 
+  - 이를 송신측은 Network layer로 보내고, 수신측은 Network layer로 부터 받는다
 - data 전송, 통신 제어
   - 신뢰, 처리율, 처리시간 보장, 보안을 담당한다
-- 네트워크에서 전송중인 data packet은 손실될 수 있다
+- IP(Internet Protocol)은 segment 전달을 보장하지 않는다.
+  - 네트워크에서 전송중인 data packet은 손실될 수 있다. 순서 역시 보장하지 않는다
   - ex) 라우터 버퍼 오버플로우, 비트 조작
 - 오디오, 비디오같은 data는 어느 정도(사용자가 이상을 느끼지 않을 정도) 손실을 허용한다
 - 처리율: 초당 처리 bit 
@@ -276,13 +283,31 @@ response body
 
 ## socket
 - 하나에 computer에 동작중인 process가 다른 computer에 동작 중인 process와 통신하기 위해 OS가 제공하는 기능(system call을 이용해 구현) 
+- 프로세스에서 네트워크로 데이터 송신, 네트워크로부터 프로세스로 데이터 수신을 하는 출입구 역활
 - TCP와 UDP 두가지 방식이 있다
 
 ## TCP
 - transmission control protocol
+- 프로세스간 논리적 통신
 - 연결 지향형(3 hand shake와 4 hand shake)
-- 신뢰도 높음
+  - 하나에 client와 하나에 server를 점대점으로 연결한다
+- 신뢰도 높음(순서대로 모두 도착함을 보장한다)
 - 혼잡 제어 있음
+  - 통신중인 호스트 사이에 있는 스위치와 링크가 폭주하는젓을 방지
+- 오류 검출 가능
+- 타이머
+
+![](./image/tcp_segment.PNG)
+
+![](./image/segment_seq_ex.PNG)
+
+- 순서번호 SEQ
+- 확인응답번호 ACK: 
+
+### 다중화와 역다중화 multiplexing and demutiplexing
+- network layer에 호스트간 논리적 통신을 프로세스간 논리적 통신으로 확장
+- 다중화: 송신을 위해 message를 segment로 만들고 이를 network layer로 보내는 과정
+- 역다중화: transport layer에 수신받은 segment를 올바른 socket에 전달하는 과정
 
 ### 3 hand shake
 - TCP socket을 쓰는 client-server에 통신 연결 과정
@@ -294,9 +319,9 @@ response body
 ## UDP
 - user datagram protocol
 - 비연결형
-- 신뢰도 낮음
+- 신뢰도 낮음(송신한 데이터가 목적지에 제대로 도착함을 보장하지 않는다)
 - 혼잡 제어 없음
-- 
+- 프로세스간 논리적 통신, 오류 검출 두 가지만 제공
 
 ## SSL
 - secure socket layer
@@ -305,6 +330,7 @@ response body
 
 ------
 # Internet Layer(Network Layer)
+- host간에 논리적 통신 제공
 ## IP와 port
 - ip: internet 서비스 공급자에서 할당 해준 internet에서 computer를 구분하는 주소 
   - version 4는 . 으로 구분되는 4개의 숫자로 이루어져있다. 각 숫자는 0~255(8bit)범위를 갖는다. 총 32bit
