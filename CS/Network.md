@@ -32,6 +32,7 @@
     - [혼잡 제어](#혼잡-제어)
     - [신뢰 보장](#신뢰-보장)
   - [UDP](#udp)
+  - [네이글 알고리즘 nagle algorithm](#네이글-알고리즘-nagle-algorithm)
   - [SSL](#ssl)
 - [Internet Layer(Network Layer)](#internet-layernetwork-layer)
   - [IP와 port](#ip와-port)
@@ -42,7 +43,6 @@
 - [Network Access Layer(Data Link Layer + Physical Layer)](#network-access-layerdata-link-layer--physical-layer)
   - [MAC](#mac)
     - [ARP](#arp)
-  - [](#)
 - [apache 와 nginx](#apache-와-nginx)
 - [tomcat](#tomcat)
 - [취약점](#취약점)
@@ -51,6 +51,7 @@
 - [proxy](#proxy)
 - [reverse proxy](#reverse-proxy)
 - [load balancing](#load-balancing)
+- [대용량 트래픽 처리법](#대용량-트래픽-처리법)
 
 
 # Computer Network
@@ -347,6 +348,22 @@ response body
 - 혼잡 제어 없음
 - 프로세스간 논리적 통신, 오류 검출 두 가지만 제공
 
+## 네이글 알고리즘 nagle algorithm
+- 데이터 전송시 네트워를 통해 보내는 패킷수를 줄여 효율성을 높이는 알고리즘
+  - ACK를 받기까지 버퍼에 대기하느라 속도는 느려지지만 전송 패킷 수는 줄어든다
+  - 실시간성을 요구할땐 좋지 않다
+- TCP 소켓이 기본으로 채택하고 있는 알고리즘
+
+```
+if 새 데이터 전송
+  if 상대가 받을 수 있는 사이즈 >= 세그먼트사이즈최대값 and 데이터 사이즈 >= 세그먼트사이즈
+    최대 세그먼트 사이즈 만큼 전송
+  else
+    if 보내지 못한 데이터 부분이 남음
+      ACK를 받을 때까지 버버에 넣고 대기
+    else
+```
+
 ## SSL
 - secure socket layer
 - TCP, UDP 둘다 보안 기능이 없다
@@ -363,6 +380,18 @@ response body
 - port: 한 computer(동일 ip)에서 process를 구분하는 번호
 
 ### subnet과 subnet mask
+
+- 서브네팅
+  - IP 주소를 네트워크 영역+호스트영역으로 구성
+  - 같은 네트워크 영역내 IP끼리는 라우터를 거치지 않고 패킷 교환 가능
+- 서브넷마스크
+  - 연속된 1과 그다음 연속된 0으로 된 32 자리 2진수
+  - 1은 네트워크 영역을 0은 호스트 영역을 의미
+  - Class에서 제공하는 서브넷 마스크 말고 자체 서브넷 마스크를 이용할 경우 IP주소를 표기할때 뒤에 '/1에갯수' 를 적어 해당 IP의 서브넷 마스크를 나타낸다
+  - IP주소 AND 서브넷마스크 = 네트워크 영역
+  - 가질 수 있는 서브넷 네트워크 수와 각 서브넷 네트워크에 호스트 영역 수를 계산할 줄 알아야 한다
+  - 호스트 수는 2^(영역수)-2, 빼기 2는 네트워크 영역 구분용(영역내에 가장 작은 수)과 브로드캐스트 용(영역내 가장 큰 수)
+
 
 ## Forwarding
 
@@ -383,8 +412,9 @@ response body
 
 
 ### ARP
+- IP 주소를 MAC 주소로 변환하는데 사용하는 프로토콜
+- 브로드 캐스트를 통해 해당 IP주소를 가진 host를 찾음
 
-## 
 
 ------
 # apache 와 nginx
@@ -416,3 +446,17 @@ response body
 ----------
 
 # load balancing
+
+
+# 대용량 트래픽 처리법
+- 발생시점을 예상 가능한가 vs 급작스런 증가인가
+- 캐시에서 감당이 안 될때 디비에서 처리하도록 서킷브레이커
+- 스케일업
+- 스케일아웃
+- 스프링이면 톰캣 스레드풀 설정 바꾸기
+- 로드밸런싱
+- 데이터베이스 샤딩
+- 데이터베이스 레플리카
+- 캐시
+- CDN
+- 그럼에도 불구하고 커버가 불가능한 경우 클라이언트에게 실패 응답을 보내 다시 시도하게 끔 한다
