@@ -28,15 +28,21 @@
     - [다중화와 역다중화 multiplexing and demutiplexing](#다중화와-역다중화-multiplexing-and-demutiplexing)
     - [3 hand shake](#3-hand-shake)
     - [4 hand shake](#4-hand-shake)
+    - [SYN Flood Atack](#syn-flood-atack)
+    - [혼잡 제어](#혼잡-제어)
+    - [신뢰 보장](#신뢰-보장)
   - [UDP](#udp)
   - [SSL](#ssl)
 - [Internet Layer(Network Layer)](#internet-layernetwork-layer)
   - [IP와 port](#ip와-port)
+    - [subnet과 subnet mask](#subnet과-subnet-mask)
+  - [Forwarding](#forwarding)
   - [Routing](#routing)
-  - [ARP](#arp)
-  - [subnet mask](#subnet-mask)
+  - [Datagram](#datagram)
 - [Network Access Layer(Data Link Layer + Physical Layer)](#network-access-layerdata-link-layer--physical-layer)
   - [MAC](#mac)
+    - [ARP](#arp)
+  - [](#)
 - [apache 와 nginx](#apache-와-nginx)
 - [tomcat](#tomcat)
 - [취약점](#취약점)
@@ -300,7 +306,6 @@ response body
 ![](./image/tcp_segment.PNG)
 
 ![](./image/segment_seq_ex.PNG)
-
 - 순서번호 SEQ
 - 확인응답번호 ACK: 
 
@@ -311,10 +316,29 @@ response body
 
 ### 3 hand shake
 - TCP socket을 쓰는 client-server에 통신 연결 과정
-- 
+1) client가 server에게 SYN=True, ACK=False인 segment를 전송한다, data를 포함하지 않고, SEQ는 random number
+2) server가 client에게 SYN=True, ACK=True인 segment를 전송한다, data를 포함하지 않고, SEQ는 random number, ACK는 1번의 SEQ에 +1
+3) client가 server에게 SYN=False, ACK=True인 segment를 전송한다, data를 포함할 수 있고, SEQ는 1번의 SEQ+1, ACK는 2번의 SEQ에 +1
+이상에 과정을 거친 client와 server는 request, response를 주고 받을 수 있다
+
 
 ### 4 hand shake
 - TCP socket을 쓰는 client-server에 통신 종료 과정
+1) client가 server에게 FIN=True인 segment를 전송한다
+2) server가 client에게 ACK=True인 segment를 전송한다 
+3) server가 client에게 FIN=True인 segment를 전송한다
+4) client가 server에게 ACk=True인 segment를 전송한다
+5) client는 설정한 대기시간동안 대기(4번이 손실될 경우를 재전송을 대비)후 종료, server는 추가 segment가 안 온다면 종료 
+
+### SYN Flood Atack
+- 1996년에 발견된 dos 공격
+- 악의적으로 3 hand shake에 세번째 단계를 완료시키지 않는 무수히 많은 SYN=True segment를 보내 server 자원을 낭비시켜 정상 client가 통신 시도를 못하게 방해하는 공격
+- 현재 대부분에 OS는 SYN cookie기술을 이용한 방어책을 갖고 있다
+
+### 혼잡 제어
+
+### 신뢰 보장
+
 
 ## UDP
 - user datagram protocol
@@ -331,17 +355,22 @@ response body
 ------
 # Internet Layer(Network Layer)
 - host간에 논리적 통신 제공
+
 ## IP와 port
 - ip: internet 서비스 공급자에서 할당 해준 internet에서 computer를 구분하는 주소 
   - version 4는 . 으로 구분되는 4개의 숫자로 이루어져있다. 각 숫자는 0~255(8bit)범위를 갖는다. 총 32bit
   - 한 computer에 ip는 공급자에 의해 바뀔 수 있다
 - port: 한 computer(동일 ip)에서 process를 구분하는 번호
 
+### subnet과 subnet mask
+
+## Forwarding
+
 ## Routing
+- packet 전송 경로를 결정하는 과정
+- 
 
-## ARP
-
-## subnet mask
+## Datagram
 
 
 ------
@@ -352,6 +381,10 @@ response body
 - : 으로 구분되는 6개 숫자로 이루어져 있다. 각 숫자는 32bit로 16진수 2자리다  
 - ip와 다르게 변하지 않는다
 
+
+### ARP
+
+## 
 
 ------
 # apache 와 nginx
