@@ -18,6 +18,7 @@
 
 # Operating System
 
+
 # CPU virtualization
 ## process와 limited direct execution
 Q. 프로레스란 무엇인가요
@@ -62,6 +63,7 @@ Q. PCB, Process Control Block 란 무엇인가요
 - state
   - runnable, running, zombie, sleeping
 
+
 Q. 제한적 직접 실행이란 무엇인가요
 - user mode에서는 시스템 자원에 접근 제한을 두고, 사용을 원할 경우 system call을 호출해 kernel mode에 진입하여 시스템 자원을 사용하고 작업을 마치면 user mode로 다시 돌아오게끔 설계한 방식
 - kernel mode 진입시(인터럽트 발생시) 프로세스에 할당되었던 cpu를 반납받아 스케줄링을 작업할 수 있다.
@@ -74,13 +76,18 @@ Q. 멀티 프로세스 다른 말로 CPU 가상화는 어떻게 가능한가요.
 
 Q. 인터럽트란 무엇인가요
 - 입출력 연산, 예외상황 등에 작업을 마이크로프로세서에게 기존 시스템 수행흐름을 중지시키고 먼저 처리를 요청, 처리가 끝나면 기존 작업으로 돌아간다
+- software interupt
+- hardware interupt
 
 Q. 시스템콜이란 무엇인가요
 - 커널 접근 인터페이스, 응용프로그램이 시스템 자원을 사용하길 원할때 유저모드에 있는 프로그램을 커널모드로 바꾼다. 작업을 마치면 유저모드로 돌아온다. 
 
 Q. IPC, 프로세스간 통신은 어떻게 이루어 지나요
-- PIPE
+- 서로 다른 프로세스간 통신
+- 익명 PIPE
+  - 동일한 부모를 가진 프로세스간 통신
 - Named PIPE
+  - 
 - Mesage Queue
 - Shared Memory
 - Memory Map
@@ -89,6 +96,10 @@ Q. IPC, 프로세스간 통신은 어떻게 이루어 지나요
 ## scheduling 과 context switching
 
 Q. 스케줄링이란 무엇인가요
+- context switching시 다음 동작할 process를 결정하는 과정
+
+Q. 컨텍스트 스웨칭이란 무엇인가요
+
 
 Q. 선점 스케줄링과 비선점 스케줄링
 - CPU를 프로세스로 부터 갈취해 다른 프로세스에게 할당하는 방식으로 동작하는 스케줄링이면 선점, 아니면 비선점 스케줄링
@@ -99,7 +110,6 @@ Q. RR 스케줄링은 어떻게 동작하나요
 
 Q. MLFQ 스케줄링은 어떻게 동작하나요
 
-Q. 컨텍스트 스웨칭이란 무엇인가요
 
 
 # memory virtualization
@@ -127,10 +137,12 @@ Q. LRU 교체 정책
 - 가장 사용되지 않았던 page를 교체시키는 정책
 - 구현 자료구조: double linked list와 hashtable을 결합해 구현
 
+
 ## thread
 Q. 스레드란 무엇인가요
 - code, data, heap 영역을 공유하며, stack 영역만을 개별로 갖는 Light weight process
 - 공유하는 주소공간에 대해서 page 교체를 할 필요가 없음
+  - context switching시 process보다 효율적!
 - 하나에 task를 동시 작업 가능
 
 ## lock, conditaion variable, semaphore
@@ -138,7 +150,10 @@ Q. critical section, race condition, mutual exclusion에 대해 설명해 주세
 - critical section(임계 영역): 스레드가 공유하는 자원에 접근하는 코드 구간
 - race condition(경쟁조건): 다수의 스레드가 임계 영역에 동시 접근해 실행 순서에 따라 문제를 발생시킬 수 있는 상황
 - mutual exclusion(상호배제): race condition이 발생하지 않도록 하나에 스레드가 공유 자원에 접근 중일때 다른 스레드가 접근 하지 않도록 막는 기술
-  
+
+Q Reentrant
+- 여러 스레드가 동시에 접그냏도 언제나 같은 실행 결과를 보장한다는 의미 
+
 Q. spin lock
 
 Q. semaphore
@@ -154,6 +169,7 @@ Q. 교착상태가 발생하는 상황은 무엇인가요
   - 환영 대기: 스레드가 각기 독점중인 자원을 서로 원하며 맞물린 상태
 
 Q. 데드락 해결
+- 발생 조건 4가지 중 하나라도 해결하면 된다
 
 
 Q. 동기화 문제
@@ -162,13 +178,16 @@ Q. 동기화 문제
 - 독자 저자 문제
 
 Q. Sychronous vs asychoronus
+- callback function: 다른 함수에 인자로 넘길 수 있는 함수면서 어떤 
+- synchronous
+- asynchronous
 
 Q. blocking vs non blocking
-
+- blocking: A함수가 B함수를 호출할때 A함수에 제어권을 B함수에게 넘겨줌
+- non blocking: A함수가 B함수를 호출할때 A함수에 제어권을 B함수에게 넘겨주지 않음
 
 ## JVM
 Q. java가 os독립적으로 코드를 실행시킬 수 있는 이유
-
 
 
 # persistence
