@@ -27,7 +27,6 @@
 - [String literal, new String, StrinBuilder, StringBuffer](#string-literal-new-string-strinbuilder-stringbuffer)
 - [Array](#array)
 - [java.util.Collections](#javautilcollections)
-  - [!](#)
 - [Class](#class)
   - [Constructor와 Design Pattern](#constructor와-design-pattern)
   - [equals 와 hascode](#equals-와-hascode)
@@ -35,6 +34,7 @@
 - [Enum](#enum)
 - [Generic](#generic)
 - [Interface](#interface)
+  - [interface 사용 목적](#interface-사용-목적)
 - [Abstract class](#abstract-class)
 - [Anotation](#anotation)
 - [Exception과 Error](#exception과-error)
@@ -46,6 +46,8 @@
 - [lamda](#lamda)
 - [serialize](#serialize)
 - [reflection](#reflection)
+- [input/output](#inputoutput)
+- [thread](#thread)
 
 ------------
 
@@ -173,7 +175,7 @@ String str = new String("test");
   - heap area에 intern pool에 literal을 저장, 같은 문자열로 추가 변수를 선언할때 동일한 intern pool주소값을 가르킨다 
 - new String 방식
   - 변수 선언할때 마다 heap area에 새로 인스턴스 할당
-- string에 equals는 값 비교를 한다. == 은 주소 비교를 한다
+- string에 equals는 값 비교를 하는걸로 오버라이딩 되어있다.
 
 - String은 불변 객체(immutable), thread safe하다
 - StringBuilder와 StringBuffer는 가변 객체로 값이 변경 되더라도 heap area에 주소를 새로 할당하지 않는다
@@ -190,11 +192,14 @@ int[] arr = new int[5];
 ```
 
 # java.util.Collections
+
 ![](./image/javaCollection.PNG)
+
 -------------
 
 # Class
 - Field, Method, Constructor로 구성
+- 모든 클래스는 Object란 이름에 클래스에 자식이다
 
 ## Constructor와 Design Pattern
 - static factory method
@@ -207,8 +212,64 @@ int[] arr = new int[5];
 
 - dependecy injection
 ## equals 와 hascode
+- Object 클래스에 정의된 메서드
+
+- equals는 현재 객체와 파라미터로 받은 객체가 같은 객체(같은 heap area 주소를 가리키는지)인지 반환
+
+```java
+boolean equals(Object obj){
+  return (this == obj);
+}
+```
+- entity class를 만들때 id가 같으면 같은 인스턴스가 되게끔 equals를 오버라이딩 해야한다
+
+```java
+class MyEntity{
+  private Long id;
+
+  //
+  boolean equals(Object obj){
+    if(obj == null){
+      return false;
+    }
+    if(obj == this){
+      return true;
+    }
+    if(this.getClass() != obj.getClass()){
+      return false;
+    }
+    MyEntity e = (MyEntity) obj;
+    return (this.getId() == e.getId());
+  }
+}
+
+
+```
+
+- hascode는 인스턴스를 구별할 수 있는 숫자
+- 자신이 만든 클래스를 원소로 같는 hashtable을 사용할 경우, table에 key 값으로 사용된다
+- 한 인스턴스를 table에 저장하고 같은 인스턴스를 저장할때 덮어씌워지게 하기 위해선 hashcode를 오버라이딩해야한다 
+
+```java
+class MyEntity{
+  int hasCode(){
+    final int PRIME_NUM = 31;
+    return PRIME_NUM+this.getId();
+  }
+}
+
+
+```
+
+
+- 두 객체에 equals가 true면(같은 인스턴스면), hashcode는 같다
+- 두 객체에 equals가 false면, hascode는 같을 수도 다를 수 도 있다. 
+- 두 객체에 hashcode가 같으면, equals는 true일수도 false일 수도 있다.
+- 두 객체에 hascode가 다르면, equals는 false다.
+
 
 ## 상속 Inheritance
+
 
 
 
@@ -223,6 +284,9 @@ int[] arr = new int[5];
 - 인터페이스를 구현(implement)하는 클래스에게 인터페이스에서 선언한 메서드를 정의하도록 강제
 - 약한 연결
   - 객체를 속성으로 갖는 클래스를 정의할때 자료형을 속성을 정의한 클래스로 두지 않고 인터페이스로 두면 속성 클래스 변경에 용이하다
+
+## interface 사용 목적
+
 # Abstract class
 
 # Anotation
@@ -281,4 +345,9 @@ Object
 
 # reflection
 
+# input/output
+
+# thread
+
 ----------------
+
