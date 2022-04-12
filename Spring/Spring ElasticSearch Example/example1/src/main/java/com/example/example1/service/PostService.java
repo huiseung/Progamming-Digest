@@ -25,7 +25,31 @@ public class PostService {
     private final PostElasticRepository postElasticRepository;
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAll(){
+    public void findAllTest(){
+
+        long start = System.currentTimeMillis();
+        postRepository.findAll();
+        long end = System.currentTimeMillis();
+        System.out.println("JPA findAll: "+(end-start)+ "ms");
+
+        start = System.currentTimeMillis();
+        postElasticRepository.findAll();
+        end = System.currentTimeMillis();
+        System.out.println("ES findAll: "+(end-start)+ "ms");
+
+        start = System.currentTimeMillis();
+        postRepository.findAll();
+        end = System.currentTimeMillis();
+        System.out.println("JPA findAll: "+(end-start)+ "ms");
+
+        start = System.currentTimeMillis();
+        postElasticRepository.findAll();
+        end = System.currentTimeMillis();
+        System.out.println("ES findAll: "+(end-start)+ "ms");
+
+    }
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findAllES(){
         log.info("[Transactional] post findAll");
         List<PostResponseDto> posts = new ArrayList<>();
         for (PostDocument post : postElasticRepository.findAll()) {
@@ -33,6 +57,17 @@ public class PostService {
         }
         return posts;
     }
+
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findAllJPA(){
+        log.info("[Transactional] post findAll");
+        List<PostResponseDto> posts = new ArrayList<>();
+        for (Post post : postRepository.findAll()) {
+            posts.add(PostResponseDto.of(post));
+        }
+        return posts;
+    }
+
 
     @Transactional(readOnly = true)
     public Post findById(Long id){
@@ -48,6 +83,7 @@ public class PostService {
                 .tittle(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .build();
+        log.info("request: "+ requestDto);
         Post savePost = postRepository.save(post);
         postElasticRepository.save(PostDocument.of(savePost));
         return PostResponseDto.of(savePost);
@@ -74,4 +110,12 @@ public class PostService {
         postRepository.delete(post);
         postElasticRepository.delete(PostDocument.of(post));
     }
+
+    @Transactional
+    public void deleteAll(){
+        postRepository.deleteAll();
+        postElasticRepository.deleteAll();
+    }
+
+
 }

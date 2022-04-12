@@ -9,4 +9,13 @@ import lombok.Getter;
 public class PostSaveRequestDto {
     private String title;
     private String content;
+
+    @Override
+    public String toString(){
+        return "{" +
+                "title: " + title +
+                " content: "+ content +
+                "}";
+
+    }
 }
