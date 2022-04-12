@@ -1,13 +1,31 @@
 version: '3'
 
 services:
-  db:
-    image: mysql
-    container_name: mysql
+  db01:
+    image: mysql:8.0.22
+    container_name: mysql01
     ports:
-      - "13306:3306"
+      - 13306:3306
     environment:
       - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=devdb
       - MYSQL_ROOT_HOST=%
+    networks:
+      - mysql-elastic
+  es01:
+    image: elasticsearch:7.10.0
+    container_name: es01
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Seoul
+    networks:
+      - mysql-elastic
+
+networks:
+  mysql-elastic:
+    driver: bridge
