@@ -211,6 +211,7 @@ int[] arr = new int[5];
 - singleton
 
 - dependecy injection
+  
 ## equals 와 hascode
 - Object 클래스에 정의된 메서드
 
@@ -248,7 +249,6 @@ class MyEntity{
 
 - hascode는 인스턴스를 구별할 수 있는 숫자
 - 자신이 만든 클래스를 원소로 같는 hashtable을 사용할 경우, table에 key 값으로 사용된다
-- 한 인스턴스를 table에 저장하고 같은 인스턴스를 저장할때 덮어씌워지게 하기 위해선 hashcode를 오버라이딩해야한다 
 
 ```java
 class MyEntity{
@@ -258,10 +258,9 @@ class MyEntity{
   }
 }
 
-
 ```
 
-
+- 두 메서드는 항상 함께 오버라이딩 되어야 한다.
 - 두 객체에 equals가 true면(같은 인스턴스면), hashcode는 같다
 - 두 객체에 equals가 false면, hascode는 같을 수도 다를 수 도 있다. 
 - 두 객체에 hashcode가 같으면, equals는 true일수도 false일 수도 있다.
@@ -270,12 +269,20 @@ class MyEntity{
 
 ## 상속 Inheritance
 
+```java
+class Child extends Parent{
 
+}
 
+```
 
 # Enum
 
+
+
 # Generic
+
+
 
 # Interface
 - 협업시 클래스에서 사용하는 메서드에 이름과 반환값을 사전에 선언해 둔것
@@ -285,9 +292,22 @@ class MyEntity{
 - 약한 연결
   - 객체를 속성으로 갖는 클래스를 정의할때 자료형을 속성을 정의한 클래스로 두지 않고 인터페이스로 두면 속성 클래스 변경에 용이하다
 
+```java
+interface MyInterface{}
+
+class MyInterfaceImpl implements MyInterface{
+
+}
+
+```
+
 ## interface 사용 목적
 
+
+
 # Abstract class
+
+
 
 # Anotation
 
