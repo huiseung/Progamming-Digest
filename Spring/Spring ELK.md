@@ -1,4 +1,171 @@
 # Elastic Search
+- document: 데이터 단위
+- index: 논리적으로 비슷한 document 집합 
+- indexing: document를 저장하는 행위
+- reverse indexing
+- shard: 하나에 index가 분리되어 저장되는 단위
+
+- 각 document는 url을 갖는다
+  - "http://host:port/index/_doc/document_id"
+
+## 데이터 CRUD
+```
+입력
+PUT index/_doc/document_id
+{
+
+}
+
+조회
+GET index/_doc/document_id
+
+수정
+POST index/_update/document_id
+{
+
+}
+
+삭제
+DELETE index/_doc/docuemnt_id
+
+```
+## 검색
+```
+//index에 모든 document 검색
+GET index/_search
+
+
+
+//index에 field에 값이 value인 document 검색
+GET index/_search
+{
+    "query": {
+        "match": {
+            "field": "value"
+        }
+    }
+}
+
+//or 연산 검색
+GET index/_search
+{
+    "query": {
+        "match": {
+            "field": "value1 value2"
+        }
+    }
+}
+
+//and 연산 검색
+GET index/_search
+{
+    "query": {
+        "match": {
+            "field": "value1 value2",
+            "operator": "and"
+        }
+    }
+}
+
+//정확히 일치
+GET index/_search
+{
+    "query": {
+        "match_phrase": {
+            "field": "value1 value2",
+        }
+    }
+}
+```
+
+
+```
+//
+GET index/_search
+{
+    "query":{
+        "bool":{
+            "must":[
+
+            ]
+        }
+    }
+}
+
+
+//
+GET index/_search
+{
+    "query":{
+        "bool":{
+            "must_not":[
+                
+            ]
+        }
+    }
+}
+
+//
+GET index/_search
+{
+    "query":{
+        "bool":{
+            "should":[
+                
+            ]
+        }
+    }
+}
+
+//
+GET index/_search
+{
+    "query":{
+        "bool":{
+            "filter":[
+                
+            ]
+        }
+    }
+}
+```
+
+- 검색 응답 형태
+  
+```json
+{
+    "took": ,
+    "timed_out": false,
+    "_shards": {
+        "total": ,
+        "successful": ,
+        "skipped": ,
+        "failed": 
+    },
+    "hits": {
+        "total": {
+            "value": , // 검색 결과 걸린 document 수
+            "relation": 
+        },
+        "max_score": ,  //가장 높은 정확도
+        "hits": [
+            {
+                "_index": , 
+                "_type": ,
+                "_id": ,
+                "_score": , //검색 정확도
+                "_source": {
+                    "field": 
+                }
+            }
+        ]
+    }
+}
+
+```
+
+
+
 
 # Logstash
 
@@ -55,9 +222,9 @@ networks:
 
 
 ------------
-# Spring Data Elastic Search 공식 문서 번역
+# Spring Data Elastic Search
 
-- 문서 저장, 검색, 정렬및 집계를 위한 고수준 추상화 템플릿 
+- 문서 전문 검색, 정렬및 집계에 특화된 고수준 추상화 템플릿 
 
 
 # version 정보
@@ -72,21 +239,82 @@ networks:
 
 ## 호환 정보
 
-|Spring Data Elastic Search|Elastic Search|Spring Boot|Spring|
-|---|---|---|---|
-|4.3|7.15.2|2.5|5.3|
-|4.2|7.12.0|2.5|5.3|
+----------------
 
-# Spring Data Repository와 함께 사용하기
-- Spring Data Repository는 data 접근 관련 코드양을 줄일 수 있게 도와준다
-- CrudRepository Interface는 entity class에 CRUD 기능을 제공
-  - ex) save, findById, findAll, delete, count, existsById  
-- JpaRepository, MongoRepository같은 CrudRepsitory에 확장형태에 Interface도 있다
-- 
+
+# Elasticsearch Clients
+## High Level Rest Client
+
+```java
+@Configuration
+public class ESConfig extends AbstractElasticsearchConfiguration{
+    @Override
+    public RestHighLevelClient elasticsearchClient(){
+        return RestClients.create().rest();
+    }
+}
+
+```
+
+----------------
+
+# Elasticsearch Object Mapping
+
+
+----------------
+# Elsticsearch Query
+- elastic search는 josn형태에 query문을 사용한다
+
+```json
+
+
+```
+
+# Elasticsearch Operations
+- Elasticsearch API를 활용해 index를 다루는 동작들이 정의된 interface
+  - 4 종류가 있다
+  - IndexOperations
+  - DocumentOperations
+  - SearchOperations
+  - ElasticsearchOperations
+  - ReactiveElasticsearchOperations
+
+ 
+## ElasticsearchOperations(Interface) 와 ElasticsearchRestTemplate(구현체) 
+
+![](./image/elasticsearch_elasticsearchresttemplate.PNG)
+
+- DocumentOperations는 조건에 맞는 Docuement를 찾아 Entity로 반환하는 기능, SearchOperations는 score나 sort같은 Entity 정보를 활용하는 기능이 있다
+  
+- 검색으로 찾은 Entitiy를 SearchHit등에 클래스로 감싸 반환한다
+  - SearchHit\<T\>
+    - Id, Score, Sort Values
+  - SearchHits\<T\>
+  - SearchPage\<T\>
+
+### Query(Interfae)와 CriteriaQuery, StringQuery, NativeSearchQuery(구현체들)
+
+```java
+//CriteriaQuery
+Criteria criteria = new Criteria("lastname").is("Miller").and("firstname").is("James");
+Query query = new CriteriaQuery(criteria);
+
+//StringQuery
+String string = "{\"match\": {\"firstname\": {\"query\": \"James\"}}}";
+Query query = new StringQuery(string);
+
+//NativeSearchQuery
+Query query = new NativeSearchQUeryBuilder()
+    .build();
+```
+
+----------------
+# ElasticsearchRepository(Interface)
 
 
 
 ------
 # reference
 - https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#preface
+- https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#reference  
 - https://docs.spring.io/spring-data/elasticsearch/docs/current/api/

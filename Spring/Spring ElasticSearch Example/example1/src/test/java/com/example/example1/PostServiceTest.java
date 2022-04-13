@@ -10,6 +10,9 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+import java.util.Objects;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
@@ -39,32 +42,33 @@ public class PostServiceTest {
         }
         //when
         long start = System.currentTimeMillis();
-        int length = postService.findAllJPA().size();
+        List<PostResponseDto> posts = postService.findAllJPA();
+        long length = posts.size();
         long end = System.currentTimeMillis();
         //then
         System.out.println("JPA findAll: "+(end-start)+ "ms");
         assertThat(length).isEqualTo(num);
-        ////
-        start = System.currentTimeMillis();
-        length = postService.findAllES().size();
-        end = System.currentTimeMillis();
-        //then
-        System.out.println("ES findAll: "+(end-start)+ "ms");
-        assertThat(length).isEqualTo(num);
-        //
-        start = System.currentTimeMillis();
-        length = postService.findAllJPA().size();
-        end = System.currentTimeMillis();
-        //then
-        System.out.println("JPA findAll: "+(end-start)+ "ms");
-        assertThat(length).isEqualTo(num);
-
-
-        start = System.currentTimeMillis();
-        length = postService.findAllES().size();
-        end = System.currentTimeMillis();
-        System.out.println("ES findAll: "+(end-start)+ "ms");
-        assertThat(length).isEqualTo(num);
+//        ////
+//        start = System.currentTimeMillis();
+//        length = postService.findAllES().size();
+//        end = System.currentTimeMillis();
+//        //then
+//        System.out.println("ES findAll: "+(end-start)+ "ms");
+//        assertThat(length).isEqualTo(num);
+//        //
+//        start = System.currentTimeMillis();
+//        length = postService.findAllJPA().size();
+//        end = System.currentTimeMillis();
+//        //then
+//        System.out.println("JPA findAll: "+(end-start)+ "ms");
+//        assertThat(length).isEqualTo(num);
+//
+//
+//        start = System.currentTimeMillis();
+//        length = postService.findAllES().size();
+//        end = System.currentTimeMillis();
+//        System.out.println("ES findAll: "+(end-start)+ "ms");
+//        assertThat(length).isEqualTo(num);
 
         //
 

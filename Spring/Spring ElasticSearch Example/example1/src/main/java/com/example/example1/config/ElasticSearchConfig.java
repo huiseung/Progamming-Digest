@@ -11,17 +11,11 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
+
 @Slf4j
 @EnableElasticsearchRepositories
 @Configuration
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
-    @Override
-    public ElasticsearchOperations elasticsearchOperations(
-            ElasticsearchConverter elasticsearchConverter,
-            RestHighLevelClient elasticsearchClient){
-        return new ElasticsearchRestTemplate(elasticsearchClient());
-    }
-
     @Override
     public RestHighLevelClient elasticsearchClient() {
         String host = "localhost:9200";
@@ -29,5 +23,12 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
                 .connectedTo(host)
                 .build();
         return RestClients.create(clientConfiguration).rest();
+    }
+
+    @Override
+    public ElasticsearchOperations elasticsearchOperations(
+            ElasticsearchConverter elasticsearchConverter,
+            RestHighLevelClient elasticsearchClient){
+        return new ElasticsearchRestTemplate(elasticsearchClient());
     }
 }
