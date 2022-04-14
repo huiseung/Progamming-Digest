@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -25,30 +26,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostElasticRepository postElasticRepository;
 
-    @Transactional(readOnly = true)
-    public void findAllTest(){
-
-        long start = System.currentTimeMillis();
-        postRepository.findAll();
-        long end = System.currentTimeMillis();
-        System.out.println("JPA findAll: "+(end-start)+ "ms");
-
-        start = System.currentTimeMillis();
-        postElasticRepository.findAll();
-        end = System.currentTimeMillis();
-        System.out.println("ES findAll: "+(end-start)+ "ms");
-
-        start = System.currentTimeMillis();
-        postRepository.findAll();
-        end = System.currentTimeMillis();
-        System.out.println("JPA findAll: "+(end-start)+ "ms");
-
-        start = System.currentTimeMillis();
-        postElasticRepository.findAll();
-        end = System.currentTimeMillis();
-        System.out.println("ES findAll: "+(end-start)+ "ms");
-
-    }
     @Transactional(readOnly = true)
     public List<PostResponseDto> findAllES(){
         log.info("[Transactional] post findAll");
@@ -69,13 +46,34 @@ public class PostService {
         return posts;
     }
 
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findByContentContainES(String content){
+        log.info("[Transactional] post findByContentContain, content: "+ content);
+        return postElasticRepository.findPostDocumentsByContentContaining(content)
+                .stream()
+                .map(PostResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findByContentContainJPA(String content){
+        log.info("[Transactional] post findByContentContain, content: "+ content);
+        return postRepository.findPostsByContentContaining(content)
+                .stream()
+                .map(PostResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+
+
 
     @Transactional(readOnly = true)
     public Post findById(Long id){
-        log.info("[Transactional] post findById");
+        log.info("[Transactional] post findById, id: "+id);
         return postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("find not post"));
     }
+
 
     @Transactional
     public PostResponseDto create(PostSaveRequestDto requestDto){
