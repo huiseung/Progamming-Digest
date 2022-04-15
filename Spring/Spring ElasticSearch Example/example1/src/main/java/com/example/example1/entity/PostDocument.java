@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.io.Serializable;
 
@@ -12,7 +13,9 @@ import java.io.Serializable;
 public class PostDocument implements Serializable {
     @Id
     private Long id;
+    @Field
     private String title;
+    @Field
     private String content;
 
     @Builder

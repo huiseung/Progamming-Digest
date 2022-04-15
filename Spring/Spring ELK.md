@@ -85,9 +85,11 @@ GET index/_search
 {
     "query":{
         "bool":{
-            "must":[
-
-            ]
+            "must":[ 
+                //개별 쿼리를 and로 묶음
+                {},
+                {}
+            ] 
         }
     }
 }
@@ -311,7 +313,71 @@ Query query = new NativeSearchQUeryBuilder()
 ----------------
 # ElasticsearchRepository(Interface)
 
+```json
+//findByContent(String Content);
+{
+    "query":{
+        "bool":{
+            "must": [
+                {
+                    "field": {
+                        "content": "?"
+                    }
+                }
+            ]
+        }
 
+    }
+}
+
+```
+
+```json
+//findByTitleAndContent(String title, String content);
+{
+    "query":{
+        "bool":{
+            "must": [
+                {
+                    "field": {
+                        "title": "?"
+                    }
+                },
+                {
+                    "field": {
+                        "content": "?"
+                    }
+                }
+            ]
+        }
+
+    }
+}
+
+```
+
+```json
+//findByContentContaining(String content)
+{
+    "query":{
+        "bool":{
+            "must": [
+                {
+                    "field": {
+                        "content": {
+                            "query": "**?**",
+                            "analyze_wildcard": true
+                        }
+                    }
+                }
+            ]
+        }
+
+    }
+}
+
+
+```
 
 ------
 # reference

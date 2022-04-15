@@ -3,63 +3,69 @@
 - [input](#input)
 - [리스트 활용](#리스트-활용)
   - [정렬](#정렬)
+  - [range](#range)
 - [여러가지 행렬 조작](#여러가지-행렬-조작)
   - [숫자칸 채우기](#숫자칸-채우기)
-    - [문제 파악](#문제-파악)
-    - [풀이](#풀이)
+    - [정사각형 달팽이: 밖에서 안으로](#정사각형-달팽이-밖에서-안으로)
+    - [정사각형 풍차](#정사각형-풍차)
+    - [정삼각형 달팽이: 밖에서 안으로 & 3가지 방향](#정삼각형-달팽이-밖에서-안으로--3가지-방향)
   - [가로, 세로 한칸씩 옮기기](#가로-세로-한칸씩-옮기기)
   - [가로, 세로, y=x, y=-x 구간 확인](#가로-세로-yx-y-x-구간-확인)
   - [직각 라인별로 배열 바라보기](#직각-라인별로-배열-바라보기)
 - [LinkedList](#linkedlist)
-- [stack 이용](#stack-이용)
+- [stack 활용](#stack-활용)
   - [예제](#예제)
-- [deque 이용](#deque-이용)
+- [deque 활용](#deque-활용)
   - [예제](#예제-1)
 - [heap, priority queu 이용](#heap-priority-queu-이용)
 - [산수](#산수)
+- [이진수](#이진수)
+- [정수론](#정수론)
+  - [문제 파악](#문제-파악)
+  - [예제와 풀이](#예제와-풀이)
 - [문자열 조작](#문자열-조작)
+- [Counter](#counter)
 - [날짜](#날짜)
-- [완전탐색](#완전탐색)
-  - [문제 파악](#문제-파악-1)
-  - [풀이](#풀이-1)
+- [http request](#http-request)
+- [정규표현식](#정규표현식)
+  - [풀이법](#풀이법)
   - [예제](#예제-2)
-- [BackTracking](#backtracking)
-  - [문제 파악](#문제-파악-2)
-  - [풀이](#풀이-2)
+- [Two Pointer](#two-pointer)
+  - [문제 파악](#문제-파악-1)
+  - [풀이법](#풀이법-1)
   - [예제](#예제-3)
-- [탐욕법 Greedy Algorithm](#탐욕법-greedy-algorithm)
-  - [문제 파악](#문제-파악-3)
-  - [풀이](#풀이-3)
+- [누적합](#누적합)
+  - [연속된 구간에 같은 값을 더하거나 빼는 쿼리](#연속된-구간에-같은-값을-더하거나-빼는-쿼리)
+    - [1D-Matrix](#1d-matrix)
+    - [2D-Matrix](#2d-matrix)
+- [완전탐색](#완전탐색)
+  - [문제 파악](#문제-파악-2)
   - [예제](#예제-4)
+- [BackTracking](#backtracking)
+  - [문제 파악](#문제-파악-3)
+  - [풀이](#풀이)
+  - [예제](#예제-5)
+- [탐욕법 Greedy Algorithm](#탐욕법-greedy-algorithm)
+  - [문제 파악](#문제-파악-4)
+  - [풀이](#풀이-1)
+  - [예제](#예제-6)
 - [동적 계획법 Dynamic Programming](#동적-계획법-dynamic-programming)
   - [문제 파악및 풀이](#문제-파악및-풀이)
-  - [예제](#예제-5)
-- [Two Pointer](#two-pointer)
-  - [문제 파악](#문제-파악-4)
-  - [풀이법](#풀이법)
-  - [예제](#예제-6)
+  - [예제](#예제-7)
 - [Parameter Search](#parameter-search)
   - [문제 파악](#문제-파악-5)
-  - [풀이](#풀이-4)
-  - [예제](#예제-7)
+  - [풀이](#풀이-2)
+  - [예제](#예제-8)
+- [Graph](#graph)
 - [BFS 2차원 최단거리](#bfs-2차원-최단거리)
   - [문제 파악](#문제-파악-6)
-  - [풀이](#풀이-5)
-  - [예제](#예제-8)
+  - [풀이](#풀이-3)
+  - [예제](#예제-9)
+- [Tree](#tree)
 - [BFS tree에서 path를 갖는 노드쌍 찾기](#bfs-tree에서-path를-갖는-노드쌍-찾기)
   - [문제 파악](#문제-파악-7)
-  - [풀이](#풀이-6)
-  - [예제](#예제-9)
-- [누적합](#누적합)
-  - [문제 파악](#문제-파악-8)
-  - [풀이](#풀이-7)
+  - [풀이](#풀이-4)
   - [예제](#예제-10)
-- [정수론](#정수론)
-  - [문제 파악](#문제-파악-9)
-  - [예제와 풀이](#예제와-풀이)
-- [정규표현식](#정규표현식)
-  - [풀이법](#풀이법-1)
-  - [예제](#예제-11)
 
 ------
 
@@ -74,21 +80,21 @@ row = list(map(int, list(input())))
 # 한줄 띄어쓰기 있을때
 row = list(map(int, input().split()))
 
-
 # def global 이용
 nRow = 0
 nCol = 0
 answer = 0
 def solution(board):
   global nRow, nCol, answer
+  nRow = len(board)
+  nCol = len(board[0])
 
 
 # direction
 # 상하좌우
-direction = [(-1, 0), (0, 1), (11, 0), (0, -1)]
+direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 # 팔방
 direction = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
-
 
 # 행렬 출력
 def printMatrix(matrix):
@@ -97,6 +103,8 @@ def printMatrix(matrix):
   print()
 
 ```
+
+-----------------------------------
 
 # 리스트 활용
 - 파이썬의 리스트는 ArrayList
@@ -121,18 +129,61 @@ sortedList = sorted(aList, key=lambda x: (x[0], -x[1]), reverse=True)
 
 ```
 
+## range
+```python
+# range(start=0, stop, step=1)
+# start부터 시작해 stop이 되기 직전까지 step씩 차이나는 등차 수열을 원소로 갖는 리스트 반환
+# 실제로는 range엔 parmeter_name이 없다. 몇 개의 paramter가 기입되었는가에 의해 작동이 정해진다.
+
+
+for i in range(5):
+  print(i)
+	# 0, 1, 2, 3, 4
+
+for i in range(2, 5):
+  print(i)
+	# 2, 3, 4
+
+for i in range(5, 5):
+  print(i)
+  # 아무 동작 안함
+for i in range(5, 3):
+  print(i)
+  # 아무 동작 안함
+
+# 내림차순
+for i in range(5, 0, -1):
+  print(i)
+  # 5, 4, 3, 2, 1
+
+# 내림차순
+for i in range(5, -1, -1):
+  print(i)
+  # 5, 4, 3, 2, 1, 0
+
+
+# stride 
+aList = []
+stride = 3
+for i in range(0, 5, stride):
+	print(aList[i:i+stride])
+	# aList[0:3], aList[3:6]
+
+
+```
+
+-----------------------------------
+
 # 여러가지 행렬 조작
 ## 숫자칸 채우기
-### 문제 파악
-- 달팽이 채우기(시계, 반시계)
-- 회오리 채우기(시계, 반시계)
-- 정삼각형 채우기
-- 직사각형 태두리 돌리기
+### 정사각형 달팽이: 밖에서 안으로
 
-### 풀이
-- 정삼각형 달팽이: 밖에서 안으로 & 3가지 방향
+
+### 정사각형 풍차
+
+
+### 정삼각형 달팽이: 밖에서 안으로 & 3가지 방향
 ![](./image/정삼각형달팽이.PNG)
-
 
 ```python
 # 정삼각형
@@ -203,8 +254,6 @@ def solution(n):
             answer.append(e)     
     return answer
 ```
-
-- 정사각형 달팽이: 밖에서 안으로 & 4가지 방향
 
 
 ## 가로, 세로 한칸씩 옮기기
@@ -299,9 +348,6 @@ for rowStart in range(nRow+nCol):
       num = matrix[rowIdx][colIdx]
       if num == 1:
         count += 
-  
-
-
 
 # y=-x
 
@@ -332,13 +378,17 @@ def solution(n, left, right):
     return answer
 ```
 
+-----------------------------------
+
 # LinkedList
 - 파이썬 기본 제공 링크드 리스트는 없다
 
 
-# stack 이용
+# stack 활용
 ## 예제
 - 프로그래머스 lv2 짝지어 제거하기
+- 110 옮기기
+  
 ```python
 def solution(s):
     answer = -1
@@ -355,7 +405,7 @@ def solution(s):
     return 0
 ```
 
-# deque 이용
+# deque 활용
 
 ```python
 from collections import deque
@@ -379,9 +429,15 @@ e = q[-1] #오른쪽
 
 # heap, priority queu 이용
 ```python
+import heapq
 
+heap = []
+heapq.heappush(heap, 1)
+heapq.heappop(heap)
+heap[0]
 ```
 
+----------------------------------------
 
 # 산수
 ```python
@@ -392,8 +448,59 @@ num = floor(3.5) # 3
 num = round(3.5) #4
 num = ceil(3.5) #4
 
+
+#정수 연산
+num = 5
+print(num / 2)  #2.5		소수점연산 살아있는 나누기
+print(num // 2)  #2		몫, 소수점 버리는 나누기
+print(num % 2)  #1		나머지
+
+
+num = -5
+print(num / 2)  #-2.5
+print(int(num/2)) #-2
+print(num // 2)  #-3	
+print(num % 2)  #1	
 ```
 
+# 이진수
+```python
+num = 6
+biString = bin(num) # "0b110"
+
+num = int("0b110", 2) # 6
+
+```
+
+
+# 정수론
+## 문제 파악
+- 정수 성질과 관련한 다양한 문제가 존재한다
+- n진수
+- 소수 판별, 애라토스테네스체
+- 최소공배수, 최대공약수
+- 직사각형
+
+## 예제와 풀이
+- 프로그래머스 lv3 최고의 집합
+  - 자연수 n개로 이루어진 숫자쌍(중복 존재 가능)중 원소 합이 S면서 원소 곱이 최대인 숫자쌍 찾기
+  - 풀이
+    - 숫자간에 차이가 작을 수록 곱이 최대이다
+    - s//n이 n개인 숫자쌍에 s%n개에 원소에 각 1씩 더한 숫자쌍이 찾는 숫자쌍이다
+    - n > s이면 조건을 만족하는 숫자쌍이 없다  
+
+- 프로그래머스 lv2 124의 나라
+- 프로그래머스 lv2 소수 판별
+```python
+# 단일 숫자에 소수 판별
+# 시간: O(sqrtN)
+
+# 범위안 숫자들에 소수 판별
+# 시간: O(NlglgN), 공간: O(N)
+
+```
+
+- 프로그래머스 lv2 멀쩡한 사각형
 
 # 문자열 조작
 ```python
@@ -411,22 +518,12 @@ chr(97) # a
 chr(122) # z
 ```
 
-
-##
-
+# Counter
 ```python
-a = [1, 5, 1, 3]
-b = "123"
-string = ""
-_dict = {}
-for i, num in enumerate(sorted(list(set(a)))):
-    _dict[num] = i
-for val in a:
-    string += b[_dict[val]]
-print(string)
-
+from collections import Counter
+aList = [1, 1, 2, 3]
+counter = Counter(aList) #{1: 2, 2: 1, 3: 1}
 ```
-
 
 # 날짜
 ```python
@@ -435,8 +532,56 @@ from datetime import datetime
 
 ```
 
+# http request
+```python
+import requests
+import json
 
-------
+url = "http://"
+params = {"key1": "value1", "key2": "value2"}
+data = json.dumps({'outer': {'inner': 'value'})
+
+#get
+response = requests.get(url=url, params=params)
+#post
+response = request.post(url=url, data=data)
+```
+
+# 정규표현식
+## 풀이법
+```python
+import re
+pattern = ""
+string = ""
+p = re.compile(pattern)
+m = p.match(string)
+```
+## 예제
+- 프로그래머스 lv2 뉴스 클러스터링
+
+------------------------------------
+
+# Two Pointer
+- 제시된 배열 aList에서 sort 없이 O(N) 시간안에  가장 큰 수, 두번째 큰 수, 가장 작은 수, 두번째 작은 수 찾기
+## 문제 파악
+
+## 풀이법
+
+## 예제
+
+# 누적합
+## 연속된 구간에 같은 값을 더하거나 빼는 쿼리
+### 1D-Matrix
+![](./image/cumulSum1D.PNG)
+
+
+### 2D-Matrix
+![](./image/cumulSum2D-1.PNG)
+
+![](./image/cumulSum2D-2.PNG)
+
+
+----------------------------------
 
 # 완전탐색
 ## 문제 파악
@@ -521,8 +666,6 @@ cand_list = product(population, repeat=r)
 """
 ```
 
-
-
 - 오름차순 생성
 ```python
 total = []
@@ -542,9 +685,6 @@ search(total, [], 1, n+1, m)
 - 정수 방적식
 
 
-## 풀이
-
-
 ## 예제
 - 프로그래머스 lv2 피로도
   - permutations
@@ -553,7 +693,7 @@ search(total, [], 1, n+1, m)
 - 프로그래머스 lv2 카펫
   - 정수 연립 방정식 해 찾기
 
-------
+----------------------------
 # BackTracking
 ## 문제 파악
 - 최적화 문제
@@ -564,7 +704,7 @@ search(total, [], 1, n+1, m)
 ## 예제
 
 
-------
+------------------------------
 # 탐욕법 Greedy Algorithm
 ## 문제 파악
 - 최적화 문제
@@ -578,10 +718,9 @@ search(total, [], 1, n+1, m)
 
 ## 예제
 - 프로그래머스 lv1 체육복
-
 - 프로그래머스 lv2 구명보트
   
-------
+------------------------------------------
 
 # 동적 계획법 Dynamic Programming
 ## 문제 파악및 풀이
@@ -609,24 +748,7 @@ search(total, [], 1, n+1, m)
 - 최단 경로
   - 반드시 한번 대각선을 지나는 최단 경로
 
-------
-
-# Two Pointer
-## 문제 파악
-
-## 풀이법
-
-## 예제
-
-
-
-
-
-
-
-
-
--------
+----------------------------------
 
 # Parameter Search
 ## 문제 파악
@@ -665,9 +787,9 @@ search(total, [], 1, n+1, m)
 
 ```
 
+---------------------------
 
-------
-
+# Graph
 # BFS 2차원 최단거리
 ## 문제 파악
 
@@ -676,8 +798,8 @@ search(total, [], 1, n+1, m)
 ## 예제
 
 
-------
 
+# Tree
 # BFS tree에서 path를 갖는 노드쌍 찾기
 ## 문제 파악
 
@@ -687,64 +809,12 @@ search(total, [], 1, n+1, m)
 ## 예제
 
 
-------
+----------------------------------
 
-# 누적합
-## 문제 파악
-- 연속된 구간에 같은 값을 더하거나 빼는 쿼리를 여러번 동작
 
-## 풀이
 
-![](./image/cumulSum1D.PNG)
 
-![](./image/cumulSum2D-1.PNG)
 
-![](./image/cumulSum2D-2.PNG)
-
-## 예제
-- 프로그래머스 lv3 파괴되지 않은 건물
 
 
 ----
-# 정수론
-## 문제 파악
-- 정수 성질과 관련한 다양한 문제가 존재한다
-- n진수
-- 소수 판별, 애라토스테네스체
-- 최소공배수, 최대공약수
-- 직사각형
-
-## 예제와 풀이
-- 프로그래머스 lv3 최고의 집합
-  - 자연수 n개로 이루어진 숫자쌍(중복 존재 가능)중 원소 합이 S면서 원소 곱이 최대인 숫자쌍 찾기
-  - 풀이
-    - 숫자간에 차이가 작을 수록 곱이 최대이다
-    - s//n이 n개인 숫자쌍에 s%n개에 원소에 각 1씩 더한 숫자쌍이 찾는 숫자쌍이다
-    - n > s이면 조건을 만족하는 숫자쌍이 없다  
-
-- 프로그래머스 lv2 124의 나라
-- 프로그래머스 lv2 소수 판별
-```python
-# 단일 숫자에 소수 판별
-# 시간: O(sqrtN)
-
-# 범위안 숫자들에 소수 판별
-# 시간: O(NlglgN), 공간: O(N)
-
-```
-
-- 프로그래머스 lv2 멀쩡한 사각형
-
-
-# 정규표현식
-
-## 풀이법
-```python
-import re
-pattern = ""
-string = ""
-p = re.compile(pattern)
-m = p.match(string)
-```
-## 예제
-- 프로그래머스 lv2 뉴스 클러스터링
