@@ -56,16 +56,19 @@
   - [문제 파악](#문제-파악-5)
   - [풀이](#풀이-2)
   - [예제](#예제-8)
+- [lower bound & upper bound](#lower-bound--upper-bound)
 - [Graph](#graph)
-- [BFS 2차원 최단거리](#bfs-2차원-최단거리)
-  - [문제 파악](#문제-파악-6)
-  - [풀이](#풀이-3)
-  - [예제](#예제-9)
+  - [BFS](#bfs)
+  - [DFS](#dfs)
+  - [BFS: 2차원 최단거리](#bfs-2차원-최단거리)
+  - [Dijkstra Algorithm: single source & all dest 최단거리](#dijkstra-algorithm-single-source--all-dest-최단거리)
+  - [bellman ford: single source & all dest 최단거리](#bellman-ford-single-source--all-dest-최단거리)
+  - [floyd-warshall: all source & all dest 최단거리](#floyd-warshall-all-source--all-dest-최단거리)
+  - [Kruskal's algorithm: Minimum Spanning Tree](#kruskals-algorithm-minimum-spanning-tree)
 - [Tree](#tree)
-- [BFS tree에서 path를 갖는 노드쌍 찾기](#bfs-tree에서-path를-갖는-노드쌍-찾기)
-  - [문제 파악](#문제-파악-7)
-  - [풀이](#풀이-4)
-  - [예제](#예제-10)
+  - [BFS: 같은 높이를 가진 node끼리 묶기, leaf node 구하기, 높이 구하기](#bfs-같은-높이를-가진-node끼리-묶기-leaf-node-구하기-높이-구하기)
+  - [topology sort](#topology-sort)
+  - [Tree DP](#tree-dp)
 
 ------
 
@@ -779,42 +782,391 @@ search(total, [], 1, n+1, m)
 
 ## 예제
 
-```python
-# 금과 은 운반하기
-"""
 
-"""
+# lower bound & upper bound
 
-```
 
 ---------------------------
 
 # Graph
-# BFS 2차원 최단거리
-## 문제 파악
+```python
+#V: vertex 집합 크기
+#E: edge 집합 크기
 
-## 풀이
+#무가중치 그래프 with 연결 리스트
+graph = [[] _ for _ in range(V+1)]  #vertex가 0번부터 시작시 range(V)
+for _ in range(E):
+  src, dest = map(int, input().split())
+  graph[src].append(dest)
+  graph[dest].append(src) #방향성 graph의 경우 해당 줄을 주석처리
+for node in graph:  #탐색시 번호 작은것 부터 탐색하게 하려면 정렬을 해둬야 한다.
+	node.sort()   
 
-## 예제
+#가중치 그래프 with 연결리스트
+graph = [[] _ for _ in range(V+1)]
+for _ in range(E):
+  src, dest, weight = map(int, input().split())
+  graph[src].append([dest, weight])
+  graph[dest].append([src, weight]) #방향성 graph의 경우 이를 생략
+  
+#가중치 그래프 with 딕셔너리
+graph = {}
+for _ in range(E):
+  src, dest, weight = map(int, input().split())
+  if src not in graph:
+    graph[src] = {}
+    graph[src][dest] = weight
+  else:
+    graph[src][dest] = weight
+  #방향성일 경우 이는 생략
+  if dest not in graph:
+    graph[dest] = {}
+    graph[dest][src] = weight
+  else:
+    graph[dest][src] = weight
+
+#가중치 그래프 with 인접행렬
+graph = [[0 for _ in range(V+1)] for _ in range(V+1)]
+for _ in range(E):
+	src, dest, weight = map(int, input().split())
+    graph[src][dest] = weight  #weight가 없다면 1 할당
+    graph[dest][src] = weight  #방향성이 있을경우 해당 줄은 주석 처리
+
+```
 
 
+## BFS
+```python
+def bfs(matrix, root):
+  visited = OrderdDict()  #key: node_index, value: (탐색시 부모노드, root로부터 거리)
+  q = deque()
+  q.append(root)
+  visited[root] = (None, 0, 0)
+  depth = 0
+  
+  while q:
+    q_len = len(q)
+    depth +=1
+    for _ in range(q_len):
+      node = q.popleft()
+      for adj_node in matrix[node]:
+        weight, adj_node = adj_node[1], adj_node[0] #가중치 그래프일때만 사용
+        if adj_node not in visited:  #visited를 List로 할 경우 해당 연산이 O(N)이지만 dict일땐 O(1) 
+          visited[adj_node] = (node, depth, visited[node]+weight)  #가중치 그래프일땐 +1이 아니라 +weight
+          q.append(adj_node)
+    return list(visited.keys())  #방분순으로 담겨있다
 
+```
+
+## DFS
+```python
+#DFS using recursive & root 설정
+#graph는 인접리스트
+
+def dfs(graph, root):
+    time = 0
+    visited = OrderdDict()
+    visited[root] = [None, 0, 0]  #(탐색시 부모노드, 발견 시간, 인접노드 탐색 종료 시간)
+    dfs_visit(graph, root, visited, time)
+    return list(visited.keys())
+
+def dfs_visit(graph, node, visited, time):
+    time += 1
+    visite[node][1] = time
+    for adj_node in graph[node]:
+    	if adj_node not in visited:
+            visited[adj_node] = [node, 0, 0]
+            time = dfs_visit(graph, adj_node, visited, time)
+    time += 1
+    visited[node][2] = time
+    return time
+
+
+#DFS using recursive & root 설정 안 함
+
+def dfs(graph):
+    time = 0
+    visited = OrderdDict()  #[부모노드, 방문시간, ]
+    num_network = 0  
+    for root in range(1, len(graph)):
+    	if root not in visitd:
+        	num_network += 1
+            visited[root] = [None, time, 0]
+            time = dfs_visit(graph, root, visited, time)
+    return num_network, visited
+
+def dfs_visit(graph, node, visited, time):
+    time += 1
+    visite[node][1] = time
+    for adj_node in graph[node]:
+    	if adj_node not in visited:
+            visited[adj_node] = [node, 0, 0]
+            time = dfs_visit(graph, adj_node, visited, time)
+    time += 1
+    visited[node][2] = time
+    return time
+```
+
+
+## BFS: 2차원 최단거리
+
+```python
+direction = [[1, 0], [-1, 0], [0, -1], [0, 1]]
+
+def bfs(source, dest):
+  q = deque()
+  q.append(source)
+  trace = [[-1 for _ in range(M)] for _ in range(N)]
+  trace[source[0]][source[1]] = 0
+  while q:
+    q_len = len(q)
+    for _ in range(q_len):
+      y, x = q.popleft()
+      for d in dirction:
+        ny = y + d[0]
+        nx = x + d[1]
+        if 0 <= ny < N and 0 <= ny < M: #matrix : (N by M)
+          if trace[ny][nx] == -1 and matrix[ny][nx] != -1:  # matrix상에 벽은 -1로 표기
+            trace[ny][nx] = trace[y][x] + 1
+            q.append([ny, nx])
+            if [ny, nx] == dest:
+              return trace[ny][nx]
+  return -1  #목적지 도달 불가
+      
+
+```
+
+## Dijkstra Algorithm: single source & all dest 최단거리
+
+```python
+import heapq
+
+graph = {}
+graph['A'] = {'B': 5, 'C': 4}
+graph['B'] = {'C': 3, 'D': 2, 'E': 2}
+graph['C'] = {}
+graph['D'] = {'B': 1, 'C': 5}
+graph['E'] = {'D': 3}
+
+
+def dijkstra(start='A'):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+
+    # min-heap, 기준: distance, 저장값: [distance, node]
+    q = []
+    for node, distance in distances.items():
+        heapq.heappush(q, [distance, node])
+    while q:
+        cur_distance, cur_node = heapq.heappop(q)
+        for neighbor, weight in graph[cur_node].items():
+            distance = cur_distance + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(q, [distance, neighbor])
+    return distances
+
+print(dijkstra())
+
+
+```
+
+
+## bellman ford: single source & all dest 최단거리
+
+```python
+graph = {}
+graph['A'] = {'B': -1, 'C': 4}
+graph['B'] = {'C': 3, 'D': 2, 'E': 2}
+graph['C'] = {}
+graph['D'] = {'B': 1, 'C': 5}
+graph['E'] = {'D': -3}
+
+def bellman_ford(start='A'):
+    distance = {}
+    pre_vertex = {}
+    # init
+    for node in graph:  #keys
+        distance[node] = float('inf')
+        pre_vertex[node] = None
+    distance[start] = 0
+    # relax
+    for _ in range(len(graph) - 1):
+        for node in graph:
+            for neighbor in graph[node]:
+                w = graph[node][neighbor]
+                if distance[neighbor] > distance[node] + w:
+                    distance[neighbor] = distance[node] + w
+                    pre_vertex[neighbor] = node
+    # negative cycle check
+    for node in graph:
+        for neighbor in graph[node]:
+            if distance[neighbor] > distance[node] + graph[node][neighbor]:
+                return 0, _, _
+
+    return 1, distance, pre_vertex
+
+flag, distance, pre_vertex = bellman_ford(start='A')
+```
+
+##  floyd-warshall: all source & all dest 최단거리
+```python
+N = 5
+edges = [
+    [1, 2, 3],
+    [1, 3, 8],
+    [1, 5, -4],
+    [2, 4, 1],
+    [2, 5, 7],
+    [3, 2, 4],
+    [4, 1, 2],
+    [4, 3, -5],
+    [5, 4, 6]
+]
+def floyd_warshall():
+    D_matrix = [[float('inf') for _ in range(N)] for _ in range(N)]
+    P_matrix = [[None for _ in range(N)] for _ in range(N)]
+    for i in range(N):
+        D_matrix[i][i] = 0
+
+    for source, dest, weight in edges:
+        D_matrix[source-1][dest-1] = weight
+        P_matrix[source-1][dest-1] = source-1
+
+    for k in range(N):
+        for i in range(N):
+            for j in range(N):
+                if D_matrix[i][j] > D_matrix[i][k]+D_matrix[k][j]:
+                    D_matrix[i][j] = D_matrix[i][k]+D_matrix[k][j]
+                    P_matrix[i][j] = P_matrix[k][j]
+        # print(k)
+        # print_matrix(D_matrix)
+        # print_matrix(P_matrix)
+
+    return D_matrix, P_matrix
+def print_matrix(_matrix):
+    for i in range(N):
+        print(_matrix[i])
+    print()
+def print_path(P_matrix, i, j):
+    if i == j:
+        print(i)
+    elif P_matrix[i][j] == None:
+        print("no path from i to j")
+    else:
+        print_path(P_matrix, i, P_matrix[i][j])
+        print(j)
+
+D_matrix, P_matrix = floyd_warshall()
+print_matrix(D_matrix)
+print_matrix(P_matrix)
+print_path(P_matrix, 0, 3)
+```
+
+
+## Kruskal's algorithm: Minimum Spanning Tree
+```python
+class Disjoint_set():
+  def __init__(self, n):
+    # vertex가 0부터 시작이면 range(n)
+    self.parent = [0 for _ in range(n+1)]  # 자신이 속한 분할 집합의 대표(부모), 대표는 자기 자신이 부모
+    self.rank = [-1 for _ in range(n+1)]  # 분할집합을 트리형태로 표현시 트리의 높이
+  
+  def make_set(self, x): # x를 원소로 하는 새 분할 집합 생성
+    self.parent[x] = x  
+    self.rank[x] = 0
+
+  def find(self, x):  # x가 속한 분할 집합의 대표 반환
+    if x != self.parent[x]  
+      self.parent[x] = find(self.parent[x])  #path compression: 대표를 찾는 와중 같은 그룹의 원소들의 부모가 대표가 아닐시 대표로 바꿈
+    return self.parent[x]
+
+  def union(self, x, y):  #x, y가 속한 분할 집합을 합집합 시킴
+    x = find(x)
+    y = find(y)
+    
+    if self.rank[x] > self.rank[y]:
+      self.parent[y] = x
+    else:
+      self.parent[x] = y
+      if self.rank[x] == self.rank[y]:
+        self.rank[y] += 1
+        
+
+def kruskal(n, edges):  
+  # n은 vertex 수
+  # edges는 (u, v, w)정보가 담긴 리스트
+  disjoint_set = DisjointSet(n)
+  spanning_tree = []
+  weight = 0
+  
+  for i in range(n):
+    disjoint_set.make_set(i)
+    
+  for edge in sorted(edges, key = lambda x: x[2]):
+    u, v, w = edge
+    if disjoint_set.find(u) != disjoint_set.find(v):
+      spanning_tree.append([u, v])
+      weight += w
+      disjoint_set.union(u, v)
+  return spanning_tree, weight
+  
+```
 # Tree
-# BFS tree에서 path를 갖는 노드쌍 찾기
-## 문제 파악
+- 자료간 상하위, 포함관계를 나타내는 자료구조
+- 빠른 검색을 위해, 조건에 맞춰 자료를 추가, 삭제, 검색하는 자료구조
+- vertex
+- edge
+- tree에 root
+- tree에 leaf
+- vertex에 parent
+- vertex에 child
+- vertex에 sibling
+- vertex에 depth: root부터 해당 vertex까지 거치는 edge 수
+- tree에 height: tree에서 가장 큰 depth
 
-## 풀이
-- 각 노드들을 root삼아 BFS를 돌린다
+## BFS: 같은 높이를 가진 node끼리 묶기, leaf node 구하기, 높이 구하기
 
-## 예제
+
+## topology sort
+```python
+
+from collections import deque
+
+#vertex 시작이 0인 버전
+#n: vertex 갯수
+matrix = [[] for _ in range(n)]
+in_degree = [0 for _ in range(n)]
+#edges: (u, v), u->v
+for edge in edges:
+  u, v = edge
+  matrix[u].append(v)
+  in_degree[v] += 1
+
+
+def topology_sort(n, matrix, in_degree):
+  q = deque()
+  topology_sorted = []
+  # 진입차수 0인 vertex push, O(V)
+  for i in range(n):
+    if in_degree[i] == 0:
+      q.appeind(i)
+  # O(E)
+  while q:
+    v = q.popleft()
+    topology_sorted.append(v)
+    for u in matrix[v]:
+      in_degree[u] -= 1
+      if in_degree[u] == 0:  #진입 vertex가 다 사라지면 큐에 push
+        q.append(u)
+  return topology_sorted
+```
+
+
+## Tree DP
+
 
 
 ----------------------------------
 
 
-
-
-
-
-
-----
