@@ -22,6 +22,7 @@
   - [proxy server](#proxy-server)
   - [reverse proxy server](#reverse-proxy-server)
   - [CDN](#cdn)
+  - [DHCP](#dhcp)
 - [Transport Layer](#transport-layer)
   - [socket](#socket)
   - [TCP](#tcp)
@@ -269,6 +270,9 @@ response body
 ## CDN
 
 
+## DHCP
+
+
 --------
 
 # Transport Layer
@@ -402,6 +406,7 @@ if 새 데이터 전송
 ## Datagram
 
 
+
 ------
 # Network Access Layer(Data Link Layer + Physical Layer)
 ## MAC
@@ -430,7 +435,8 @@ if 새 데이터 전송
 
 # 취약점
 ## xss
-
+- cross site scripting
+- 
 ## csrf
 
 ---------

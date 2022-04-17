@@ -1,9 +1,19 @@
 # Elastic Search
-- document: 데이터 단위
-- index: 논리적으로 비슷한 document 집합 
+- 엘라스틱 서치(Elastic Search)는 웹사이트 데이터에 전문 검색 기능을 제공하는 오픈 소스다
+- 분산 환경 지원, http상에서 json 인터페이스 지원, 다양한 프로그래밍 언어 호환  
+- 2010년 발표
+- 데이터 수집 도구인 로그스태시(Logstash)와 비츠(Beat), 시각화 UI 도구인 키바나(Kibana)를 결합해 ELK 스택이 완성되었다
+- 인덱싱을 이용해 빠른 전문 검색 기능을 제공한다
+- 로그 발생량이 많아지고, 여러 서비스가 연계되어 발생 위치가 다양해진 경우 로그를 추적하기 어려워진다.
+- 비츠를 사용하면 로그들을 빠르게 수집할 수 있고, 로그스태시는 필터를 이용해 수집한 로그를 동일한 형태로 바꿀 수 있다.
+-  
+
+- document: 데이터 단위, json으로 관리, 텍스트 말고도 다양한 데이터 타입 지원
+- index: 논리적으로 비슷한 document 집합, 불변 자료구조로 삽입 삭제 over head가 크다 
 - indexing: document를 저장하는 행위
 - reverse indexing
 - shard: 하나에 index가 분리되어 저장되는 단위
+- score: 검색어와 검색결과 사이 유사도
 
 - 각 document는 url을 갖는다
   - "http://host:port/index/_doc/document_id"

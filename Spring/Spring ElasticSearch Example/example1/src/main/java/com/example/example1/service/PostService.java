@@ -88,6 +88,20 @@ public class PostService {
         return PostResponseDto.of(savePost);
     }
 
+    @Transactional
+    public void createAll(List<PostSaveRequestDto> requestDtos){
+        List<Post> posts = requestDtos.stream()
+                .map(post -> {
+                    return Post.builder()
+                            .tittle(post.getTitle())
+                            .content(post.getContent())
+                            .build();
+                })
+                .collect(Collectors.toList());
+        List<Post> savePosts = postRepository.saveAll(posts);
+        postElasticRepository.saveAll(savePosts.stream().map(PostDocument::of).collect(Collectors.toList()));
+    }
+
     @Transactional(readOnly = true)
     public PostResponseDto readById(Long id){
         return PostResponseDto.of(findById(id));

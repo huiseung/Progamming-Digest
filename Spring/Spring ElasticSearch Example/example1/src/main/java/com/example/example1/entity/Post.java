@@ -20,6 +20,7 @@ public class Post {
     //
     @Column
     private String title;
+    @Lob
     @Column
     private String content;
     //
