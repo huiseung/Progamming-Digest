@@ -9,36 +9,107 @@
 -  
 
 - document: 데이터 단위, json으로 관리, 텍스트 말고도 다양한 데이터 타입 지원
-- index: 논리적으로 비슷한 document 집합, 불변 자료구조로 삽입 삭제 over head가 크다 
+- index: 논리적으로 같은 document 집합(RDBMS에 table 역활), 불변 자료구조로 삽입 삭제 over head가 크다 
 - indexing: document를 저장하는 행위
-- reverse indexing
+- reverse indexing: 장문에 문자열을 분석해 token단위로 쪼개어 indexing 한다
+- 분석기는 문자열에 character filter를 활용해 불필요한 문자를 제거, 이를 tokenizer로 분해해 token생성, token filter를 이용해 불필요한 token을 걸러내고 이를 indexing 한다. indexing 상태에 token을 term이라 부른다. character filter와 token filter는 분석기에 필수 동작 과정은 아니다
 - shard: 하나에 index가 분리되어 저장되는 단위
 - score: 검색어와 검색결과 사이 유사도
 
 - 각 document는 url을 갖는다
   - "http://host:port/index/_doc/document_id"
 
+![](./image/elasticsearch_reverse_indexing.PNG)
+
+##
+```
+# cat: compact and aligned text, 시스템 상테 확인
+GET _cat
+
+#
+GET _cat/indices?v
+```
+
 ## 데이터 CRUD
 ```
-입력
-PUT index/_doc/document_id
+생성: 인덱스 ex_index생성
+POST ex_index
+GET ex_index
+DELETE ex_index
+
+
+
+
+
+
+입력: 인덱스 ex_index에 1번 도큐먼트 생성 
+POST ex_index/_doc/1
 {
 
 }
 
-조회
-GET index/_doc/document_id
+조회: 인덱스 ex_index에 1번 도큐먼트 조회
+GET ex_index/_doc/1
 
-수정
-POST index/_update/document_id
+수정: 인덱스 ex_index에 1번 도큐먼트 특정 필드값 수정
+PUT ex_index/_update/1
+{
+
+}
+수정: 
+PUT ex_index/_doc/1
 {
 
 }
 
-삭제
-DELETE index/_doc/docuemnt_id
+삭제: 인덱스 ex_index에 1번 도큐먼트 삭제
+DELETE ex_index/_doc/1
 
 ```
+
+
+
+- get query context 응답 결과
+```json
+{
+  "took" : 32,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 3927,  //검색결과로 찾은 document 수
+      "relation" : "eq"
+    },
+    "max_score" : 0.20545526,
+    "hits": [{}, ..., {}] //검색결과 document를 score 높은 순으로 정렬
+  }
+}
+```
+
+
+##
+
+```
+# field 타입을 지정한 index 생성
+# text: 전문검색을 위해 문자열을 토큰으로 분해해 저장해 둔다. 여러 단어가 나열된 문자열은 지정하지 않아도 text로 다이나믹 매핑
+# keyword: 범주형 데이터에 정렬, 집계를 위해 문자열욜 통으로 저장해 둔다
+PUT ex_index
+{
+    "mappings":{
+        "properties":{
+            "age": {"type": "short"},
+            "name": {"type": "text"},
+            "gender": {"type": "keyword"}
+        }
+    }
+}
+```
+
 ## 검색
 ```
 //index에 모든 document 검색
@@ -46,15 +117,46 @@ GET index/_search
 
 
 
-//index에 field에 값이 value인 document 검색
-GET index/_search
+//인덱스 ex_index에 필드 ex_field에 값이 value인 document 검색
+GET ex_index/_search
 {
     "query": {
         "match": {
-            "field": "value"
+            "ex_field": "value"
         }
     }
 }
+
+//검색 결과
+{
+  "took" : 1,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : ,
+      "relation" : "eq"
+    },
+    "max_score" : 0.2876821,
+    "hits" : [
+      {
+        "_index" : "text_index",
+        "_type" : "_doc",
+        "_id" : "1",
+        "_score" : 0.2876821,
+        "_source" : {
+          "contents" : ""
+        }
+      }
+    ]
+  }
+}
+
 
 //or 연산 검색
 GET index/_search
@@ -183,7 +285,6 @@ GET index/_search
 
 # Kibana
 
-
 # 설치및 실행
 
 ```sh
@@ -191,20 +292,33 @@ GET index/_search
 elastic search
 END
 
-docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.1
-
-docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --name elasticsearch7 docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+docker pull elasticsearch:7.9.1
 
 <<END
 kibana
 END
 
-docker pull odcker.elastic.co/kibana/kibana:7.9.1
-
-docker run -d --link elasticsearch7:elasticsearch -p 5601:5601 --name kibana7 docker.elastic.co/kibana/kibana:7.9.1
-
+docker pull kibana:7.10.1
 ```
 
+- curl은 터미널 환경에서 통신 프로토콜을 사용할 수 있는 소프트웨어다. 리눅스, 맥, 윈도우10이상 버전에 기본으로 설치되어 있다
+- 옵션 -X: 메서드 정의, -d: POST에 request body 정의
+
+```sh
+# elastic search정상 실행 확인
+curl -X GET "localhost:9200/?pretty"
+
+#응답 결과
+{
+    "name": ,
+    "cluster_name": ,
+    "cluster_uuid": ,
+    "version": {},
+    "tagline": 
+}
+```
+
+- kibana: localhost:5601 접속 dev tools를 이용해 elastic search api 호출 가능
 
 ```yml
 """
@@ -212,24 +326,50 @@ docker-compose
 """
 
 version: '3'
+
 services:
-    elasticsearch:
-        image:
-        continaer_name:
-        ports:
-            - "9200:9200"
-            - "9300:9300"
-        environment:
-            - node.name = "es01"
-            - cluster.name = "es-docker-cluster"
-            - discovery.type=single-node
-        networks:
-            elastic
+  mysql:
+    image: mysql:8.0.22
+    container_name: mysql
+    ports:
+      - 13306:3306
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=devdb
+      - MYSQL_ROOT_HOST=%
+    networks:
+      - mysql-elk
+  elasticsearch:
+    image: elasticsearch:7.10.0
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Seoul
+    networks:
+      - mysql-elk
+  kibana:
+    image: kibana:7.10.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - TZ=Asia/Seoul
+    depends_on:
+      - elasticsearch
+    networks:
+      - mysql-elk
+    restart: always
 
 networks:
-    elastic:
-        diver: bridge
-
+  mysql-elk:
+    driver: bridge
 ```
 
 

@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  db01:
+  mysql:
     image: mysql:8.0.22
-    container_name: mysql01
+    container_name: mysql
     ports:
       - 13306:3306
     environment:
@@ -12,10 +12,10 @@ services:
       - MYSQL_DATABASE=devdb
       - MYSQL_ROOT_HOST=%
     networks:
-      - mysql-elastic
-  es01:
+      - mysql-elk
+  elasticsearch:
     image: elasticsearch:7.10.0
-    container_name: es01
+    container_name: elasticsearch
     ports:
       - 9200:9200
       - 9300:9300
@@ -24,8 +24,45 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - TZ=Asia/Seoul
     networks:
-      - mysql-elastic
+      - mysql-elk
+  logstash:
+    image: logstash:6.4.0
+    container_name: logstash
+    ports:
+      - 5000:5000/tcp
+      - 5000:5000/udp
+      - 9600:9600
+    environment:
+      - "LS_JAVA_OPT=-Xmx256m -Xms256m"
+    volumes:
+      - type: bind
+        source: ./elk/logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+      - type: bind
+        source: ./elk/logstash/example.log
+        target: /data/example.log
+      - type: bind
+        source: ./elk/logstash/config/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+    depends_on:
+      - elasticsearch
+    networks:
+      - mysql-elk
+  kibana:
+    image: kibana:7.10.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - TZ=Asia/Seoul
+    depends_on:
+      - elasticsearch
+    networks:
+      - mysql-elk
 
 networks:
-  mysql-elastic:
+  mysql-elk:
     driver: bridge
