@@ -24,6 +24,21 @@
   - [필드 집계](#필드-집계)
   - [document 집계](#document-집계)
 - [로그스태시 logstash](#로그스태시-logstash)
+  - [input plugin](#input-plugin)
+    - [file](#file)
+    - [kafka](#kafka)
+    - [syslog](#syslog)
+  - [filter plugin](#filter-plugin)
+    - [mutate](#mutate)
+    - [dissect](#dissect)
+    - [date](#date)
+    - [grok](#grok)
+  - [output plugin](#output-plugin)
+    - [elastic search](#elastic-search)
+    - [kafka](#kafka-1)
+    - [file](#file-1)
+  - [모니터링](#모니터링)
+- [비츠 Beats](#비츠-beats)
 
 
 ---------------
@@ -301,13 +316,53 @@
 # 로그스태시 logstash
 - 데이터 가공 소프트웨어
 
+![](./image/elk/logstash.PNG)
+
+- 파이프라인 템플릿
+```
+input{
+
+}
+
+filter{
+
+}
+
+output{
+    
+}
+
+```
+
+## input plugin
+### file
+### kafka
+### syslog
+
+## filter plugin
+###  mutate
 
 
+### dissect
 
 
+### date
+
+### grok
+
+## output plugin
+### elastic search
+
+### kafka
+
+### file
 
 
+## 모니터링
 
 
 
 ---------------
+
+# 비츠 Beats
+
