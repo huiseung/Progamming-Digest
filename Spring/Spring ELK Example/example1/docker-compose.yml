@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:8.0.22
+    container_name: mysql
+    ports:
+      - 13306:3306
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=devdb
+      - MYSQL_ROOT_HOST=%
+    networks:
+      - mysql-elk
+  elasticsearch:
+    image: elasticsearch:7.10.0
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Seoul
+    networks:
+      - mysql-elk
+  logstash:
+    image: logstash:7.2.0
+    container_name: logstash
+    ports:
+      - 5000:5000/tcp
+      - 5000:5000/udp
+      - 9600:9600
+    environment:
+      - "LS_JAVA_OPT=-Xmx256m -Xms256m"
+    volumes:
+      - type: bind
+        source: ./elk/logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    depends_on:
+      - elasticsearch
+    networks:
+      - mysql-elk
+  kibana:
+    image: kibana:7.10.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - TZ=Asia/Seoul
+    depends_on:
+      - elasticsearch
+      - logstash
+    networks:
+      - mysql-elk
+
+networks:
+  mysql-elk:
+    driver: bridge
