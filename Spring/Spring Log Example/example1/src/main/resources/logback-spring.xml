@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+    <springProfile name="dev">
+        <timestamp key="date" datePattern="yyyy-MM-dd"></timestamp>
+        <appender name="console" calss="ch.qos.logback.core.ConsoleAppender">
+        </appender>
+        <root level="debug">
+            <appender-ref ref="console"></appender-ref>
+        </root>
+    </springProfile>
+    <springProfile name="prod">
+        <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>
+                ./log/log-${date}.log
+            </file>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter"></filter>
+            <encoder>
+                <pattern></pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePatter>./backup/log-%d{yyyy-MM-dd}.%i.log</fileNamePatter>
+                <maxFileSize>100MB</maxFileSize>
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+        </appender>
+        <root level="info">
+            <appender-ref ref="file"></appender-ref>
+        </root>
+    </springProfile>
+</configuration>
