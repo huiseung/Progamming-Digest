@@ -69,7 +69,7 @@ DELETE ex_index/_doc/1
 
 
 
-- get query context 응답 결과
+- get query 응답 결과
 ```json
 {
   "took" : 32,

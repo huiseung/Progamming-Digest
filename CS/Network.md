@@ -51,7 +51,8 @@
   - [csrf](#csrf)
 - [proxy](#proxy)
 - [reverse proxy](#reverse-proxy)
-- [load balancing](#load-balancing)
+- [로드 밸런싱 load balancing](#로드-밸런싱-load-balancing)
+  - [algorithm](#algorithm)
 - [대용량 트래픽 처리법](#대용량-트래픽-처리법)
 
 
@@ -451,8 +452,10 @@ if 새 데이터 전송
 
 ----------
 
-# load balancing
-
+# 로드 밸런싱 load balancing
+## algorithm
+- sticky session
+- 
 
 # 대용량 트래픽 처리법
 - 발생시점을 예상 가능한가 vs 급작스런 증가인가
