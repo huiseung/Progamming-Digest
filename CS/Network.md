@@ -20,6 +20,8 @@
       - [status](#status)
     - [교차 출처 리소스 공유 CORS](#교차-출처-리소스-공유-cors)
   - [https](#https)
+    - [대칭키와 공개키](#대칭키와-공개키)
+    - [SSL](#ssl)
   - [REST API](#rest-api)
   - [cookie](#cookie)
   - [session](#session)
@@ -29,7 +31,6 @@
   - [DHCP](#dhcp)
   - [socket](#socket)
 - [Transport Layer](#transport-layer)
-  - [socket](#socket-1)
   - [TCP](#tcp)
     - [다중화와 역다중화 multiplexing and demutiplexing](#다중화와-역다중화-multiplexing-and-demutiplexing)
     - [3 hand shake](#3-hand-shake)
@@ -39,7 +40,7 @@
     - [신뢰 보장](#신뢰-보장)
   - [UDP](#udp)
   - [네이글 알고리즘 nagle algorithm](#네이글-알고리즘-nagle-algorithm)
-  - [SSL](#ssl)
+  - [SSL](#ssl-1)
 - [Internet Layer(Network Layer)](#internet-layernetwork-layer)
   - [IP와 port](#ip와-port)
     - [subnet과 subnet mask](#subnet과-subnet-mask)
@@ -246,16 +247,33 @@
 | 500 | server error |
 
 ### 교차 출처 리소스 공유 CORS
+- cross origin resource sharing
+- http header를 이용해 브라우저가 다른 출처(도메인:포트 가 다른 곳)에서 실행중인 자원에 접근 할 수 있게 하는 체제
 
+1) 브라우저가 options method 로 preflight request를 보낸다
+   - access-control-request
+2) 서버가 허락 response를 응답
+   - access-control-allow
+3) 브라우저가 실제 request 보낸다
+4) 서바가 처리후 response 응답
 
 -----------------
 
 ## https
+- hypertext transfer protocol secure
+- http에 보안 기능인 SSL을 합친 프로토콜
 
-1) client가 ssl로 암호화된 페이지 요청
-2) server가 client에게 인증서 전송
-3) client가 
+### 대칭키와 공개키
+- 대칭키
+  - 암호화와 복호화에 사용하는 키가 같은 암호 체계
+- 공개키
+  - 누구나 아는 공개키로 암호화, 복호화 키는 비밀인 암호 체계
+- 
 
+### SSL
+- secure sockets layer
+- ca: 인증 기관
+- 브라우저는 공인된 ca들에 목록을 갖고 있다
 
 ------------------
 
@@ -322,8 +340,6 @@
 - 게임과 같이 실시간 통신이 중요한 경우 처리 시간이 짧아야 한다
   - nagle's algorithm
 -  
-
-## socket
 
 
 ## TCP
@@ -402,7 +418,8 @@ if 새 데이터 전송
 - TCP, UDP 둘다 보안 기능이 없다
 - 
 
-------
+----------------
+
 # Internet Layer(Network Layer)
 - host간에 논리적 통신 제공
 
