@@ -188,16 +188,21 @@ public class ProviderManager implements AuthenticationManager{
 - jwt 자체는 암호화 되어 있지 않기때문에 민감정보는 담지 않는다
 
 ## Header
-- 암호화 알고리즘 종류 정보
+- alg: signature를 해싱한 알고리즘 종류
+- typ: jwt임을 명시
 
 ## Payload
-- key-value 자료구조로된 Claim 객체를 의미
+- key-value 자료구조로된 Claim 객체
+- 클라이언트, 서버가 주고 받는 핵심 내용
 - iss: 토큰 발급자
+- sub: 토큰 제목
 - exp: 토큰 만료시간
 - iat: 토큰 발급시간
 
 ## Signature
-- 토큰이 변조되지 않았음을 확인하기 위해 발급자만 알고있는 키
+- (header + . + payload)를 secretKey로 암호화한값
+- secretKey는 server만 알고 있다
+- 서버는 받은 jwt에 Signature 부분을 secretKey로 복호화해, 해당 jwt에 Header, Payload와 대조해 위조 변경 사항을 감지한다
 
 -------------
 
