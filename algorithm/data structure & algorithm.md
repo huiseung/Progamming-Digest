@@ -13,6 +13,7 @@
   - [가로, 세로 한칸씩 옮기기](#가로-세로-한칸씩-옮기기)
   - [가로, 세로, y=x, y=-x 구간 확인](#가로-세로-yx-y-x-구간-확인)
   - [직각 라인별로 배열 바라보기](#직각-라인별로-배열-바라보기)
+  - [0 내리기](#0-내리기)
 - [LinkedList](#linkedlist)
 - [stack 활용](#stack-활용)
   - [예제](#예제)
@@ -61,6 +62,7 @@
 - [Graph](#graph)
   - [BFS](#bfs)
   - [DFS](#dfs)
+    - [dfs:인접그룹 탐색](#dfs인접그룹-탐색)
   - [BFS: 2차원 최단거리](#bfs-2차원-최단거리)
   - [Dijkstra Algorithm: single source & all dest 최단거리](#dijkstra-algorithm-single-source--all-dest-최단거리)
   - [bellman ford: single source & all dest 최단거리](#bellman-ford-single-source--all-dest-최단거리)
@@ -391,6 +393,31 @@ def solution(n, left, right):
     for i in range(left, right+1):
         answer.append(max(i//n,i%n)+1)
     return answer
+```
+
+## 0 내리기
+```python
+
+def breakAndDown(nRow, nCol, board, groups):
+    retBoard = [[0 for _ in range(nCol)] for _ in range(nRow)]
+    for group in groups:
+        for r, c in group:
+            board[r][c] = 0
+    #
+    for c in range(nCol):
+        newCol = []
+        for r in range(nRow-1, -1, -1):
+            num = board[r][c]
+            if num > 0:
+                newCol.append(num)
+        #pad
+        for _ in range(nCol-len(newCol)):
+            newCol.append(0)
+        for i in range(nRow):
+            num = newCol[i]
+            r = nRow-i-1
+            retBoard[r][c] = num
+    return retBoard
 ```
 
 -----------------------------------
@@ -772,13 +799,16 @@ search(total, [], 1, n+1, m)
 - 이분 탐색으로 최적해를 찾다
 - 시간복잡도 lgN
 
+
 - 조건을 만족하는 최소 해 찾기
+  - 해 x가 조건을 충족하는지 빠르게 확인할 수 있다
   - 해 x는 음이 아닌 정수
   - 해 x에 상한, 하한이 있다
   - 해 x가 조건 충족시, x보다 큰 모든 음이 아닌 정수대해서도 조건을 만족
   - 해 x가 조건을 만족하지 않을때, x보다 작은 모든 음이 아닌 정수에 대해서도 조건을 만족하지 않는다
 
 - 조건을 만족하는 최대 해 찾기
+  - 해 x가 조건을 충족하는지 빠르게 확인할 수 있다
   - 해 x는 음이 아닌 정수
   - 해 x에 상한, 하한이 있다
   - 해 x가 조건 충족시, x보다 작은 음이 아닌 정수대해서도 조건을 만족
@@ -917,6 +947,40 @@ def dfs_visit(graph, node, visited, time):
     time += 1
     visited[node][2] = time
     return time
+```
+
+
+### dfs:인접그룹 탐색
+```python
+
+def search(nRow, nCol, board, now, targetColor, visited, group):
+    r, c = now
+    if board[r][c] == targetColor:
+        visited[r][c] = True
+        group.append(now)
+        for dr, dc in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
+            nr = r + dr
+            nc = c + dc
+            if 0 <= nr < nRow and 0<= nc < nCol:
+                if not visited[nr][nc]:
+                    search(nRow, nCol, board, (nr, nc), targetColor, visited, group)
+
+def check(nRow, nCol, board):
+    visited = [[False for _ in range(nCol)] for _ in range(nRow)]
+    groups = []
+    for r in range(nRow):
+        for c in range(nCol):
+            group = []
+            if board[r][c] == 0:
+                visited[r][c] = True
+            else:
+                if not visited[r][c]:
+                    search(nRow, nCol, board, (r, c), board[r][c], visited, group)
+                if len(group) >= 3:
+                    groups.append(group)
+    return groups
+
+
 ```
 
 
