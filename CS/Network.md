@@ -1,95 +1,88 @@
 # 목차
 - [목차](#목차)
 - [Computer Network](#computer-network)
-- [OSI 7 layer와 TCP-IP](#osi-7-layer와-tcp-ip)
+- [OSI 7 Layer 와 TCP/IP 4 Layer](#osi-7-layer-와-tcpip-4-layer)
 - [응용 계층 Application Layer](#응용-계층-application-layer)
-  - [웹 web](#웹-web)
-    - [클라이언트 서버 구조 client-server](#클라이언트-서버-구조-client-server)
-    - [웹페이지 web page](#웹페이지-web-page)
-    - [웹 브라우저 web browser](#웹-브라우저-web-browser)
-    - [URL과 URI](#url과-uri)
-    - [DNS](#dns)
-      - [브라우저에 웹사이트 주소(domain name)를 입력할때 DNS가 처리하는 과정](#브라우저에-웹사이트-주소domain-name를-입력할때-dns가-처리하는-과정)
-      - [브라우저가 웹 페이지를 화면에 그리는 과정](#브라우저가-웹-페이지를-화면에-그리는-과정)
-  - [http](#http)
-    - [http 특징](#http-특징)
-    - [http version](#http-version)
-    - [request](#request)
-      - [method](#method)
-    - [response](#response)
-      - [status](#status)
-    - [교차 출처 리소스 공유 CORS](#교차-출처-리소스-공유-cors)
-  - [https](#https)
-    - [대칭키와 공개키](#대칭키와-공개키)
-    - [SSL](#ssl)
+  - [web과 client-server 구조](#web과-client-server-구조)
+  - [DNS](#dns)
+  - [HTTP](#http)
+  - [HTTPS](#https)
   - [REST API](#rest-api)
-  - [cookie](#cookie)
-  - [session](#session)
-  - [proxy server](#proxy-server)
-  - [reverse proxy server](#reverse-proxy-server)
+  - [Cookie와 Seesion](#cookie와-seesion)
+  - [Proxy Server와 Reverse Proxy Server](#proxy-server와-reverse-proxy-server)
   - [CDN](#cdn)
-  - [DHCP](#dhcp)
-  - [socket](#socket)
-- [Transport Layer](#transport-layer)
+- [전송 계층 Transport Layer](#전송-계층-transport-layer)
+  - [Socket](#socket)
   - [TCP](#tcp)
-    - [다중화와 역다중화 multiplexing and demutiplexing](#다중화와-역다중화-multiplexing-and-demutiplexing)
-    - [3 hand shake](#3-hand-shake)
-    - [4 hand shake](#4-hand-shake)
-    - [SYN Flood Atack](#syn-flood-atack)
-    - [혼잡 제어](#혼잡-제어)
-    - [신뢰 보장](#신뢰-보장)
+    - [네이글 알고리즘 nagle algorithm](#네이글-알고리즘-nagle-algorithm)
   - [UDP](#udp)
-  - [네이글 알고리즘 nagle algorithm](#네이글-알고리즘-nagle-algorithm)
-  - [SSL](#ssl-1)
-- [Internet Layer(Network Layer)](#internet-layernetwork-layer)
-  - [IP와 port](#ip와-port)
-    - [subnet과 subnet mask](#subnet과-subnet-mask)
-  - [Forwarding](#forwarding)
-  - [Routing](#routing)
-  - [Datagram](#datagram)
-- [Network Access Layer(Data Link Layer + Physical Layer)](#network-access-layerdata-link-layer--physical-layer)
-  - [MAC](#mac)
-    - [ARP](#arp)
-- [apache 와 nginx](#apache-와-nginx)
-- [tomcat](#tomcat)
-- [취약점](#취약점)
-  - [xss](#xss)
-  - [csrf](#csrf)
-- [proxy](#proxy)
-- [reverse proxy](#reverse-proxy)
-- [로드 밸런싱 load balancing](#로드-밸런싱-load-balancing)
-  - [algorithm](#algorithm)
-- [대용량 트래픽 처리법](#대용량-트래픽-처리법)
+  - [QUIC(Quick UDP Internet Connection)](#quicquick-udp-internet-connection)
+- [인터넷 계층 Internet Layer](#인터넷-계층-internet-layer)
+  - [LAN과 WAN](#lan과-wan)
+  - [라우터 Router](#라우터-router)
+  - [스위치 Switch](#스위치-switch)
+  - [IP](#ip)
+    - [IP class와 subnet](#ip-class와-subnet)
+    - [DHCP](#dhcp)
+  - [ARP와 RAPR](#arp와-rapr)
+  - [ICMP](#icmp)
+- [네트워크 접근 계층 Network Access Layer](#네트워크-접근-계층-network-access-layer)
+  - [MAC address](#mac-address)
 
 
-----------------------
+-------------------------------
 
 # Computer Network
+
 - 인터넷 internet
   - inter network에 줄인말
   - 전세계 computer가 연결되어 data를 주고 받는 system
+
 - 프로토콜 protocol
   - internet에서 data를 주고 받을 때 지키는 약속
     - 어떻게 보낼까
     - 어떻게 응답할까
     - 응답이 없을때 어떻게 대응할까
+
 - 노드 node
   - internet에서 data를 주고 받는 주체인 하드웨어를 부르는 말
+    - 서버 server
+    - 라우터 router
+    - 스위치 switch
+
 - 호스트 host
   - application 기능이 있는 node
 
+- 네트워크 성능 지표
+  - 처리량 throughput: 단위시간당 전송/수신 데이터양 bps, bit per second  
+  - 지연시간 latency: 요청 전송부터 응답이 오기까지 걸린 시간 ms
+    - RTT, Round Trip Time: 네트워크 시작지점에서 목표지점까지후 다시 시작지점으로 돌아오기까지 걸린시간 
 
-# OSI 7 layer와 TCP-IP
+
+# OSI 7 Layer 와 TCP/IP 4 Layer
+
 - Computer Network를 구성하는 요소들을 구분하는 방식
+- 한 계층 layer 에서 변경은 다른 계층에 영향을 주지 않는다 
 
 ![](./image/OSI.PNG)
 
+<ul>
+  <li>Application Layer: 사용자와 직접 상호작용하는 응용프로그램</li>
+  <li>Presentation Layer: data form을 결정하는 계층</li>
+  <li>Session Layer: computer간 통신용 세션을 만드는 계층</li>
+  <li>Transport Layer: process에서 패킷을 송신, 수신하는 계층 </li>
+  <li>Network Layer: 패킷을 목적지까지 전달하는 계층</li>
+  <li>DataLink Layer: 인접 노드간 데이터 전달, 신호가 전달되는 동안 오류감지를 담당하는 계층</li>
+  <li>Physical Layer: 데이터를 전기신호로 바꾸는 계층</li>
+</ul>
 
-------------
+-----------------------------------
 
 # 응용 계층 Application Layer
+- OSI에 Application, Presentation, Session Layer에 해당
+
 - 응용 계층은 인터넷에서 다른 컴퓨터와 통신하는 기능을 갖춘 프로그램을 지칭한다
-- 애플리케이션이라고도 부른다
+- 줄여서 애플리케이션이라고도 부른다
   
 - 대표 프로토콜
   - http
@@ -102,216 +95,272 @@
     - simple mail transfer protocol
     - 문자 통신 프로토콜
 
-## 웹 web
-- world wide web을 줄여서 www 혹은 web이라 부른다
-- 수 많은 웹 페이지(web page)와 웹 서버(web server)가 연결된 연결망
-- 인터넷에 부분집합
+## web과 client-server 구조
+- 클라이언트 client
+  - 다른 프로세스와 접속을 시도하는 프로세스
+- 서버 server
+  - 다른 프로세스의 접속을 기다리는 프로세스
 
-### 클라이언트 서버 구조 client-server
-- 클라이언트 client: 다른 프로세스와 접속을 시도하는 프로세스
-- 서버 server: 다른 프로세스의 접속을 기다리는 프로세스
+</br>
 
-### 웹페이지 web page
+- 웹 Web
+  - world wide web을 줄여서 www 혹은 web이라 부른다
+  - 수 많은 웹 페이지(web page)와 웹 서버(web server)가 연결된 연결망
+  - 인터넷에 부분집합
+
+</br>
+
 - 웹 페이지 web page
   - 웹상에 존재하는 문서
   - 웹 서버에 저장되며, 브라우저에서 검색(요청)시 서버 응답받아 화면에 띄운다  
   - 하이퍼링크(hypter link)를 이용해 다른 웹 페이지로 이동 가능하다
 - 웹 사이트 web site
   - 여러 웹 페이지 묶음
-- html
+
+</br>
+
+- HTML
   - hypter text markup language
   - 웹 페이지를 만들 때 사용하는 기본 언어
   - 좀더 복잡한 웹 페이지를 만들기 위해 css, js 언어를 사용한다
 
-### 웹 브라우저 web browser
-- web client
-- 브라우저라고도 부른다
-- html를 이용해 만든 웹 페이지가 돌어가는 프로그램
+</br>
 
-### URL과 URI
-- uniform resource indentifier
-  - web상에 resource를 식별하는 형식
+- 웹 브라우저 web browser
+  - web client
+  - 브라우저라고도 부른다
+  - html를 이용해 만든 웹 페이지가 돌어가는 프로그램
 
-- uniform resource locator
-  - web상에 resource 위치를 가리키는 형식
+</br>
 
-- uri는 url 보다 큰 개념
-- protocol://domain:port/path?query#fragment 로 구성된다
-- 웹 페이지는 url로 지정할 수 있는 파일들(html, jpeg, 등)로 구성된다
+- URL과 URI 
+  - uniform resource locator
+    - web상에 resource 위치를 가리키는 형식
+  - uniform resource indentifier
+    - web상에 resource를 식별하는 형식
+  - uri는 url 보다 큰 개념
+  - protocol://domain:port/path?query#fragment 로 구성된다
+    - query는 key=value 형식이다
+  - 웹 페이지는 url로 지정할 수 있는 파일들(html, jpeg, 등)로 구성된다
 
+</br>
+<details>
+<summary>브라우저가 웹페이지를 그리는 과정
+</summary>
+<ol>
+  <li>주소창에 입력된 url이 브라우저에 의해 파싱되어 http request를 만들어 dns 처리 과정과 웹 서버와 연결과정(3 handshake)을 거친끝에 서버로부터 html 파일을 받아온다</li>
+  <li> html 파싱 과정중 css 파일을 다운받는 태그를 만나면 다운로드 진행한다,</br> header에 link 태그로 있는 편이다</li>
+  <li> html 파싱 과정중 script 태그를 만나면 브라우저는 자바스크립트 엔진을 실행해 해당 과정이 끝날때까지 파싱을 잠시 중단한다. </br>script 태그를 body 끝에 두면, 사용자에게 빠른 렌더링 경험을 제공할 수 있다</li>
+  <li>DOM Tree가 완성되면 css파일을 바탕으로 CSSOM Tree 생성</li>
+  <li>DOM Tree와 CSSOM Tree를 합쳐 Render Tree 완성</li>
+  <li>Render Tree를 바탕으로 레이아웃 잡기</li>
+  <li>브라우저에 페인팅</li>
+</ol>
+</details>
+</br>
 
-### DNS
+## DNS
 - domain name system
 - ip주소를 사람이 읽을 수 있는 이름(domain name)으로 등록해 둔 계층형 데이터 베이스 시스템
 - 인터넷에 모든 domain은 root부터 시작해 . 으로 구분되는 계층 형태로 저장된다
 
-#### 브라우저에 웹사이트 주소(domain name)를 입력할때 DNS가 처리하는 과정
-1) 브라우저가 local dns(내 컴퓨터에 저장되어있는 폴더)에게 domain name에 맞는 ip주소를 찾는 쿼리를 보낸다
-2) local dns에서 해당 domain name에 맞는 ip 주소가 있으면 반환, 없으면 root dns로 해당 domain name을 관리하는 dns를 찾기 위한 쿼리를 보낸다
-3) 해당 domain name을 관리하는 dns가 나올때까지 쿼리를 주고받는다
-4) 해당 domain name을 관리하는 dns로 부터 ip주소 응답
-5) local dns에 해당 ip주소와 domain name을 캐싱하고 브라우저에게 ip주소 응답
-6) 브라우저는 찾은 ip주소를 갖는 웹 서버와 연결을 시도한다 
+</br>
+<details>
+  <summary>브라우저에 웹 사이트 주소로 접속할때 dns가 처리하는 과정</summary>
+  <ol>
+  <li>브라우저가 url을 파싱해 http request messgae 생성, os에게 request를 보내달라한다</li>
+  <li> os는 local dns(내 컴퓨터에 저장되어있는 폴더)에게 domain name에 맞는 ip주소를 찾는 쿼리를 보낸다</li>
+  <li>local dns에서 해당 domain name에 맞는 ip 주소가 있으면 반환, 없으면 root dns로 해당 domain name을 관리하는 dns를 찾기 위한 쿼리를 보낸다</li>
+  <li> 해당 domain name을 관리하는 dns가 나올때까지 쿼리를 주고받는다</li>
+  <li>해당 domain name을 관리하는 dns로 부터 ip주소 응답</li>
+  <li>local dns에 해당 ip주소와 domain name을 캐싱하고 브라우저에게 ip주소 응답</li>
+  <li>브라우저는 찾은 ip주소를 갖는 웹 서버와 연결을 시도한다, 해당 ip주소까지 찾아가는 법은 참조</li>
+  </ol>
+</details>
+</br>
 
-#### 브라우저가 웹 페이지를 화면에 그리는 과정
-1) 주소창에 url이 입력된다
-2) dns 처리 과정을 거치고 웹 서버와 연결
-3) 서버로부터 html 파일을 받아온다
-4) html 내용을 기반으로 DOM Tree 생성
-5) html 파싱 과정중 css 파일을 다운받는 태그를 만나면 다운로드 진행한다, header에 link 태그로 있는 편이다
-6) html 파싱 과정중 script 태그를 만나면 브라우저는 자바스크립트 엔진을 실행해 해당 과정이 끝날때까지 파싱을 잠시 중단한다. 따라서 사용자에 빠른 렌더링 경험을 위해 script 태그를 body 끝에 두는걸 권장한다
-7) DOM Tree가 완성되면 css파일을 바탕으로 CSSOM Tree 생성
-8) DOM Tree와 CSSOM Tree를 합쳐 Render Tree 완성
-9) Render Tree를 바탕으로 레이아웃 잡기
-10) 브라우저에 페인팅
+------------------------------------
 
----------------
-
-## http
-- hyper text transper protocol
-- web server와 web client(browser)사이에 통신 프로토콜
-### http 특징
-- request
-  - client가 server에 보내는 요청
-- response
-  - server가 요청에 대응해 client에 보내는 응답
+## HTTP
+- hyper text trasport protocol
+- server와 client(browser)사이에 통신 프로토콜
+  - client는 request를 server에게 보내 response를 받는다
 - stateless
   - server는 client에 상태를 저장하지 않는다
-  - request에 현재 client에 상태를 담아야 한다 
+  - request에 client에 상태를 담아 보낸다
 - connectionless
-  - response를 보내면 server는 client와 연결을 끊는다
-
-### http version
-- 0.9
-  - 1991년 발표
-  - get method만 있다
-  - header가 없다
-- 1.0
-  - 1996년 발표
-  - method 추가
-  - header 추가
-  - content-type이 헤더에 있어 html외에 다른 형식 주고 받을 수 있다
-  - 응답에 status code가 담긴다
-- 1.1
-  - 1997년 발표
-  - TCP 기반 연결
-  - 한번 요청을 응답하더라도 header 부분에 keep alive 필드값을 이용해 연결(hand shake)를 해제하지 않고 재사용한다
-  - 요청에 응답이 오지 않더라도 다음 요청을 보내는 pipelining 기능 추가
-- 2.0
-  - 2015년 발표
-  - TCP 기반 연결
-  - multiplexed stream을 이용해 하나에 연결에서 여러 응답/요청을 동시에 주고 받을 수 있다
-- 3
-  - UDP 기반 연결
-  - QUIC
-
-
-### request
-- request 형태
+  - response를 보낸후 server는 client와 연결을 끊는다
 
 ![request 형태](./image/request.PNG)
 
-#### method
-| method | 의미 |
-|---|---|
-| get | server에 resource 가져오기 요청 |
-| post | server에 resource 생성 요청|
-| delete | server에 resource 삭제 요청|
-| put | server에 resource 대체 요청, 기존에 있던 값에 수정사항을 넣지 않으면 null로 수정된다 |
-| patch | server에 resource 일부 수정 요청, 기존에 있던 값에 수정사항을 넣지 않으면 기존 값으로 유지된다|
-| options | server에 통신 옵션 설명, cors 해결에 사용 |
-| head | server에 resource를 요청하지만 응답에 상태코드와 header만 받는다, 웹서버가 동작중인지 확인하는 용도|
-| connect| server에 proxy 기능 요청|
-| trace| resource 루프백 요청|
+</br>
+<details>
+<summary>HTTP request method
+</summary>
+<ul>
+  <li>GET: server에 resource 가져오기 요청</li>
+  <li>POST: server에 resource 생성 요청</li>
+  <li>PUT: server에 resource 변경 요청, 변경없는 값을 안 넣을 경우 null로 변경된다</li>
+  <li>PATCH: server에 resource 변경 요청, 변경없는 값을 안 넣을 경우 수정없이 유지된다</li>
+  <li>DELETE: server에 resource 삭제 요청</li>
+  <li>OPTIONS: </li>
+  <li>HEAD: </li>
+  <li>CONNECT: </li>
+  <li>TRACE: </li>
+</ul>
+</details>
+</br>
 
-### response
-- response 형태
-  
 ![response 형태](./image/response.PNG)
 
+</br>
+<details>
+<summary>HTTP response status
+</summary>
+<ul>
+  <li>200: 정상 응답</li>
+  <li>400: bad request, 잘 못된 요청</li>
+  <li>401: unauthorized, 단어 뜻은 권한 없음이지만 실제론 인증되지 않은 사용자에 요청</li>
+  <li>403: forbidden, 권한 없는 사용자에 요청</li>
+  <li>405: method not allowed, 요청한 resource를 찾을 수 없습니다</li>
+  <li>500: server error</li>
+</ul>
+</details>
+</br>
 
-#### status
-- 요청 처리 상태를 표기
-- 2xx: 정상 처리 
-- 3xx: 처리 완료를 위해 추가 행동 요구
-- 4xx: 클라이언트 오류
-- 5xx: 서버 오류
+</br>
+<details>
+<summary>CORS란 무엇인가
+</summary>
+<p>
+cross origin resource sharing
+</p>
+</br>
+<p>
+브라우저는 보안 정책상 같은 출처(현재 접속중인 사이트에 "도메인:포트"와 같은 곳)에 resource만 접근할 수 있게 만들어졌다. </br>
+CORS는 http header를 이용해 브라우저가 다른 출처에 자원에 접근 할 수 있게 하는 체제
+</p>
+<ol>
+<li>client는 POST request를 보내기 전, OPTIONS method로 preflight request를 먼저 보낸다</li>
+<li>server가 POST request를 보내도 괜찮다는 허락 response를 보낸다</li>
+<li>client는 원래 보내고 싶은 POST reqeust를 보내고 server는 이를 처리해 response를 보낸다</li>
+</ol>
+</details>
+</br>
 
-|status|의미|
-|---|---|
-| 200 | 정상 응답 |
-| 400 | bad request, 잘 못된 요청 |
-| 401 | unauthorized, 로그인 하지 않음(영단어를 해석하면 권한 없음이지만 실제론 인증되지 않음으로 사용한다 ) |
-| 403 | forbidden, 권한 없음 |
-| 405 | method not allowed, 요청한 resource를 찾을 수 없습니다 |
-| 500 | server error |
+</br>
+<details>
+<summary>HTTP version 별 차이점</summary>
+<ol>
+  <li>
+    <ul>
+      <li>1991년 발표</li>
+      <li>get method만 존재</li>
+      <li>header가 없다</li>
+      <li>response status가 없다</li>
+    </ul>
+  </li>
+  <li>version 1.0
+    <ul>
+      <li>1996년 발표</li>
+      <li>다양한 method 기능 추가</li>
+      <li>header 기능 추가</li>
+      <li>header에 content-type field를 넣어 html외에 파일도 주고받을 수 있다</li>
+      <li>response status 기능 추가</li>
+    </ul>
+  </li>
+    <li>version 1.1
+    <ul>
+      <li>1997년 발표</li>
+      <li>TCP 기반 연결</li>
+      <li>한번 요청을 응답하더라도 header 부분에 keep alive 필드값을 이용해 연결(hand shake)를 해제하지 않고 재사용한다</li>
+      <li>요청에 응답이 오지 않더라도 다음 요청을 보내는 pipelining 기능 추가</li>
+    </ul>
+  </li>
+  <li>version 2.0
+    <ul>
+      <li>2015년 발표</li> 
+      <li> 1.1 성능 개선에 주력 </li>
+      <li>TCP 기반 연결</li>
+      <li> Multiplexed Streams: 하나에 연결에 여러 메세지 동시 주고 받을 수 있음 </li>
+      <li>header 압축 기술 추가</li>
+      <li>client에 요청없이 server에서 messgage push하는 기능 추가</li>
+    </ul>
+  </li>
+</ol>
+</details>
+</br>
 
-### 교차 출처 리소스 공유 CORS
-- cross origin resource sharing
-- http header를 이용해 브라우저가 다른 출처(도메인:포트 가 다른 곳)에서 실행중인 자원에 접근 할 수 있게 하는 체제
+## HTTPS
+- 보안기능을 더한 HTTP
+- 대칭키와 비대칭키 암호화 방식 둘 다 사용
+  - 대칭키
+    - 암호화/복호화에 사용하는 키가 동일
+    - 암호를 주고받는 이들끼리 안전하게 키를 공유하는 시스템 필요 
+  - 비대칭키(개인키와 공개키)
+    - 암호를 사용하는 개인별로 (개인키, 공개키) 쌍을 갖는다.</br> 
+      모든 사용자에 공개키는 공개해 누구나 사용가능하며, 개인키는 자신만 알고 있다.</br> 
+      A는 B에게 암호를 보낼때, B에 공개키를 이용해 암호화</br>
+      B는 A가 보낸 암호문을 자신에 개인키를 이용해 복호화 
+  - 비대칭키 암호화 복호화는 시간이 많이 소요되기에 클리이언트-서버가 처음 대칭키를 공유할때만 사용, 메세지를 주고 받을 때는 대칭키 방식을 사용한다
 
-1) 브라우저가 options method 로 preflight request를 보낸다
-   - access-control-request
-2) 서버가 허락 response를 응답
-   - access-control-allow
-3) 브라우저가 실제 request 보낸다
-4) 서바가 처리후 response 응답
-
------------------
-
-## https
-- hypertext transfer protocol secure
-- http에 보안 기능인 SSL을 합친 프로토콜
-
-### 대칭키와 공개키
-- 대칭키
-  - 암호화와 복호화에 사용하는 키가 같은 암호 체계
-- 공개키
-  - 누구나 아는 공개키로 암호화, 복호화 키는 비밀인 암호 체계
-- 
-
-### SSL
-- secure sockets layer
-- ca: 인증 기관
-- 브라우저는 공인된 ca들에 목록을 갖고 있다
-
-------------------
+</br>
+<details>
+<summary>
+HTTPS가 안전하게 메세지를 주고받는 방법
+</summary>
+</br>
+<p>
+1) 브라우저(클라이언트)가 서버와 연결 성공(3 hand shake 끝남)
+</p>
+<p>
+2) 서버가 자신에 인증서(공개키)를 브라우저에게 보낸다
+</p>
+<p>
+3) 브라우저는 등록된 인증기관 목록을 활용해 인증서가 유효한지 검사 
+</p>
+<p>
+4) 유효한 인증일 경우, 브라우저는 세션키를 발급해 저장한 후, 서버가 보낸 공개키를 이용해 세션키(대칭키)를 암호화한 후 서버에 전송 
+</p>
+<p>
+5) 서버는 자신에 개인키로 복호화해 세션키를 얻는다
+</p>
+<p>
+6) 클라이언트와 서버는 세션키를 이용해 메세지 암호화/복호화
+</p>
+</details>
+</br>
 
 ## REST API
 
-------------------
-  
-## cookie
-- web site가 사용자 정보를 추적하기 위해 저장해두는 정보 
-- server가 response header에 'set-cookie' filed로 담은 value를 browser가 저장한다
-- request 보낼시 cookie는 header에 담긴다
 
+## Cookie와 Seesion
+- Cookie
+  - web site가 사용자 정보를 추적하기 위해 저장해두는 정보 
+  - server가 response header에 'set-cookie' filed로 담은 value를 browser가 저장한다
+  - request 보낼시 cookie는 header에 담긴
+- Session
 
-## session
-- session: web server에 저장됨
-
------------------
-
-## proxy server
+## Proxy Server와 Reverse Proxy Server
 - response cache 역활
 - client가 요청을 보낼 경우 proxy server는 response가 cache되어 있는지를 확인하고 있다면 이를 응답한다, 없다면 server에 요청을 보내 response를 받아 와 저장한 후 client에게 응답한다
 - 비슷한 목적으로 사용하는 여러 client들을 하나에 proxy server로 request 보내게끔 시스템을 설계하면 server로 직접 가는 트래픽을 줄일 수 있다
 - caching시 마지막 수정된 날짜를 함께 저장한다
 - client는 cache에서 response를 받기전 server에게 조건부 get를 보내 수정 사항이 있는지 확인(status 304 response)를 확인 받고 cache에서 받는다
 
-## reverse proxy server
 
----------------
 
 ## CDN
 
---------------
 
-## DHCP
+----------------------------------
 
----------------
+# 전송 계층 Transport Layer
+- OSI에 Transport Layer에 해당
+- 프로세스간 논리적 통신 제공: 서로 다른 호스트에서 동작중인 애플리케이션이 직접 연결된 것처럼 통신한다.
+- 해당 계층에서는 데이터를 segment라 부른다
 
-## socket
+## Socket
 - 응용 계층과 전송 계층간 인터페이스
   - 프로세스에서 네트워크로 데이터 송신, 네트워크로부터 프로세스로 데이터 수신을 하는 출입구 역활
 - 하나에 컴퓨터에 동작중인 프로세스가 다른 컴퓨터에 동작 중인 프로세스와 통신하기 위해 OS가 제공하는 기능(system call을 이용해 구현) 
@@ -321,83 +370,51 @@
 - 송신측 소켓은 애플리케이션이 생성한 메세지를 네트워크로 전송하는 책임이
 - 수신측 소켓은 받은 메세지를 애플리케이션에 이동시키는 책임이 있다
 
-
---------------
-
-# Transport Layer
-- 프로세스간 논리적 통신 제공: 서로 다른 호스트에서 동작중인 애플리케이션이 직접 연결된 것처럼 통신한다.
-  - 실제론 호스트와 호스트 사이에 수많은 라우터와 링크들이 존재한다
-- segment: transport layer에 packet 단위
-  - 애플리케이션 message를 분해한 후 header를 붙인다 
-  - 이를 송신측은 Network layer로 보내고, 수신측은 Network layer로 부터 받는다
-- data 전송, 통신 제어
-  - 신뢰, 처리율, 처리시간 보장, 보안을 담당한다
-- IP(Internet Protocol)은 segment 전달을 보장하지 않는다.
-  - 네트워크에서 전송중인 data packet은 손실될 수 있다. 순서 역시 보장하지 않는다
-  - ex) 라우터 버퍼 오버플로우, 비트 조작
-- 오디오, 비디오같은 data는 어느 정도(사용자가 이상을 느끼지 않을 정도) 손실을 허용한다
-- 처리율: 초당 처리 bit 
-- 게임과 같이 실시간 통신이 중요한 경우 처리 시간이 짧아야 한다
-  - nagle's algorithm
--  
-
-
 ## TCP
 - transmission control protocol
 - 프로세스간 논리적 통신
 - 연결 지향형(3 hand shake와 4 hand shake)
   - 하나에 client와 하나에 server를 점대점으로 연결한다
-- 신뢰도 높음(순서대로 모두 도착함을 보장한다)
+- 신뢰도 높음
+  - 보낸 순서대로 모두 도착함을 보장한다
+  - 오류 검출 가능
 - 혼잡 제어 있음
   - 통신중인 호스트 사이에 있는 스위치와 링크가 폭주하는젓을 방지
-- 오류 검출 가능
 - 타이머
 
 ![](./image/tcp_segment.PNG)
 
-![](./image/segment_seq_ex.PNG)
-- 순서번호 SEQ
-- 확인응답번호 ACK: 
-
-### 다중화와 역다중화 multiplexing and demutiplexing
-- network layer에 호스트간 논리적 통신을 프로세스간 논리적 통신으로 확장
-- 다중화: 송신을 위해 message를 segment로 만들고 이를 network layer로 보내는 과정
-- 역다중화: transport layer에 수신받은 segment를 올바른 socket에 전달하는 과정
-
-### 3 hand shake
-- TCP socket을 쓰는 client-server에 통신 연결 과정
-1) client가 server에게 SYN=True, ACK=False인 segment를 전송한다, data를 포함하지 않고, SEQ는 random number
-2) server가 client에게 SYN=True, ACK=True인 segment를 전송한다, data를 포함하지 않고, SEQ는 random number, ACK는 1번의 SEQ에 +1
-3) client가 server에게 SYN=False, ACK=True인 segment를 전송한다, data를 포함할 수 있고, SEQ는 1번의 SEQ+1, ACK는 2번의 SEQ에 +1
-이상에 과정을 거친 client와 server는 request, response를 주고 받을 수 있다
+</br>
+<details>
+<summary>
+클라이언트가 서버와 연결하는 과정
+</summary>
+<ol>
+<li>client가 server에게 SYN=True, ACK=False인 segment를 전송한다, data를 포함하지 않고, SEQ는 random number</li>
+<li>server가 client에게 SYN=True, ACK=True인 segment를 전송한다, data를 포함하지 않고, SEQ는 random number, ACK는 1번의 SEQ에 +1</li>
+<li>client가 server에게 SYN=False, ACK=True인 segment를 전송한다, data를 포함할 수 있고, SEQ는 1번의 SEQ+1, ACK-number는 2번의 SEQ에 +1</li>
+<li>이상에 과정을 거친 client와 server는 request, response를 주고 받을 수 있다</li>
+</ol>
+</details>
+</br>
 
 
-### 4 hand shake
-- TCP socket을 쓰는 client-server에 통신 종료 과정
-1) client가 server에게 FIN=True인 segment를 전송한다
-2) server가 client에게 ACK=True인 segment를 전송한다 
-3) server가 client에게 FIN=True인 segment를 전송한다
-4) client가 server에게 ACk=True인 segment를 전송한다
-5) client는 설정한 대기시간동안 대기(4번이 손실될 경우를 재전송을 대비)후 종료, server는 추가 segment가 안 온다면 종료 
+</br>
+<details>
+<summary>
+클라이언트가 서버와 연결 종료하는 과정
+</summary>
+<ol>
+<li>client가 server에게 FIN=True인 segment를 전송한다</li>
+<li>server가 client에게 ACK=True인 segment를 전송한다</li>
+<li>server가 client에게 FIN=True인 segment를 전송한다</li>
+<li>client가 server에게 ACk=True인 segment를 전송한다</li>
+<li>client는 설정한 대기시간동안 대기(4번 과정에서 전송 데이터 손실이 발생할 경우 재전송 하기위해)후 종료, server는 추가 segment가 안 온다면 종료</li> 
+</ol>
+</details>
+</br>
 
-### SYN Flood Atack
-- 1996년에 발견된 dos 공격
-- 악의적으로 3 hand shake에 세번째 단계를 완료시키지 않는 무수히 많은 SYN=True segment를 보내 server 자원을 낭비시켜 정상 client가 통신 시도를 못하게 방해하는 공격
-- 현재 대부분에 OS는 SYN cookie기술을 이용한 방어책을 갖고 있다
-
-### 혼잡 제어
-
-### 신뢰 보장
-
-
-## UDP
-- user datagram protocol
-- 비연결형
-- 신뢰도 낮음(송신한 데이터가 목적지에 제대로 도착함을 보장하지 않는다)
-- 혼잡 제어 없음
-- 프로세스간 논리적 통신, 오류 검출 두 가지만 제공
-
-## 네이글 알고리즘 nagle algorithm
+### 네이글 알고리즘 nagle algorithm
 - 데이터 전송시 네트워를 통해 보내는 패킷수를 줄여 효율성을 높이는 알고리즘
   - ACK를 받기까지 버퍼에 대기하느라 속도는 느려지지만 전송 패킷 수는 줄어든다
   - 실시간성을 요구할땐 좋지 않다
@@ -413,109 +430,86 @@ if 새 데이터 전송
     else
 ```
 
-## SSL
-- secure socket layer
-- TCP, UDP 둘다 보안 기능이 없다
+## UDP
+- user datagram protocol
+- 비연결형
+- 신뢰도 낮음(송신한 데이터가 목적지에 제대로 도착함을 보장하지 않는다)
+- 혼잡 제어 없음
+- 프로세스간 논리적 통신, 오류 검출 두 가지만 제공
+
+
+## QUIC(Quick UDP Internet Connection)
+- zero RTT를 목표로 개발된 프로토콜
+
+
+
+
+----------------------------------
+
+# 인터넷 계층 Internet Layer
+- OSI에 Network Layer에 해당
+- host간 논리적 통신 제공
+- 해당 계층에서는 데이터를 packet이라 부른다
+
+## LAN과 WAN
+- LAN
+  - 근접 통신망 local area network
+  - 좁은 범위에서 노드간에 직접 연결된 네트워크
+- WAN
+  - 광범위 통신망 wide area network
+  - 인터넷 공급자ISP(Internet Service Provider)가 제공하는 서비스로 연결된 네트워크 
+
+## 라우터 Router
+- 서로 다른 네트워크간 연결하는 장치
+- 연결된 node에 ip 정보를 갖고 있다
+<details>
+<summary> Routing: 패킷이 목적지까지 가기위한 가장 짧은 루트 찾기
+</summary>
+
+</details>
+
+## 스위치 Switch
+- 여러 기기들을 연결해 네트워크를 만드는 장치
+- 이웃 node들에 mac address 정보를 갖고 있다
+
+## IP
+- Internet Protocol
+- network상에 node를 구분하는 논리 주소, 변할 수 있다
+  - port는 같은 ip내에 process를 구분하는 주소
+- version 4를 사용하고 있으며, '.' 으로 구분된 0~255사이 정수 4개로 이루어져있다
+- source address(출발지)와 destination address(도착지) 정보가 담긴 header를 전송계층 packet에 붙인다
+
+### IP class와 subnet
+- IP 주소를 네트워크 영역+호스트영역으로 구성
+- 하나에 네트워크 영역을 잘게 나눈 네트워크를 subnet이라 부른다
+- 같은 subnet내에 host 끼리는 라우터를 거치지 않고 packet 전송 가능
+- subnet mask
+  - ip주소에서 subnet ID를 뽑아내는데 사용하는 연속된 1과 그 후 연속된 0으로 이루어진 32자리 2진수
+  - (ip주소) AND (subnet mask) = subnet ID
 - 
 
-----------------
-
-# Internet Layer(Network Layer)
-- host간에 논리적 통신 제공
-
-## IP와 port
-- ip: internet 서비스 공급자에서 할당 해준 internet에서 computer를 구분하는 주소 
-  - version 4는 . 으로 구분되는 4개의 숫자로 이루어져있다. 각 숫자는 0~255(8bit)범위를 갖는다. 총 32bit
-  - 한 computer에 ip는 공급자에 의해 바뀔 수 있다
-  - ip주소는 host가 네트워크 어디에 위치하는지 나타낸다
-  - ip주소는 32bit다
-  - ip주소는 4계층으로 이루어져있다
-  - ip주소의 한 계층은 0~255 십진수로 표현한다(8bit)
-  - ip주소에 계층은 . 으로 구분한다
-- port: 한 computer(동일 ip)에서 process를 구분하는 번호
-
-### subnet과 subnet mask
-
-- 서브네팅
-  - IP 주소를 네트워크 영역+호스트영역으로 구성
-  - 같은 네트워크 영역내 IP끼리는 라우터를 거치지 않고 패킷 교환 가능
-- 서브넷마스크
-  - 연속된 1과 그다음 연속된 0으로 된 32 자리 2진수
-  - 1은 네트워크 영역을 0은 호스트 영역을 의미
-  - Class에서 제공하는 서브넷 마스크 말고 자체 서브넷 마스크를 이용할 경우 IP주소를 표기할때 뒤에 '/1에갯수' 를 적어 해당 IP의 서브넷 마스크를 나타낸다
-  - IP주소 AND 서브넷마스크 = 네트워크 영역
-  - 가질 수 있는 서브넷 네트워크 수와 각 서브넷 네트워크에 호스트 영역 수를 계산할 줄 알아야 한다
-  - 호스트 수는 2^(영역수)-2, 빼기 2는 네트워크 영역 구분용(영역내에 가장 작은 수)과 브로드캐스트 용(영역내 가장 큰 수)
 
 
-## Forwarding
+### DHCP
+- Dynamic Host Configuration Protocol
+- network에 node가 접속할때마다 ISP로부터 새 ip를 받는 프로토콜
 
-## Routing
-- packet 전송 경로를 결정하는 과정
-- 
+## ARP와 RAPR
+- ARP
+  - IP를 MAC으로 변경하는 프로토콜
+  - node A가 ARP request를 브로드캐스트하면, IP를 갖는 node가 node A에게 자신에 MAC 주소를 유니케스트로 응답한다
 
-## Datagram
+## ICMP
 
+----------------------------------
 
+# 네트워크 접근 계층 Network Access Layer
+- OSI에 DataLink, Physical Layer에 해당
+- DataLink Layer는 host간 물리적 통신 제공, 근접한 host로 데이터를 전송하는 계층
+  - 해당 계층에서 데이터를 frame이라 부른다
+- Pysical Layer는 data를 전기신호로 바꾸어 흐르게 하는 순수 하드웨어 계층
+  - 해당 계층에서 데이터를 bit라 부른다
 
-------
-# Network Access Layer(Data Link Layer + Physical Layer)
-## MAC
-- media access control
-- 하드웨가 갖고 있는 고유 주소
-- : 으로 구분되는 6개 숫자로 이루어져 있다. 각 숫자는 32bit로 16진수 2자리다  
-- ip와 다르게 변하지 않는다
-
-
-### ARP
-- IP 주소를 MAC 주소로 변환하는데 사용하는 프로토콜
-- 브로드 캐스트를 통해 해당 IP주소를 가진 host를 찾음
-
-
-------
-# apache 와 nginx
-- apache: thread 기반, 요청이 올때마다 thread 생성
-- nginx: 최소 thread만으로 event queue
-
-
-# tomcat
-
-
-
--------
-
-# 취약점
-## xss
-- cross site scripting
-- 
-## csrf
-
----------
-
-# proxy
-- client대신 request를 보내고 response 받아 caching한다
-
-
-# reverse proxy
-- server 대신 request를 받아 server가 처리하게 한후 response을 대신 보낸다
-- load balancing
-
-----------
-
-# 로드 밸런싱 load balancing
-## algorithm
-- sticky session
-- 
-
-# 대용량 트래픽 처리법
-- 발생시점을 예상 가능한가 vs 급작스런 증가인가
-- 캐시에서 감당이 안 될때 디비에서 처리하도록 서킷브레이커
-- 스케일업
-- 스케일아웃
-- 스프링이면 톰캣 스레드풀 설정 바꾸기
-- 로드밸런싱
-- 데이터베이스 샤딩
-- 데이터베이스 레플리카
-- 캐시
-- CDN
-- 그럼에도 불구하고 커버가 불가능한 경우 클라이언트에게 실패 응답을 보내 다시 시도하게 끔 한다
+## MAC address
+- Media Access Control address
+- network상에 node를 구분하는 물리 주소, 변하지 않는다
