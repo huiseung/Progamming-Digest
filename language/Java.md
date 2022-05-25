@@ -77,7 +77,9 @@
 - 다형성
   - 오버로딩 overloading
     - 같은 이름을 가지며 다른 파라미터를 갖는 기능(method) 정의
+    - 같은 파라미터 다른 리턴은 불가
   - 오버라이딩 overriding
+    - 자바 @Override
     - 부모 클래스에 기능(method)을 자식 클래스가 변경해 정의
 
 ## 5대 원칙 SOLID
@@ -279,9 +281,10 @@ class Child extends Parent{
 # Enum
 
 
-
 # Generic
-
+- 컴파일단계에 클래스 외부에서 타입을 지정해주는 일반 타입
+- 사용목적
+  - 동일 메서드에 여러 타입을 접목해 사용하고 싶을때 각 타입별로 메서드를 짜두는건 비효율적이다
 
 
 # Interface
@@ -307,7 +310,13 @@ class MyInterfaceImpl implements MyInterface{
 
 # Abstract class
 
-
+</br>
+<details>
+<summary>
+Interface와 Abstrace class 차이점
+</summary>
+</details>
+</br>
 
 # Anotation
 

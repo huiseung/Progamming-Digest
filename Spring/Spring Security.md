@@ -18,14 +18,14 @@
   - [AccessDecisionVoter](#accessdecisionvoter)
   - [SecurityContextHolder](#securitycontextholder)
   - [UserDetailsService](#userdetailsservice)
-  - [## UserDetails](#-userdetails)
+  - [UserDetails](#userdetails)
 - [JWT](#jwt)
   - [Header](#header)
   - [Payload](#payload)
   - [Signature](#signature)
 - [OAuth](#oauth)
 
------------
+------------------------
 
 # 애플리케이션 보안
 ## 사용자 인증 Authentication
@@ -104,7 +104,6 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter{
 ## Authentication
 
 ```java
-
 public abstract class AbstractAuthenticationToken implements Authentication, CredentialsContainer{
   private final Collection<GrantedAuthority> authorities;
   private Object details;
@@ -128,7 +127,6 @@ class UsernamePasswordAuthenticationToken extends AbstractAuthenticationToken{
   private final Object principal;
   private Object credentials;
 
-
   public UsernamePasswordAuthenticationToken(
     Object principal,
     Object credentials
@@ -150,8 +148,6 @@ class UsernamePasswordAuthenticationToken extends AbstractAuthenticationToken{
     setAuthenticated(true);
   }
 }
-
-
 ```
 
 ## AuthenticationManager
@@ -180,7 +176,8 @@ public class ProviderManager implements AuthenticationManager{
 ## UserDetailsService
 
 ## UserDetails
-------------
+
+-------------------------
 
 # JWT
 - Header, Payload, Signature 로 구성된다

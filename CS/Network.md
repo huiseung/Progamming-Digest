@@ -14,9 +14,9 @@
 - [전송 계층 Transport Layer](#전송-계층-transport-layer)
   - [Socket](#socket)
   - [TCP](#tcp)
-    - [네이글 알고리즘 nagle algorithm](#네이글-알고리즘-nagle-algorithm)
   - [UDP](#udp)
   - [QUIC(Quick UDP Internet Connection)](#quicquick-udp-internet-connection)
+    - [네이글 알고리즘 nagle algorithm](#네이글-알고리즘-nagle-algorithm)
 - [인터넷 계층 Internet Layer](#인터넷-계층-internet-layer)
   - [LAN과 WAN](#lan과-wan)
   - [라우터 Router](#라우터-router)
@@ -348,9 +348,8 @@ HTTPS가 안전하게 메세지를 주고받는 방법
 - caching시 마지막 수정된 날짜를 함께 저장한다
 - client는 cache에서 response를 받기전 server에게 조건부 get를 보내 수정 사항이 있는지 확인(status 304 response)를 확인 받고 cache에서 받는다
 
-
-
 ## CDN
+
 
 
 ----------------------------------
@@ -359,6 +358,10 @@ HTTPS가 안전하게 메세지를 주고받는 방법
 - OSI에 Transport Layer에 해당
 - 프로세스간 논리적 통신 제공: 서로 다른 호스트에서 동작중인 애플리케이션이 직접 연결된 것처럼 통신한다.
 - 해당 계층에서는 데이터를 segment라 부른다
+
+- 흐름제어: 수신자에 버퍼오버플로우 방지하기 위해 송신자가 한번에 많은 데이터를 보내지 않음
+- 혼잡제어: 네트워크상에 이동중인 패킷수가 너무 많지 않게 데이터 보내지 않음
+- 오류제어: 네트워크 이동중 패킷이 분실될 경우 재전송 
 
 ## Socket
 - 응용 계층과 전송 계층간 인터페이스
@@ -372,15 +375,11 @@ HTTPS가 안전하게 메세지를 주고받는 방법
 
 ## TCP
 - transmission control protocol
-- 프로세스간 논리적 통신
-- 연결 지향형(3 hand shake와 4 hand shake)
-  - 하나에 client와 하나에 server를 점대점으로 연결한다
-- 신뢰도 높음
+- 연결 지향형(3 hand shake로 연결, 4 hand shake로 해제)
+  - 각 패킷이 동일 경로로 전송됨
+- 신뢰도 높다
   - 보낸 순서대로 모두 도착함을 보장한다
-  - 오류 검출 가능
-- 혼잡 제어 있음
-  - 통신중인 호스트 사이에 있는 스위치와 링크가 폭주하는젓을 방지
-- 타이머
+- 혼잡 제어 있다
 
 ![](./image/tcp_segment.PNG)
 
@@ -398,7 +397,6 @@ HTTPS가 안전하게 메세지를 주고받는 방법
 </details>
 </br>
 
-
 </br>
 <details>
 <summary>
@@ -413,6 +411,27 @@ HTTPS가 안전하게 메세지를 주고받는 방법
 </ol>
 </details>
 </br>
+
+## UDP
+- user datagram protocol
+- 비연결형
+  - 각 패킷이 다른 경로로 전송됨
+- 신뢰도 낮음
+  - 송신한 데이터가 목적지에 제대로 도착함을 보장하지 않는다
+- 흐름제어 없음
+- 혼잡 제어 없음
+- 속도 빠름
+
+<details>
+<summary>
+TCP와 UDP 차이점
+</summary>
+
+</details>
+
+## QUIC(Quick UDP Internet Connection)
+- zero RTT를 목표로 개발된 프로토콜
+
 
 ### 네이글 알고리즘 nagle algorithm
 - 데이터 전송시 네트워를 통해 보내는 패킷수를 줄여 효율성을 높이는 알고리즘
@@ -429,19 +448,6 @@ if 새 데이터 전송
       ACK를 받을 때까지 버버에 넣고 대기
     else
 ```
-
-## UDP
-- user datagram protocol
-- 비연결형
-- 신뢰도 낮음(송신한 데이터가 목적지에 제대로 도착함을 보장하지 않는다)
-- 혼잡 제어 없음
-- 프로세스간 논리적 통신, 오류 검출 두 가지만 제공
-
-
-## QUIC(Quick UDP Internet Connection)
-- zero RTT를 목표로 개발된 프로토콜
-
-
 
 
 ----------------------------------
@@ -486,8 +492,6 @@ if 새 데이터 전송
 - subnet mask
   - ip주소에서 subnet ID를 뽑아내는데 사용하는 연속된 1과 그 후 연속된 0으로 이루어진 32자리 2진수
   - (ip주소) AND (subnet mask) = subnet ID
-- 
-
 
 
 ### DHCP
