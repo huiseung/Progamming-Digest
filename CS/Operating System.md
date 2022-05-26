@@ -32,6 +32,7 @@ Q. 프로세스는 어떤 구조를 가지고 있나요
   - stack: local variable, return address가 저장되는 영역
   - heap: dynamic allocation data가 저장되는 영역
 
+
 Q. PCB, Process Control Block 란 무엇인가요
 - 운영체제가 프로세스를 관리하기 위해 필요한 정보를 저장한 자료구조
 - proc
@@ -152,12 +153,10 @@ Q. critical section, race condition, mutual exclusion에 대해 설명해 주세
 - race condition(경쟁조건): 다수의 스레드가 임계 영역에 동시 접근해 실행 순서에 따라 문제를 발생시킬 수 있는 상황
 - mutual exclusion(상호배제): race condition이 발생하지 않도록 하나에 스레드가 공유 자원에 접근 중일때 다른 스레드가 접근 하지 않도록 막는 기술
 
-Q Reentrant
-- 여러 스레드가 동시에 접그냏도 언제나 같은 실행 결과를 보장한다는 의미 
-
 Q. spin lock
 
 Q. semaphore
+- 정수를 이용해 
 
 Q. DeadLock(교착상태)이 무엇인가요
 - 스레드들이 서로에 자원을 사용하기를 무한히 기다려 다음 task로 진행 못하고 있는 상황
@@ -173,7 +172,7 @@ Q. 데드락 해결
 - 발생 조건 4가지 중 하나라도 해결하면 된다
 
 Q. 동기화 문제
-- 식사하는 철하자 문제
+- 식사하는 철학자 문제
 - 생산자 소비자 문제
 - 독자 저자 문제
 

@@ -338,8 +338,11 @@ HTTPS가 안전하게 메세지를 주고받는 방법
 - Cookie
   - web site가 사용자 정보를 추적하기 위해 저장해두는 정보 
   - server가 response header에 'set-cookie' filed로 담은 value를 browser가 저장한다
-  - request 보낼시 cookie는 header에 담긴
+  - request 보낼시 cookie는 header에 담긴다
+
 - Session
+  - server에서 저장해두는 정보
+  - 쿠키보다 보안 우수 
 
 ## Proxy Server와 Reverse Proxy Server
 - response cache 역활
