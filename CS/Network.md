@@ -11,6 +11,7 @@
   - [Cookie와 Seesion](#cookie와-seesion)
   - [Proxy Server와 Reverse Proxy Server](#proxy-server와-reverse-proxy-server)
   - [CDN](#cdn)
+  - [GSLB](#gslb)
 - [전송 계층 Transport Layer](#전송-계층-transport-layer)
   - [Socket](#socket)
   - [TCP](#tcp)
@@ -352,7 +353,16 @@ HTTPS가 안전하게 메세지를 주고받는 방법
 - client는 cache에서 response를 받기전 server에게 조건부 get를 보내 수정 사항이 있는지 확인(status 304 response)를 확인 받고 cache에서 받는다
 
 ## CDN
+- content delivery network
+- 세계 여러 나라에 분산된 서버
+- client와 가까운 server에서 resource를 응답해 전송 속도를 빠르게 한다
+- 소프트웨어 회사
+  - akamai
 
+## GSLB
+- global server load balancing
+- 발전된 DNS 
+- 
 
 
 ----------------------------------
