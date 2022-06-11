@@ -1,6 +1,5 @@
 # 목차
 - [목차](#목차)
-- [Operating System](#operating-system)
 - [CPU virtualization](#cpu-virtualization)
   - [process와 limited direct execution](#process와-limited-direct-execution)
   - [scheduling 과 context switching](#scheduling-과-context-switching)
@@ -16,9 +15,6 @@
   - [FSCK and Journaling](#fsck-and-journaling)
   - [Recovery](#recovery)
 
-# Operating System
-
-
 # CPU virtualization
 ## process와 limited direct execution
 Q. 프로레스란 무엇인가요
@@ -29,8 +25,8 @@ Q. 프로세스는 어떤 구조를 가지고 있나요
 - 메모리 적재시 4가지 영역으로 구분한다
   - code: 컴파일된 소스코드가 저장되는 영역
   - data: static variable이 저장되는 영역
-  - stack: local variable, return address가 저장되는 영역
   - heap: dynamic allocation data가 저장되는 영역
+  - stack: local variable, return address가 저장되는 영역
 
 
 Q. PCB, Process Control Block 란 무엇인가요
