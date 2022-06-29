@@ -17,16 +17,33 @@
 
 # CPU virtualization
 ## process와 limited direct execution
-Q. 프로레스란 무엇인가요
-- 코드(명령어) 모음을 프로그램이라 부르며, 실행 중인 프로그램을 프로세스라 부른다
 
-Q. 프로세스는 어떤 구조를 가지고 있나요
-- 프로그램이 실행중이란 건 disk에 있던 파일이 메모리에 적재되어 CPU에 의해 코드가 동작중인 상황을 의미한다.
-- 메모리 적재시 4가지 영역으로 구분한다
-  - code: 컴파일된 소스코드가 저장되는 영역
-  - data: static variable이 저장되는 영역
-  - heap: dynamic allocation data가 저장되는 영역
-  - stack: local variable, return address가 저장되는 영역
+<details>
+<summary>
+프로그램과 프로세스
+</summary>
+</br>
+<p>
+코드(명령어) 모음을 프로그램이라 부르며, </br>
+실행중인 프로그램을 프로세스라 부른다. </br>
+</p>
+<p>
+프로그램은 디스크에 저장되어 있다가 </br>
+실행시 main memory에 할당되며 이를 프로세스라 부른다. </br>
+명령어에 실행은 CPU가 처리한다.
+</p>
+
+<p>
+프로세스는 main memory를 4 가지 영역으로 구분해 사용한다
+<ul>
+<li>code: 컴파일된 소스코드가 저장되는 영역</li>
+<li>data: static variable이 저장되는 영역</li>
+<li>heap: dynamic allocation data가 저장되는 영역</li>
+<li>stack: local variable, return address가 저장되는 영역</li>
+</ul>
+</p>
+</details>
+</br>
 
 
 Q. PCB, Process Control Block 란 무엇인가요
@@ -142,6 +159,16 @@ Q. 스레드란 무엇인가요
 - 공유하는 주소공간에 대해서 page 교체를 할 필요가 없음
   - context switching시 process보다 효율적!
 - 하나에 task를 동시 작업 가능
+
+
+<details>
+<summary>
+멀티 프로세스와 멀티 스레드
+</summary>
+<p>
+
+</p>
+</details>
 
 ## lock, conditaion variable, semaphore
 Q. critical section, race condition, mutual exclusion에 대해 설명해 주세요

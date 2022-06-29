@@ -989,8 +989,6 @@ def check(nRow, nCol, board):
                 if len(group) >= 3:
                     groups.append(group)
     return groups
-
-
 ```
 
 
